@@ -1,16 +1,17 @@
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
-import {Brand} from '@/views' 
-async function fetchBrand() {
+import { Product } from "@/views";
+
+async function fetchProduct() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/brands`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`);
     return res.json();
   } catch (err) {
-    console.error("Failed to fetch brands:", err);
+    console.error("Failed to fetch product:", err);
   }
 }
-const BrandPage = async () => {
-  const data = await fetchBrand();
-  const brands = data.data;
+const ProductPage = async () => {
+  const data = await fetchProduct();
+  const products = data.data;
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -26,22 +27,22 @@ const BrandPage = async () => {
           </li>
           <li>
             <div className="flex items-center">
-              <CaretRight size={16} color="#9ca3af" weight="bold"/>
+              <CaretRight size={16} color="#9ca3af" weight="bold" />
               <a
-                className="ms-1 text-sm font-medium text-gray-700 dark:text-gray-400"
+                className="inline-flex items-center text-sm font-medium text-gray-700  dark:text-gray-400"
               >
-                Brand
+                Product
               </a>
             </div>
           </li>
         </ol>
       </nav>
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
-        Brand
+        Product
       </h2>
-      <Brand brands={brands}/>
+      <Product datas={products} />
     </>
   );
 };
 
-export default BrandPage;
+export default ProductPage;

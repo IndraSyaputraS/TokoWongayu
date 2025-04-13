@@ -1,6 +1,8 @@
 "use client";
+import { X } from "@phosphor-icons/react";
 import React, { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
+
 const Modal = ({
   open = false,
   title = "Form",
@@ -18,7 +20,8 @@ const Modal = ({
 }) => {
   const backdropClasses = "fixed inset-0 z-50 bg-gray-100 bg-opacity-50";
   const dialogClasses =
-    "fixed top-0 start-0 end-0 md:inset-0 h-full z-50 w-full flex p-8 flex overflow-y-auto scrollbar-none";
+    "fixed top-0 start-0 end-0 md:inset-0 h-full z-50 w-full flex p-8 overflow-y-auto scrollbar-none";
+
   const sizes = {
     xs: "max-w-md",
     sm: "max-w-lg",
@@ -28,16 +31,12 @@ const Modal = ({
   };
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = open ? "hidden" : "unset";
   }, [open]);
 
   const hide = (e) => {
     e.preventDefault();
-    props.onClose();
+    props.onClose?.();
   };
 
   const handleKeys = (e) => {
@@ -45,10 +44,7 @@ const Modal = ({
       hide(e);
     }
   };
-  const onAutoClose = (e) => {
-    const target = e.target;
-    if (autoClose && target?.tagName === "BUTTON") hide(e); // close on any button click
-  };
+
   const onOutsideClose = (e) => {
     if (outsideClose && e.target === e.currentTarget) {
       hide(e);
@@ -75,8 +71,7 @@ const Modal = ({
   const body = childrenArray.find((child) => child.type === Modal.Body) || null;
   const footer =
     childrenArray.find((child) => child.type === Modal.Footer) || null;
-    console.log(childrenArray);
-    
+
   return (
     <>
       <div className={twMerge(backdropClasses, backdropClass)} />
@@ -92,8 +87,12 @@ const Modal = ({
         aria-modal="true"
         role="dialog"
       >
-        <div className={`flex relative ${sizes[size]} w-full max-h-full`}>
-          <div className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+        {/* <div
+          className={`flex justify-center relative ${sizes[size]} w-auto h-full max-h-full pt-10 md:h-auto`}
+        >
+          <div className="relative bg-white rounded-lg shadow dark:bg-gray-800 w-full"> */}
+        <div className={`flex justify-center relative ${sizes[size]} w-full pt-10 md:h-auto`}>
+          <div className="bg-white rounded-lg shadow dark:bg-gray-800 w-auto">
             {(header || title) && (
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                 {header ? (
@@ -110,27 +109,15 @@ const Modal = ({
                     className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                     data-modal-toggle="crud-modal"
                   >
-                    <svg
-                      className="w-3 h-3"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 14 14"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                      />
-                    </svg>
+                    <X size={20} color="#6b7280" weight="light" />
                     <span className="sr-only">Close modal</span>
                   </button>
                 )}
               </div>
             )}
-            {body && <div className="p-4 md:p-5 space-y-4">{children}</div>}
+
+            {body && <div className="p-4 md:p-5">{body}</div>}
+
             {footer}
           </div>
         </div>
@@ -139,16 +126,13 @@ const Modal = ({
   );
 };
 
+// Komponen sub Modal
 Modal.Header = ({ children }) => children;
-
 Modal.Body = ({ children }) => children;
-
-Modal.Footer = function ModalFooter({ children }) {
-  return (
-    <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-      {children}
-    </div>
-  );
-};
+Modal.Footer = ({ children }) => (
+  <div className="flex justify-center items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+    {children}
+  </div>
+);
 
 export default Modal;

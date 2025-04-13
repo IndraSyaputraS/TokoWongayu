@@ -1,13 +1,15 @@
 "use client";
 
 import { Navbar, Sidebar } from "@/components";
+import { Toaster } from "react-hot-toast";
 
 const UserLayout = ({ children }) => {
   return (
-    <div class="antialiased bg-gray-50 dark:bg-gray-900">
+    <div className="antialiased bg-gray-50 dark:bg-gray-900">
+      <Toaster position="top-right" />
       <Navbar />
       <Sidebar />
-      <main class="p-4 md:ml-64 h-auto pt-20">{children}</main>
+      <main className="px-8 md:ml-64 min-h-svh pt-20 pb-8">{children}</main>
     </div>
   );
 };

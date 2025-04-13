@@ -6,7 +6,7 @@ export async function GET(request, { params }) {
   const IntId = parseInt(id);
   const brands = await prisma.brand.findUnique({
     where: {
-      brand_id: IntId,
+      id: IntId,
     },
   });
 
@@ -41,7 +41,7 @@ export async function PUT(request, { params }) {
   const { name } = body;
   const brands = await prisma.brand.findUnique({
     where: {
-      brand_id: IntId,
+      id: IntId,
     },
   });
   if (!brands) {
@@ -57,7 +57,7 @@ export async function PUT(request, { params }) {
   }
   await prisma.brand.update({
     where: {
-      brand_id: IntId,
+      id: IntId,
     },
     data: {
       name: name,
@@ -80,7 +80,7 @@ export async function DELETE(request, { params }) {
   const IntId = parseInt(id);
   const brands = await prisma.brand.findUnique({
     where: {
-      brand_id: IntId,
+      id: IntId,
     },
   });
   if (!brands) {
@@ -96,7 +96,7 @@ export async function DELETE(request, { params }) {
   }
   await prisma.brand.delete({
     where: {
-      brand_id: IntId,
+      id: IntId,
     },
   });
   return NextResponse.json(

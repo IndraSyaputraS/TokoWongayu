@@ -10,7 +10,7 @@ const MultiSelect = ({
   label = "Category",
   data,
   selectedCategory,
-  setCelectedCategory,
+  setSelectedCategory,
   placeholder = "Select Category",
   type,
   name,
@@ -37,12 +37,12 @@ const MultiSelect = ({
   );
   const handleSelectTag = (tag) => {
     if (!selectedCategory.find((t) => t.id === tag.id)) {
-      setCelectedCategory((prevTags) => [...prevTags, tag]);
+      setSelectedCategory((prevTags) => [...prevTags, tag]);
       setTagKeywords("");
     }
   };
   const handleRemoveTag = (tagId) => {
-    setCelectedCategory((prevTags) =>
+    setSelectedCategory((prevTags) =>
       prevTags.filter((tag) => tag.id !== tagId)
     );
   };

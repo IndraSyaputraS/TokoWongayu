@@ -8,77 +8,79 @@ import toast from "react-hot-toast";
 const BundleCategory = ({ data, benefits, categories }) => {
   const [form, setForm] = useState({
     benefitId: "",
-    categoryId: "",
   });
-  const [selectedCategory, setSelectedCategory] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [editMode, setEditMode] = useState(false);
-  const [selectedBrand, setSelectedBrand] = useState(null);
-  const [brandList, setBrandList] = useState([]);
+  const [selectedBundCat, setSelectedBundCat] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [brandToDelete, setBrandToDelete] = useState(null);
-
+  const [bundCatToDelete, setBundCatToDelete] = useState(null);
   const router = useRouter();
   const itemsPerPage = 10;
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedBrands = data.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedBunCat = data.slice(startIndex, startIndex + itemsPerPage);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (!form.benefitId || selectedCategory.length === 0) {
+        toast.error("Please select both benefit and category.");
+        return;
+      }
       const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "";
       const url = editMode
-        ? `${baseURL}/api/brands/${selectedBrand.id}`
-        : `${baseURL}/api/brands`;
+        ? `${baseURL}/api/bundle-categories/${selectedBundCat.id}`
+        : `${baseURL}/api/bundle-categories`;
 
       const method = editMode ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({
+          benefitId: form.benefitId,
+          categoryIds: selectedCategory.map((item) => item.id),
+        }),
       });
 
       if (res.ok) {
         const notif = editMode
-          ? toast.success("Brand Updated successfully.")
-          : toast.success("Brand Created successfully.");
+          ? toast.success("Bundle Category Updated successfully.")
+          : toast.success("Bundle Category Created successfully.");
         setForm({
-          benefitId: form.benefitId,
-          categoryId: form.categoryId,
+          benefitId: "",
         });
         setOpenModal(false);
         setEditMode(false);
-        setSelectedBrand(null);
+        setSelectedBundCat(null);
         router.refresh();
       } else {
-        console.error("Failed to save brand:", await res.text());
+        console.error("Failed to save Bundle Category:", await res.text());
       }
     } catch (err) {
-      console.error("Error saving brand:", err);
+      console.error("Error saving Bundle Category:", err);
     }
   };
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`/api/brands/${brandToDelete}`, {
+      const res = await fetch(`/api/bundle-categories/${bundCatToDelete}`, {
         method: "DELETE",
       });
 
       if (res.ok) {
-        setBrandList((prev) => prev.filter((data) => data.id !== id));
-        toast.success("Brand deleted successfully.");
+        toast.success("Bundle Category deleted successfully.");
         setOpenDeleteModal(false);
         router.refresh();
       } else {
-        toast.error("Failed to delete brand.");
+        toast.error("Failed to delete Bundle Category.");
       }
     } catch (error) {
-      console.error("Error deleting brand:", error);
-      toast.error("An error occurred while deleting the brand.");
+      console.error("Error deleting Bundle Category:", error);
+      toast.error("An error occurred while deleting the Bundle Category.");
     }
   };
 
@@ -86,38 +88,50 @@ const BundleCategory = ({ data, benefits, categories }) => {
     setEditMode(false);
     setForm({
       benefitId: "",
-      categoryId: "",
     });
-    setSelectedBrand(null);
+    setSelectedBundCat(null);
     setOpenModal(true);
   }
   function handleOpenDeleteModal(id) {
     setOpenDeleteModal(true);
-    setBrandToDelete(id);
+    setBundCatToDelete(id);
   }
 
-  function handleEdit(brand) {
+  function handleEdit(bundleCategory) {
     setEditMode(true);
-    setSelectedBrand(brand);
+    setSelectedBundCat(bundleCategory);
+
+    const selectedCats = categories.filter((cat) =>
+      bundleCategory.categories?.some((item) => item.Category?.id === cat.id)
+    );
+
     setForm({
-      benefitId: form.benefitId,
-      categoryId: form.categoryId,
+      benefitId: bundleCategory.benefitId || "",
     });
+
+    setSelectedCategory(selectedCats);
     setOpenModal(true);
   }
 
   function handleCloseDeleteModal() {
     setOpenDeleteModal(false);
-    setBrandToDelete("");
+    setBundCatToDelete("");
   }
   function handleCloseModal() {
     setForm({
       benefitId: "",
-      categoryId: "",
     });
-    setSelectedBrand(null);
+    setSelectedBundCat(null);
+    setSelectedCategory([]);
     setOpenModal(false);
   }
+
+  const updateForm = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
   return (
     <>
       <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-lg sm:rounded-lg">
@@ -144,8 +158,8 @@ const BundleCategory = ({ data, benefits, categories }) => {
                 <th scope="col" className="w-[64px] px-4 py-3">
                   No
                 </th>
-                <th scope="col" className="w-[500px] px-4 py-3">
-                  Benefit
+                <th scope="col" className="w-[450px] px-4 py-3">
+                  Perawatan
                 </th>
                 <th scope="col" className="px-4 py-3">
                   Category
@@ -156,25 +170,32 @@ const BundleCategory = ({ data, benefits, categories }) => {
               </tr>
             </thead>
             <tbody>
-              {paginatedBrands.map((brand, index) => (
+              {paginatedBunCat.map((bundCat, index) => (
                 <tr
                   key={index}
                   className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <td className="px-4 py-3">{data.indexOf(brand) + 1}</td>
+                  <td className="px-4 py-3">{data.indexOf(bundCat) + 1}</td>
                   <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {brand.name}
+                    {bundCat.Benefit?.name}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {bundCat.categories && bundCat.categories.length > 0
+                      ? bundCat.categories
+                          .map((c) => c.Category?.name)
+                          .join(", ")
+                      : "-"}
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex justify-center gap-2">
                       <button
                         className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
-                        onClick={() => handleEdit(brand)}
+                        onClick={() => handleEdit(bundCat)}
                       >
                         <PencilLine size={20} weight="thin" />
                       </button>
                       <button
-                        onClick={() => handleOpenDeleteModal(brand.id)}
+                        onClick={() => handleOpenDeleteModal(bundCat.id)}
                         className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                       >
                         <Trash size={20} weight="light" />
@@ -211,7 +232,7 @@ const BundleCategory = ({ data, benefits, categories }) => {
                   htmlFor="benefit"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Benefit
+                  Perawatan
                 </label>
                 <select
                   id="benefit"
@@ -228,7 +249,11 @@ const BundleCategory = ({ data, benefits, categories }) => {
                 </select>
               </div>
               <div>
-                <MultiSelect selectedCategory={selectedCategory} setCelectedCategory={setSelectedCategory} data={categories}/>
+                <MultiSelect
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  data={categories}
+                />
               </div>
             </div>
           </form>
@@ -242,12 +267,12 @@ const BundleCategory = ({ data, benefits, categories }) => {
             {editMode ? (
               <>
                 <PencilLine size={20} className="mr-2" />
-                Update Brand
+                Update Bundle Category
               </>
             ) : (
               <>
                 <Plus size={20} className="mr-2" />
-                Add New Brand
+                Add New Bundle Category
               </>
             )}
           </button>
@@ -266,7 +291,7 @@ const BundleCategory = ({ data, benefits, categories }) => {
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg text-center font-normal text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this Brand?
+              Are you sure you want to delete this Bundle Category?
             </h3>
             <div className="flex ">
               <button

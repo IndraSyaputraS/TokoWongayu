@@ -31,12 +31,11 @@ export async function GET() {
 
 export async function POST(request) {
   const body = await request.json();
-  const { name, benefitId, categoryIds } = body;
+  const { benefitId, categoryIds } = body;
 
   try {
     const bunCat = await prisma.bundleCategory.create({
       data: {
-        name,
         benefitId: parseInt(benefitId),
       },
     });

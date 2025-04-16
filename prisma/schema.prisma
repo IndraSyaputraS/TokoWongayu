@@ -99,7 +99,6 @@ model Users {
 
 model BundleCategory {
   id         Int           @id @default(autoincrement())
-  name       String
   benefitId  Int           @map("benefit_id")
   Benefit    Benefit       @relation(fields: [benefitId], references: [id], onDelete: Cascade)
   categories PivotBunCat[] // relasi ke kategori (pivot)

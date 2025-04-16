@@ -1,5 +1,6 @@
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
-import {Brand} from '@/views' 
+import { Brand } from "@/views";
+import { Spinner } from "@/components";
 async function fetchBrand() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/brands`);
@@ -26,10 +27,8 @@ const BrandPage = async () => {
           </li>
           <li>
             <div className="flex items-center">
-              <CaretRight size={16} color="#9ca3af" weight="bold"/>
-              <a
-                className="ms-1 text-sm font-medium text-gray-700 dark:text-gray-400"
-              >
+              <CaretRight size={16} color="#9ca3af" weight="bold" />
+              <a className="ms-1 text-sm font-medium text-gray-700 dark:text-gray-400">
                 Brand
               </a>
             </div>
@@ -39,7 +38,7 @@ const BrandPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Brand
       </h2>
-      <Brand brands={brands}/>
+      <Brand data={brands} />
     </>
   );
 };

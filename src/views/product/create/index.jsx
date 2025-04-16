@@ -4,32 +4,44 @@ import { useState } from "react";
 import Image from "next/image";
 import { Trash } from "@phosphor-icons/react";
 
-const ProductCreate = ({ brands, categories, benefits }) => {
-  const [name, setName] = useState("");
-  const [brandId, setBrandId] = useState("");
-  const [itemCode, setItemCode] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [benefitId, setBenefitId] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const [uploadedImageId, setUploadedImageId] = useState("");
-  const [oldUploadedImageId, setOldUploadedImageId] = useState("");
+const ProductCreate = ({ brands, categories, benefits, product }) => {
+  const [form, setForm] = useState({
+    name: product?.name || "",
+    brandId: product?.brandId || "",
+    itemCode: product?.itemCode || "",
+    price: product?.price || "",
+    stock: product?.stock || "",
+    benefitId: product?.benefitId || "",
+    categoryId: product?.categoryId || "",
+    image: null,
+    preview: product?.imageUrl || null,
+    uploadedImageUrl: product?.imageUrl || "",
+    uploadedImageId: product?.imageId || "",
+    oldUploadedImageId: "",
+  });
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
+
+  const updateForm = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
   const handleImageChange = async (e) => {
     if (uploading) return;
     setUploading(true);
+
     const file = e.target.files[0];
     if (!file) {
       setUploading(false);
       return;
     }
 
-    if (uploadedImageId) setOldUploadedImageId(uploadedImageId);
+    if (form.uploadedImageId) {
+      updateForm("oldUploadedImageId", form.uploadedImageId);
+    }
 
     const formData = new FormData();
     formData.append("image", file);
@@ -41,16 +53,16 @@ const ProductCreate = ({ brands, categories, benefits }) => {
 
     const data = await uploadRes.json();
     if (uploadRes.ok) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
-      setUploadedImageUrl(data.data.imageUrl);
-      setUploadedImageId(data.data.id);
+      updateForm("image", file);
+      updateForm("preview", URL.createObjectURL(file));
+      updateForm("uploadedImageUrl", data.data.imageUrl);
+      updateForm("uploadedImageId", data.data.id);
 
-      if (oldUploadedImageId) {
-        await fetch(`/api/upload-image/${oldUploadedImageId}`, {
+      if (form.oldUploadedImageId) {
+        await fetch(`/api/upload-image/${form.oldUploadedImageId}`, {
           method: "DELETE",
         });
-        setOldUploadedImageId("");
+        updateForm("oldUploadedImageId", "");
       }
     } else {
       console.error("Failed to upload image:", data.message || "Unknown error");
@@ -59,31 +71,55 @@ const ProductCreate = ({ brands, categories, benefits }) => {
     setUploading(false);
   };
 
+  const handleDeleteImage = async () => {
+    if (!form.uploadedImageId || form.uploadedImageId === "undefined") return;
+
+    const res = await fetch(`/api/upload-image/${form.uploadedImageId}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      updateForm("uploadedImageId", "");
+      updateForm("uploadedImageUrl", "");
+      updateForm("image", null);
+      updateForm("preview", null);
+    } else {
+      console.error("Failed to delete image");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("/api/products", {
-      method: "POST",
+    const method = product ? "PUT" : "POST";
+    const endpoint = product
+      ? `/api/products/${product.id}`
+      : "/api/products";
+
+    const res = await fetch(endpoint, {
+      method,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
-        brandId,
-        itemCode,
-        price,
-        stock,
-        benefitId,
-        categoryId,
-        imageId: uploadedImageId,
-        imageUrl: uploadedImageUrl,
+        name: form.name,
+        brandId: form.brandId,
+        itemCode: form.itemCode,
+        price: form.price,
+        stock: form.stock,
+        benefitId: form.benefitId,
+        categoryId: form.categoryId,
+        imageId: form.uploadedImageId,
+        imageUrl: form.uploadedImageUrl,
       }),
     });
 
     if (res.ok) {
       router.push("/product");
     } else {
-      console.error("Failed to create product");
+      console.error(
+        "Failed to " + (initialData ? "update" : "create") + " product"
+      );
     }
   };
 
@@ -102,9 +138,9 @@ const ProductCreate = ({ brands, categories, benefits }) => {
               type="text"
               id="name"
               className="input-field"
-              placeholder="Input Prodcut Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              placeholder="Input Product Name"
+              value={form.name}
+              onChange={(e) => updateForm("name", e.target.value)}
               required
             />
           </div>
@@ -118,8 +154,8 @@ const ProductCreate = ({ brands, categories, benefits }) => {
               id="itemCode"
               className="input-field"
               placeholder="Input Item Code"
-              value={itemCode}
-              onChange={(e) => setItemCode(e.target.value)}
+              value={form.itemCode}
+              onChange={(e) => updateForm("itemCode", e.target.value)}
               required
             />
           </div>
@@ -130,8 +166,8 @@ const ProductCreate = ({ brands, categories, benefits }) => {
             </label>
             <select
               id="brand"
-              value={brandId}
-              onChange={(e) => setBrandId(e.target.value)}
+              value={form.brandId}
+              onChange={(e) => updateForm("brandId", e.target.value)}
               className="input-field"
             >
               <option value="">Select Brand</option>
@@ -149,8 +185,8 @@ const ProductCreate = ({ brands, categories, benefits }) => {
             </label>
             <select
               id="category"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
+              value={form.categoryId}
+              onChange={(e) => updateForm("categoryId", e.target.value)}
               className="input-field"
             >
               <option value="">Select Category</option>
@@ -168,8 +204,8 @@ const ProductCreate = ({ brands, categories, benefits }) => {
             </label>
             <select
               id="benefit"
-              value={benefitId}
-              onChange={(e) => setBenefitId(e.target.value)}
+              value={form.benefitId}
+              onChange={(e) => updateForm("benefitId", e.target.value)}
               className="input-field"
             >
               <option value="">Select Benefit</option>
@@ -190,8 +226,8 @@ const ProductCreate = ({ brands, categories, benefits }) => {
               id="price"
               className="input-field"
               placeholder="Input Price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              value={form.price}
+              onChange={(e) => updateForm("price", e.target.value)}
               required
             />
           </div>
@@ -205,29 +241,31 @@ const ProductCreate = ({ brands, categories, benefits }) => {
               id="stock"
               className="input-field"
               placeholder="Input Stock"
-              value={stock}
-              onChange={(e) => setStock(e.target.value)}
+              value={form.stock}
+              onChange={(e) => updateForm("stock", e.target.value)}
               required
             />
           </div>
+
           <div className="sm:col-span-2 flex justify-end mt-auto">
-      <button
-        type="submit"
-        className="px-5 py-2.5 text-sm font-medium text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900"
-      >
-        Add product
-      </button>
-    </div>
+            <button
+              type="submit"
+              className="px-5 py-2.5 text-sm font-medium text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900"
+            >
+              {product ? "Update Product" : "Add Product"}
+            </button>
+          </div>
         </div>
+
         <div className="md:w-1/4 flex flex-col items-center h-200 mt-4 md:mt-0">
           <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white text-center">
             Add Image
           </label>
 
-          {preview ? (
+          {form.preview ? (
             <div className="relative group w-32 h-32">
               <Image
-                src={preview}
+                src={form.preview}
                 alt="Preview"
                 className="object-contain rounded-lg border border-gray-300 dark:border-gray-600 shadow w-full h-full bg-zinc-50 dark:bg-gray-700"
                 width={128}
@@ -236,23 +274,7 @@ const ProductCreate = ({ brands, categories, benefits }) => {
               <button
                 type="button"
                 className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
-                onClick={async () => {
-                  if (!uploadedImageId || uploadedImageId === "undefined")
-                    return;
-
-                  const res = await fetch(`/api/upload-image/${uploadedImageId}`, {
-                    method: "DELETE",
-                  });
-
-                  if (res.ok) {
-                    setUploadedImageId("");
-                    setUploadedImageUrl("");
-                    setImage(null);
-                    setPreview(null);
-                  } else {
-                    console.error("Failed to delete image");
-                  }
-                }}
+                onClick={handleDeleteImage}
               >
                 <Trash size={16} />
               </button>

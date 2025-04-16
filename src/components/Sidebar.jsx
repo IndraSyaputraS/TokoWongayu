@@ -76,11 +76,13 @@
 "use client";
 
 import {
+  Calculator,
   ChartBar,
   CirclesFour,
   HardDrive,
   Note,
   Package,
+  Stack,
   Tag,
 } from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
@@ -119,6 +121,16 @@ const Sidebar = () => {
       href: "/calculation-data",
       icon: <HardDrive size={24} weight="fill" className="text-gray-500" />,
       label: "Calculation Data",
+    },
+    {
+      href: "/recomendation",
+      icon: <Calculator size={24} weight="fill" className="text-gray-500" />,
+      label: "Recomendation",
+    },
+    {
+      href: "/bundle-category",
+      icon: <Stack size={24} weight="fill" className="text-gray-500" />,
+      label: "Bundle Category",
     },
   ];
 

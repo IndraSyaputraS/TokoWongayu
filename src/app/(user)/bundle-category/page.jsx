@@ -1,17 +1,23 @@
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
-import { Product } from "@/views";
+import { BundleCategory } from "@/views";
 
-async function fetchProduct() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`);
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch product:", err);
-  }
+async function fetchData(endpoint) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/${endpoint}`,
+    {
+      cache: "no-store",
+    }
+  );
+  if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
+  const data = await res.json();
+  return data.data;
 }
-const ProductPage = async () => {
-  const data = await fetchProduct();
-  const products = data.data;
+const BundleCategoryPage = async () => {
+  const [benefits, categories, bundleCategories] = await Promise.all([
+    fetchData("benefits"),
+    fetchData("categories"),
+    fetchData("bundle-categories"),
+  ]);
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -28,21 +34,23 @@ const ProductPage = async () => {
           <li>
             <div className="flex items-center">
               <CaretRight size={16} color="#9ca3af" weight="bold" />
-              <a
-                className="inline-flex items-center text-sm font-medium text-gray-700  dark:text-gray-400"
-              >
-                Product
+              <a className="ms-1 text-sm font-medium text-gray-700 dark:text-gray-400">
+                Bundle Category
               </a>
             </div>
           </li>
         </ol>
       </nav>
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
-        Product
+        Bundle Category
       </h2>
-      <Product data={products} />
+      <BundleCategory
+        data={bundleCategories}
+        benefits={benefits}
+        categories={categories}
+      />
     </>
   );
 };
 
-export default ProductPage;
+export default BundleCategoryPage;

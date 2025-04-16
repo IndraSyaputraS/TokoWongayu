@@ -7,24 +7,29 @@ import {
   Plus,
   Spinner,
   Trash,
+  Warning,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-const Product = ({ datas }) => {
+const Product = ({ data }) => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [productList, setProductList] = useState([]);
+  const [editMode, setEditMode] = useState(false);
   const router = useRouter();
   const itemsPerPage = 10;
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(datas.length / itemsPerPage);
+  const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = datas.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedProducts = data.slice(startIndex, startIndex + itemsPerPage);
 
   function handleOpenModal() {
     setOpenModal(true);
@@ -69,43 +74,176 @@ const Product = ({ datas }) => {
       setIsImporting(false); // stop loading
     }
   };
+  function handleCloseDeleteModal() {
+    setOpenDeleteModal(false);
+  }
+  function handleOpenDeleteModal(id) {
+    setOpenDeleteModal(true);
+    setProductToDelete(id);
+  }
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`/api/products/${productToDelete}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setProductList((prev) =>
+          prev.filter((data) => data.id !== productToDelete)
+        );
+        toast.success("Benefit deleted successfully.");
+        setOpenDeleteModal(false);
+        router.refresh();
+      } else {
+        toast.error("Failed to delete benefit.");
+      }
+    } catch (error) {
+      console.error("Error deleting benefit:", error);
+      toast.error("An error occurred while deleting the benefit.");
+    }
+  };
 
   return (
-    <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-      <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-        <div className="flex items-center flex-1 space-x-4">
-          <h5>
-            <span className="text-gray-500">All Product: </span>
-            <span className="dark:text-white">{datas?.length}</span>
-          </h5>
-        </div>
-        <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-          <Link href="/product/create">
+    <>
+      <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+        <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+          <div className="flex items-center flex-1 space-x-4">
+            <h5>
+              <span className="text-gray-500">All Product: </span>
+              <span className="dark:text-white">{data?.length}</span>
+            </h5>
+          </div>
+          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+            <Link href="/product/create">
+              <button
+                type="button"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              >
+                <Plus size="24" color="#d9e3f0" />
+                Add new product
+              </button>
+            </Link>
+          </div>
+          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
             <button
               type="button"
+              onClick={handleOpenModal}
               className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
             >
-              <Plus size="24" color="#d9e3f0" />
-              Add new product
+              <FileArrowDown size="24" />
+              Import
             </button>
-          </Link>
+          </div>
         </div>
-        <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-          <button
-            type="button"
-            onClick={handleOpenModal}
-            className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-          >
-            <FileArrowDown size="24" />
-            Import
-          </button>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="min-w-16 px-4 py-3">
+                  No
+                </th>
+                <th scope="col" className="min-w-28 px-4 py-3">
+                  Item Code
+                </th>
+                <th scope="col" className="min-w-96 px-4 py-3">
+                  Product
+                </th>
+                <th scope="col" className="min-w-32 px-4 py-3">
+                  Brand
+                </th>
+                <th scope="col" className="min-w-40 px-4 py-3">
+                  Category
+                </th>
+                <th scope="col" className="min-w-56 px-4 py-3">
+                  Benefit
+                </th>
+                <th scope="col" className="min-w-24 px-4 py-3">
+                  Price
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Stock
+                </th>
+                <th scope="col" className="text-center px-4 py-3">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedProducts.map((product, index) => (
+                <tr
+                  key={index}
+                  className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <td className="whitespace-nowrap px-4 py-3">
+                    {data.indexOf(product) + 1}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {product.itemCode}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <div className="flex items-center gap-2">
+                      {product.imageUrl ? (
+                        <Image
+                          src={product.imageUrl}
+                          alt={product.name}
+                          width={35}
+                          height={35}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <span className="text-gray-400 text-xs">No Image</span>
+                      )}
+                      <span>{product.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {product.Brand?.name}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {product.Category?.name}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {product.Benefit?.name}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {product.price}
+                  </td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {product.stock}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex justify-center gap-2">
+                      <Link href={`/product/edit/${product.id}`}>
+                        <button className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700">
+                          <PencilLine size={20} weight="thin" />
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => handleOpenDeleteModal(product.id)}
+                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                      >
+                        <Trash size={20} weight="light" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
+      {/* Modal Import */}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
-        size="xl"
-        title="Create Product"
+        size="sm"
+        title="Import Product"
       >
         <Modal.Body>
           <form id="import" onSubmit={handleFileUpload}>
@@ -161,110 +299,41 @@ const Product = ({ datas }) => {
           </button>
         </Modal.Footer>
       </Modal>
-
-      <div className="overflow-x-auto">
-        <table className="table-fixed w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" className="w-[20px] px-4 py-3">
-                No
-              </th>
-              <th scope="col" className="px-4 py-3">
-                Item Code
-              </th>
-              <th scope="col" className="px-4 py-3">
-                Product
-              </th>
-              <th scope="col" className="px-4 py-3">
-                Brand
-              </th>
-              <th scope="col" className="px-4 py-3">
-                Category
-              </th>
-              <th scope="col" className="px-4 py-3">
-                Benefit
-              </th>
-              <th scope="col" className="px-4 py-3">
-                Price
-              </th>
-              <th scope="col" className="px-4 py-3">
-                Stock
-              </th>
-              <th scope="col" className="text-center px-4 py-3">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedProducts.map((product, index) => (
-              <tr
-                key={index}
-                className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+      {/* Modal Delete */}
+      <Modal
+        open={openDeleteModal}
+        onClose={handleCloseModal}
+        size="sm"
+        placement="center"
+      >
+        <Modal.Body>
+          <div className="flex flex-col justify-center items-center">
+            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200">
+              <Warning size={64} />
+            </div>
+            <h3 className="mb-5 text-lg text-center font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this Product?
+            </h3>
+            <div className="flex ">
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
               >
-                <td className="whitespace-nowrap px-4 py-3">
-                  {datas.indexOf(product) + 1}
-                </td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {product.itemCode}
-                </td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <div className="flex items-center gap-2">
-                    {product.imageUrl ? (
-                      <Image
-                        src={product.imageUrl}
-                        alt={product.name}
-                        width={35}
-                        height={35}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <span className="text-gray-400 text-xs">No Image</span>
-                    )}
-                    <span>{product.name}</span>
-                  </div>
-                </td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {product.Brand?.name}
-                </td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {product.Category?.name}
-                </td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {product.Benefit?.name}
-                </td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {product.price}
-                </td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {product.stock}
-                </td>
-                <td className="px-3 py-2">
-                  <div className="flex justify-center gap-2">
-                    <button
-                      className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
-                      //   onClick={() => handleEdit(brand.id)}
-                    >
-                      <PencilLine size={20} weight="thin" />
-                    </button>
-                    <button
-                      //   onClick={() => handleDelete(brand.id)}
-                      className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
-                      <Trash size={20} weight="light" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      </div>
-    </div>
+                Yes, I'm sure
+              </button>
+              <button
+                type="button"
+                onClick={handleCloseDeleteModal}
+                className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+              >
+                No, cancel
+              </button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

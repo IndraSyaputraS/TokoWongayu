@@ -5,7 +5,7 @@ import { twMerge } from "tailwind-merge";
 
 const Modal = ({
   open = false,
-  title = "Form",
+  title = "",
   description = "",
   size = "md",
   placement = "top-center",
@@ -18,9 +18,9 @@ const Modal = ({
   children,
   ...props
 }) => {
-  const backdropClasses = "fixed inset-0 z-50 bg-gray-100 bg-opacity-50";
+  const backdropClasses = "fixed inset-0 z-50 bg-gray-900/50";
   const dialogClasses =
-    "fixed top-0 start-0 end-0 md:inset-0 h-full z-50 w-full flex p-8 overflow-y-auto scrollbar-none";
+    "fixed top-0 start-0 end-0 md:inset-0 h-full z-50 w-full flex p-8 overflow-y-auto";
 
   const sizes = {
     xs: "max-w-md",
@@ -91,10 +91,15 @@ const Modal = ({
           className={`flex justify-center relative ${sizes[size]} w-auto h-full max-h-full pt-10 md:h-auto`}
         >
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-800 w-full"> */}
-        <div className={`flex justify-center relative ${sizes[size]} w-full pt-10 md:h-auto`}>
-          <div className="bg-white rounded-lg shadow dark:bg-gray-800 w-auto">
+        <div className={`flex relative ${sizes[size]} w-full`}>
+          <div className="bg-white rounded-lg shadow dark:bg-gray-800 w-full flex flex-col mx-auto h-auto max-h-max">
             {(header || title) && (
-              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+              <div
+                className={twMerge(
+                  defaultClass,
+                  "flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200"
+                )}
+              >
                 {header ? (
                   header
                 ) : (
@@ -109,7 +114,7 @@ const Modal = ({
                     className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                     data-modal-toggle="crud-modal"
                   >
-                    <X size={20} color="#6b7280" weight="light" />
+                    <X size={20} weight="light" />
                     <span className="sr-only">Close modal</span>
                   </button>
                 )}

@@ -1,12 +1,16 @@
 "use client";
-import { Modal, Pagination } from "@/components";
+import { Modal, MultiSelect, Pagination } from "@/components";
 import { PencilLine, Plus, Trash, Warning } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const Brand = ({ data }) => {
-  const [name, setName] = useState("");
+const BundleCategory = ({ data, benefits, categories }) => {
+  const [form, setForm] = useState({
+    benefitId: "",
+    categoryId: "",
+  });
+  const [selectedCategory, setSelectedCategory] = useState([])
   const [openModal, setOpenModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [editMode, setEditMode] = useState(false);
@@ -42,7 +46,10 @@ const Brand = ({ data }) => {
         const notif = editMode
           ? toast.success("Brand Updated successfully.")
           : toast.success("Brand Created successfully.");
-        setName("");
+        setForm({
+          benefitId: form.benefitId,
+          categoryId: form.categoryId,
+        });
         setOpenModal(false);
         setEditMode(false);
         setSelectedBrand(null);
@@ -77,7 +84,10 @@ const Brand = ({ data }) => {
 
   function handleOpenModal() {
     setEditMode(false);
-    setName("");
+    setForm({
+      benefitId: "",
+      categoryId: "",
+    });
     setSelectedBrand(null);
     setOpenModal(true);
   }
@@ -89,7 +99,10 @@ const Brand = ({ data }) => {
   function handleEdit(brand) {
     setEditMode(true);
     setSelectedBrand(brand);
-    setName(brand.name);
+    setForm({
+      benefitId: form.benefitId,
+      categoryId: form.categoryId,
+    });
     setOpenModal(true);
   }
 
@@ -98,7 +111,10 @@ const Brand = ({ data }) => {
     setBrandToDelete("");
   }
   function handleCloseModal() {
-    setName("");
+    setForm({
+      benefitId: "",
+      categoryId: "",
+    });
     setSelectedBrand(null);
     setOpenModal(false);
   }
@@ -108,7 +124,7 @@ const Brand = ({ data }) => {
         <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
           <div className="flex items-center flex-1 space-x-4 justify-between">
             <h5>
-              <span className="text-gray-500">All Brand: </span>
+              <span className="text-gray-500">All Bundle Category: </span>
               <span className="dark:text-white">{data?.length}</span>
             </h5>
             <button
@@ -117,7 +133,7 @@ const Brand = ({ data }) => {
               className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
             >
               <Plus size="24" color="#d9e3f0" className="mr-1" />
-              Add new brand
+              Add Bundle Category
             </button>
           </div>
         </div>
@@ -128,8 +144,11 @@ const Brand = ({ data }) => {
                 <th scope="col" className="w-[64px] px-4 py-3">
                   No
                 </th>
-                <th scope="col" className="w-[600px] px-4 py-3">
-                  Brand
+                <th scope="col" className="w-[500px] px-4 py-3">
+                  Benefit
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Category
                 </th>
                 <th scope="col" className="text-center px-4 py-3">
                   Action
@@ -178,37 +197,46 @@ const Brand = ({ data }) => {
         open={openModal}
         onClose={handleCloseModal}
         size="sm"
-        title={editMode ? "Update Brand" : "Create Brand"}
+        title={editMode ? "Update Bundle Category" : "Create Bundle Category"}
       >
         <Modal.Body>
           <form
-            id="brand-form"
+            id="bundCat-form"
             onSubmit={handleSubmit}
             className="flex flex-col md:flex-row items-center "
           >
             <div className="w-full">
-              <label
-                htmlFor="name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Brand Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Input Brand Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
+              <div className="pb-3">
+                <label
+                  htmlFor="benefit"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Benefit
+                </label>
+                <select
+                  id="benefit"
+                  value={form.benefitId}
+                  onChange={(e) => updateForm("benefitId", e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">Select Benefit</option>
+                  {benefits.map((benefit) => (
+                    <option key={benefit.id} value={benefit.id}>
+                      {benefit.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <MultiSelect selectedCategory={selectedCategory} setCelectedCategory={setSelectedCategory} data={categories}/>
+              </div>
             </div>
           </form>
         </Modal.Body>
         <Modal.Footer>
           <button
             type="submit"
-            form="brand-form"
+            form="bundCat-form"
             className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
             {editMode ? (
@@ -226,7 +254,12 @@ const Brand = ({ data }) => {
         </Modal.Footer>
       </Modal>
       {/* Modal Delete */}
-      <Modal open={openDeleteModal} onClose={handleCloseModal} size="sm" placement="center">
+      <Modal
+        open={openDeleteModal}
+        onClose={handleCloseModal}
+        size="sm"
+        placement="center"
+      >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
             <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200">
@@ -254,8 +287,19 @@ const Brand = ({ data }) => {
           </div>
         </Modal.Body>
       </Modal>
+      <style jsx>{`
+        .input-field {
+          background-color: #f9fafb;
+          border: 1px solid #d1d5db;
+          color: #111827;
+          font-size: 0.875rem;
+          border-radius: 0.5rem;
+          padding: 0.625rem;
+          width: 100%;
+        }
+      `}</style>
     </>
   );
 };
 
-export default Brand;
+export default BundleCategory;

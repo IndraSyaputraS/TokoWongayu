@@ -13,6 +13,7 @@ async function fetchCategory() {
 const CategoryPage = async () => {
   const data = await fetchCategory();
   const categories = data.data;
+  
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -39,7 +40,7 @@ const CategoryPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Category
       </h2>
-      <Category datas={categories} />
+      <Category data={categories} />
     </>
   );
 };

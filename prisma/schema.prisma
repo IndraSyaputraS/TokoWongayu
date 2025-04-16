@@ -52,9 +52,9 @@ model Category {
   id             Int              @id @default(autoincrement())
   name           String
   Product        Product[]
-  BundleCategory BundleCategory[]
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @updatedAt @map("updated_at")
+  PivotBunCat    PivotBunCat[]
 
   @@map("category")
 }
@@ -98,15 +98,30 @@ model Users {
 }
 
 model BundleCategory {
-  id         Int      @id @default(autoincrement())
-  categoryId Int      @map("category_id")
-  Category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  benefitId  Int      @map("benefit_id")
-  Benefit    Benefit  @relation(fields: [benefitId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id         Int           @id @default(autoincrement())
+  name       String
+  benefitId  Int           @map("benefit_id")
+  Benefit    Benefit       @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+  categories PivotBunCat[] // relasi ke kategori (pivot)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
 
   @@map("bundle_category")
+}
+
+model PivotBunCat {
+  id               Int @id @default(autoincrement())
+  bundleCategoryId Int @map("bundle_id") // <- Sudah dibenerin
+  categoryId       Int @map("category_id")
+
+  BundleCategory BundleCategory @relation(fields: [bundleCategoryId], references: [id], onDelete: Cascade)
+  Category       Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([bundleCategoryId, categoryId])
+  @@map("pivot_bun_cat")
 }
 
 model Ratings {

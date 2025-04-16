@@ -1,42 +1,3 @@
-// import { NextResponse } from "next/server";
-// import prisma from "@libs/prismaClient";
-
-// export async function POST(request) {
-//   const body = await request.json();
-//   const {
-//     name,
-//     brandId,
-//     itemCode,
-//     price,
-//     stock,
-//     categoryId,
-//     benefitId,
-//     imageUrl,
-//     imageId,
-//   } = body;
-//   const products = await prisma.product.create({
-//     data: {
-//       name: name,
-//       brandId: parseInt(brandId),
-//       itemCode: itemCode,
-//       categoryId: parseInt(categoryId),
-//       benefitId: parseInt(benefitId),
-//       price: parseFloat(price),
-//       stock: parseInt(stock),
-//       imageUrl: imageUrl,
-//       imageId: parseInt(imageId),
-//     },
-//   });
-
-//   return NextResponse.json(
-//     {
-//       success: true,
-//       message: "Product Created Successfully!",
-//       data: products,
-//     },
-//     { status: 201 }
-//   );
-// }
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 import { importExcel } from "@/libs/importExcel";
@@ -91,7 +52,7 @@ export async function POST(req) {
         benefitId: parseInt(benefitId),
         price: parseFloat(price),
         stock: parseInt(stock),
-        imageUrl,
+        imageUrl: imageUrl || "/images/noimage.png",
         imageId: parseInt(imageId),
       },
     });

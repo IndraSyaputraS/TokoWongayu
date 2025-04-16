@@ -1,18 +1,19 @@
 import { CalculationData } from "@/views";
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
-async function fetchCalc() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/calculation-data`
-    );
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch calculation data:", err);
-  }
+async function fetchData(endpoint) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/${endpoint}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
+  const data = await res.json();
+  return data.data;
 }
 const CalculationDataPage = async () => {
-  const data = await fetchCalc();
-  const calcs = data.data;
+  const [products, calcs, getLast] = await Promise.all([
+    fetchData("products"),
+    fetchData("calculation-data"),
+    fetchData("calculation-data/get-last")
+  ]);
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -39,7 +40,7 @@ const CalculationDataPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Calculation Data
       </h2>
-      <CalculationData datas={calcs}/>
+      <CalculationData data={calcs} products={products} getTransaction={getLast}/>
     </>
   );
 };

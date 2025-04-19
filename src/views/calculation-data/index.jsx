@@ -424,7 +424,7 @@ const CalculationData = ({ data, products, getTransaction }) => {
       >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
-            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200">
+            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-red-600">
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg font-normal text-center text-gray-500 dark:text-gray-400">

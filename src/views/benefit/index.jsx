@@ -1,5 +1,5 @@
 "use client";
-import { Modal, Pagination } from "@/components";
+import { HandleError, Modal, Pagination } from "@/components";
 import { PencilLine, Plus, Trash, Warning } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,10 +10,10 @@ const Benefit = ({ data }) => {
   const [name, setName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBenefit, setSelectedBenefit] = useState(null);
-  const [benefitList, setBenefitList] = useState([]);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [benefitToDelete, setBenefitToDelete] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
   const itemsPerPage = 10;
 
@@ -36,6 +36,11 @@ const Benefit = ({ data }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
       });
+      const response = await res.json();
+      if (!name.trim()) {
+        setError(response.message);
+        return;
+      }
 
       if (res.ok) {
         const notif = editMode
@@ -61,7 +66,6 @@ const Benefit = ({ data }) => {
       });
 
       if (res.ok) {
-        setBenefitList((prev) => prev.filter((data) => data.id !== id));
         toast.success("Benefit deleted successfully.");
         setOpenDeleteModal(false);
         router.refresh();
@@ -97,83 +101,84 @@ const Benefit = ({ data }) => {
   }
   function handleCloseModal() {
     setOpenModal(false);
+    setError("");
   }
   return (
     <>
-    <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-      <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-        <div className="flex items-center flex-1 space-x-4">
-          <h5>
-            <span className="text-gray-500">All Benefit: </span>
-            <span className="dark:text-white">{data?.length}</span>
-          </h5>
+      <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+        <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+          <div className="flex items-center flex-1 space-x-4">
+            <h5>
+              <span className="text-gray-500">All Benefit: </span>
+              <span className="dark:text-white">{data?.length}</span>
+            </h5>
+          </div>
+          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+            <button
+              onClick={handleOpenModal}
+              type="button"
+              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+            >
+              <Plus size="24" color="#d9e3f0" />
+              Add new benefit
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-          <button
-            onClick={handleOpenModal}
-            type="button"
-            className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-          >
-            <Plus size="24" color="#d9e3f0" />
-            Add new benefit
-          </button>
-        </div>
-      </div>
-      
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" className="w-[64px] px-4 py-3">
-                No
-              </th>
-              <th scope="col" className="w-[600px] px-4 py-3">
-                Benefit
-              </th>
-              <th scope="col" className="text-center px-4 py-3">
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedBenefits.map((benefit, index) => (
-              <tr
-                key={index}
-                className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <td className="px-4 py-3">{data.indexOf(benefit) + 1}</td>
-                <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {benefit.name}
-                </td>
-                <td className="px-3 py-2">
-                  <div className="flex justify-center gap-2">
-                    <button
-                      className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
-                        onClick={() => handleEdit(benefit)}
-                    >
-                      <PencilLine size={20} weight="thin" />
-                    </button>
-                    <button
-                        onClick={() => handleOpenDeleteModal(benefit.id)}
-                      className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
-                      <Trash size={20} weight="light" />
-                    </button>
-                  </div>
-                </td>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="w-[64px] px-4 py-3">
+                  No
+                </th>
+                <th scope="col" className="w-[600px] px-4 py-3">
+                  Benefit
+                </th>
+                <th scope="col" className="text-center px-4 py-3">
+                  Action
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
+            </thead>
+            <tbody>
+              {paginatedBenefits.map((benefit, index) => (
+                <tr
+                  key={index}
+                  className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <td className="px-4 py-3">{data.indexOf(benefit) + 1}</td>
+                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {benefit.name}
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex justify-center gap-2">
+                      <button
+                        className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
+                        onClick={() => handleEdit(benefit)}
+                      >
+                        <PencilLine size={20} weight="thin" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenDeleteModal(benefit.id)}
+                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                      >
+                        <Trash size={20} weight="light" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
       </div>
-    </div>
-    {/* Modal Create Update */}
-    <Modal
+      {/* Modal Create Update */}
+      <Modal
         open={openModal}
         onClose={handleCloseModal}
         size="sm"
@@ -195,17 +200,24 @@ const Benefit = ({ data }) => {
               <input
                 type="text"
                 id="name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={
+                  !error
+                    ? "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    : "bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full h-8 p-2 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                }
                 placeholder="Input Benefit Name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (error) setError("");
+                }}
               />
+              {error && <HandleError error={error} />}
             </div>
           </form>
         </Modal.Body>
         <Modal.Footer>
-        <button
+          <button
             type="submit"
             form="benefit-form"
             className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
@@ -225,10 +237,15 @@ const Benefit = ({ data }) => {
         </Modal.Footer>
       </Modal>
       {/* Modal Delete */}
-      <Modal open={openDeleteModal} onClose={handleCloseModal} size="sm" placement="center">
+      <Modal
+        open={openDeleteModal}
+        onClose={handleCloseModal}
+        size="sm"
+        placement="center"
+      >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
-            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200">
+            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-red-600">
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg text-center font-normal text-gray-500 dark:text-gray-400">

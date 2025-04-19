@@ -1,5 +1,5 @@
 "use client";
-import { Modal, Pagination } from "@/components";
+import { HandleError, Modal, Pagination } from "@/components";
 import { PencilLine, Plus, Trash, Warning } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,9 +11,9 @@ const Brand = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [editMode, setEditMode] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(null);
-  const [brandList, setBrandList] = useState([]);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [brandToDelete, setBrandToDelete] = useState(null);
+  const [error, setError] = useState("");
 
   const router = useRouter();
   const itemsPerPage = 10;
@@ -22,36 +22,81 @@ const Brand = ({ data }) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedBrands = data.slice(startIndex, startIndex + itemsPerPage);
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "";
+  //     const url = editMode
+  //       ? `${baseURL}/api/brands/${selectedBrand.id}`
+  //       : `${baseURL}/api/brands`;
+
+  //     const method = editMode ? "PUT" : "POST";
+
+  //     const res = await fetch(url, {
+  //       method,
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ name }),
+  //     });
+
+  //     const response = await res.json();
+
+  //     if (res.ok) {
+  //       toast.success(
+  //         editMode
+  //           ? "Benefit Updated successfully."
+  //           : "Benefit Created successfully."
+  //       );
+  //       setName("");
+  //       setOpenModal(false);
+  //       setEditMode(false);
+  //       setSelectedBrand(null);
+  //       router.refresh();
+  //     } else {
+  //       toast.error(response.message || "Something went wrong");
+  //     }
+  //   } catch (err) {
+  //     console.error("Error saving brand:", err);
+  //     toast.error("Internal server error");
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "";
       const url = editMode
         ? `${baseURL}/api/brands/${selectedBrand.id}`
         : `${baseURL}/api/brands`;
-
       const method = editMode ? "PUT" : "POST";
-
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
       });
-
+      const response = await res.json();
+      if (!name.trim()) {
+        setError(response.message);
+        return;
+      }
       if (res.ok) {
-        const notif = editMode
-          ? toast.success("Brand Updated successfully.")
-          : toast.success("Brand Created successfully.");
+        toast.success(
+          editMode
+            ? "Brand updated successfully."
+            : "Brand created successfully."
+        );
         setName("");
         setOpenModal(false);
         setEditMode(false);
         setSelectedBrand(null);
+        setError("");
         router.refresh();
       } else {
-        console.error("Failed to save brand:", await res.text());
+        setError(response.message || "Something went wrong");
       }
     } catch (err) {
       console.error("Error saving brand:", err);
+      toast.error("Internal server error");
     }
   };
 
@@ -62,7 +107,6 @@ const Brand = ({ data }) => {
       });
 
       if (res.ok) {
-        setBrandList((prev) => prev.filter((data) => data.id !== id));
         toast.success("Brand deleted successfully.");
         setOpenDeleteModal(false);
         router.refresh();
@@ -100,6 +144,7 @@ const Brand = ({ data }) => {
   function handleCloseModal() {
     setName("");
     setSelectedBrand(null);
+    setError("");
     setOpenModal(false);
   }
   return (
@@ -196,12 +241,19 @@ const Brand = ({ data }) => {
               <input
                 type="text"
                 id="name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={
+                  !error
+                    ? "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    : "bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full h-8 p-2 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                }
                 placeholder="Input Brand Name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (error) setError(""); // reset error saat mengetik
+                }}
               />
+              {error && <HandleError error={error} />}
             </div>
           </form>
         </Modal.Body>
@@ -226,10 +278,15 @@ const Brand = ({ data }) => {
         </Modal.Footer>
       </Modal>
       {/* Modal Delete */}
-      <Modal open={openDeleteModal} onClose={handleCloseModal} size="sm" placement="center">
+      <Modal
+        open={openDeleteModal}
+        onClose={handleCloseModal}
+        size="sm"
+        placement="center"
+      >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
-            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200">
+            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-red-600">
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg text-center font-normal text-gray-500 dark:text-gray-400">

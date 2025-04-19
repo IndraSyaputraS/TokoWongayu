@@ -5,3 +5,5 @@ export { default as Pagination } from "./Pagination";
 export { default as PopUp } from "./Popup";
 export { default as Spinner } from "./Spinner";
 export { default as MultiSelect } from "./MultiSelect";
+export { default as HandleError } from "./HandleError";
+export { default as NavbarMain } from "./NavbarMain";

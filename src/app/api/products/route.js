@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 import { importExcel } from "@/libs/importExcel";
+import Joi from "joi";
 
 export async function GET() {
   const products = await prisma.product.findMany({
@@ -25,12 +26,73 @@ export async function GET() {
   );
 }
 
+const schema = Joi.object({
+  name: Joi.string().required().messages({
+    "string.empty": "Product name must be filled",
+    "any.required": "Product name must be filled",
+  }),
+  brandId: Joi.number().required().messages({
+    "number.base": "Brand must be a number",
+    "any.required": "Brand must be selected",
+    "any.invalid": "Brand must be selected",
+  }),
+  itemCode: Joi.string().required().messages({
+    "string.empty": "Item code must be filled",
+    "any.required": "Item code must be filled",
+  }),
+  price: Joi.number().required().messages({
+    "number.base": "Price must be a number",
+    "any.required": "Price must be filled",
+  }),
+  stock: Joi.number().allow("",null),
+  categoryId: Joi.number().required().messages({
+    "number.base": "Category must be a number",
+    "any.required": "Category must be selected",
+    "any.invalid": "Category must be selected",
+  }),
+  benefitId: Joi.number().required().messages({
+    "number.base": "Benefit must be a number",
+    "any.required": "Benefit must be selected",
+    "any.invalid": "Benefit must be selected",
+  }),
+  imageUrl: Joi.string().allow("", null),
+  imageId: Joi.number().allow(null).messages({
+    "number.base": "Image ID must be a number",
+  }),
+});
+
 export async function POST(req) {
   const contentType = req.headers.get("content-type");
 
   // ========== UNTUK POST JSON MANUAL ==========
   if (contentType.includes("application/json")) {
+    // 2. Ambil body request
     const body = await req.json();
+    const cleanBody = {
+      ...body,
+      brandId: body.brandId === "" ? undefined : body.brandId,
+      categoryId: body.categoryId === "" ? undefined : body.categoryId,
+      benefitId: body.benefitId === "" ? undefined : body.benefitId,
+    };
+
+    const { error, value } = schema.validate(cleanBody, { abortEarly: false });
+
+    if (error) {
+      const errors = {};
+      error.details.forEach((detail) => {
+        const field = detail.path[0];
+        errors[field] = detail.message;
+      });
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Validation failed",
+          errors: errors,
+        },
+        { status: 400 }
+      );
+    }
     const {
       name,
       brandId,
@@ -41,19 +103,19 @@ export async function POST(req) {
       benefitId,
       imageUrl,
       imageId,
-    } = body;
+    } = value;
 
     const product = await prisma.product.create({
       data: {
         name,
-        brandId: parseInt(brandId),
+        brandId,
         itemCode,
-        categoryId: parseInt(categoryId),
-        benefitId: parseInt(benefitId),
-        price: parseFloat(price),
-        stock: parseInt(stock),
+        categoryId,
+        benefitId,
+        price,
+        stock,
         imageUrl: imageUrl || "/images/noimage.png",
-        imageId: parseInt(imageId),
+        imageId,
       },
     });
 
@@ -91,17 +153,17 @@ export async function POST(req) {
       const brand = await prisma.brand.findFirst({
         where: { name: namaBrand },
       });
-    
+
       // Cari ID category berdasarkan nama
       const category = await prisma.category.findFirst({
         where: { name: namaCategory },
       });
-    
+
       // Cari ID benefit berdasarkan nama
       const benefit = await prisma.benefit.findFirst({
         where: { name: namaBenefit },
       });
-  
+
       if (namaItem) {
         insertedData.push({
           name: namaItem,

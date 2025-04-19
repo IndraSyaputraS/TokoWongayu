@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { Trash } from "@phosphor-icons/react";
+import { HandleError } from "@/components";
 
 const ProductCreate = ({ brands, categories, benefits, product }) => {
   const [form, setForm] = useState({
@@ -19,6 +20,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
     uploadedImageId: product?.imageId || "",
     oldUploadedImageId: "",
   });
+  const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
 
@@ -88,13 +90,47 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const method = product ? "PUT" : "POST";
+  //   const endpoint = product
+  //     ? `/api/products/${product.id}`
+  //     : "/api/products";
+
+  //   const res = await fetch(endpoint, {
+  //     method,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       name: form.name,
+  //       brandId: form.brandId,
+  //       itemCode: form.itemCode,
+  //       price: form.price,
+  //       stock: form.stock,
+  //       benefitId: form.benefitId,
+  //       categoryId: form.categoryId,
+  //       imageId: form.uploadedImageId,
+  //       imageUrl: form.uploadedImageUrl,
+  //     }),
+  //   });
+
+  //   if (res.ok) {
+  //     router.push("/product");
+  //   } else {
+  //     console.error(
+  //       "Failed to " + (initialData ? "update" : "create") + " product"
+  //     );
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({}); // clear old errors
 
     const method = product ? "PUT" : "POST";
-    const endpoint = product
-      ? `/api/products/${product.id}`
-      : "/api/products";
+    const endpoint = product ? `/api/products/${product.id}` : "/api/products";
 
     const res = await fetch(endpoint, {
       method,
@@ -114,12 +150,18 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
       }),
     });
 
+    const data = await res.json();
+
     if (res.ok) {
       router.push("/product");
     } else {
-      console.error(
-        "Failed to " + (initialData ? "update" : "create") + " product"
-      );
+      if (data.errors) {
+        setErrors(data.errors);
+      } else {
+        console.error(
+          "Failed to " + (product ? "update" : "create") + " product"
+        );
+      }
     }
   };
 
@@ -137,12 +179,12 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
             <input
               type="text"
               id="name"
-              className="input-field"
               placeholder="Input Product Name"
+              className={!errors.name ? "input-field" : "input-field-error"}
               value={form.name}
               onChange={(e) => updateForm("name", e.target.value)}
-              required
             />
+            {errors.name && <HandleError error={errors.name} />}
           </div>
 
           <div>
@@ -152,12 +194,12 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
             <input
               type="text"
               id="itemCode"
-              className="input-field"
+              className={!errors.itemCode ? "input-field" : "input-field-error"}
               placeholder="Input Item Code"
               value={form.itemCode}
               onChange={(e) => updateForm("itemCode", e.target.value)}
-              required
             />
+            {errors.itemCode && <HandleError error={errors.itemCode} />}
           </div>
 
           <div>
@@ -168,7 +210,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
               id="brand"
               value={form.brandId}
               onChange={(e) => updateForm("brandId", e.target.value)}
-              className="input-field"
+              className={!errors.brandId ? "input-field" : "input-field-error"}
             >
               <option value="">Select Brand</option>
               {brands.map((brand) => (
@@ -177,6 +219,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
                 </option>
               ))}
             </select>
+            {errors.brandId && <HandleError error={errors.brandId} />}
           </div>
 
           <div>
@@ -187,7 +230,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
               id="category"
               value={form.categoryId}
               onChange={(e) => updateForm("categoryId", e.target.value)}
-              className="input-field"
+              className={!errors.categoryId ? "input-field" : "input-field-error"}
             >
               <option value="">Select Category</option>
               {categories.map((category) => (
@@ -196,6 +239,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
                 </option>
               ))}
             </select>
+            {errors.categoryId && <HandleError error={errors.categoryId} />}
           </div>
 
           <div>
@@ -206,7 +250,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
               id="benefit"
               value={form.benefitId}
               onChange={(e) => updateForm("benefitId", e.target.value)}
-              className="input-field"
+              className={!errors.benefitId ? "input-field" : "input-field-error"}
             >
               <option value="">Select Benefit</option>
               {benefits.map((benefit) => (
@@ -215,6 +259,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
                 </option>
               ))}
             </select>
+            {errors.benefitId && <HandleError error={errors.benefitId} />}
           </div>
 
           <div>
@@ -224,12 +269,12 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
             <input
               type="number"
               id="price"
-              className="input-field"
+              className={!errors.price ? "input-field" : "input-field-error"}
               placeholder="Input Price"
               value={form.price}
               onChange={(e) => updateForm("price", e.target.value)}
-              required
             />
+            {errors.price && <HandleError error={errors.price} />}
           </div>
 
           <div>
@@ -243,7 +288,6 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
               placeholder="Input Stock"
               value={form.stock}
               onChange={(e) => updateForm("stock", e.target.value)}
-              required
             />
           </div>
 
@@ -301,6 +345,23 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
             border-radius: 0.5rem;
             padding: 0.625rem;
             width: 100%;
+          }
+
+          .input-field-error {
+            background-color: #f9fafb; /* Tetap menggunakan latar belakang normal */
+            border: 1px solid #f87171; /* border-red-500 */
+            color: #111827; /* Tidak berubah, tetap warna teks normal */
+            font-size: 0.875rem;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            width: 100%;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.5); /* focus:ring-red-500 */
+          }
+
+          /* Placeholder style */
+          .input-field-error::placeholder {
+            color: #9b2c2c; /* placeholder-red-700 */
           }
         `}</style>
       </form>

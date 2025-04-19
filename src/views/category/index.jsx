@@ -1,5 +1,5 @@
 "use client";
-import { Modal, Pagination } from "@/components";
+import { HandleError, Modal, Pagination } from "@/components";
 import { PencilLine, Plus, Trash, Warning } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,6 +14,7 @@ const Category = ({ data }) => {
   const [categoryList, setCategoryList] = useState([]);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [error, setError] = useState("");
   const router = useRouter();
   const itemsPerPage = 10;
 
@@ -36,7 +37,11 @@ const Category = ({ data }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
       });
-
+      const response = await res.json();
+      if (!name.trim()) {
+        setError(response.message);
+        return;
+      }
       if (res.ok) {
         const notif = editMode
           ? toast.success("Category Updated successfully.")
@@ -97,6 +102,7 @@ const Category = ({ data }) => {
   }
   function handleCloseModal() {
     setOpenModal(false);
+    setError("");
   }
   return (
     <>
@@ -154,7 +160,7 @@ const Category = ({ data }) => {
                         <PencilLine size={20} weight="thin" />
                       </button>
                       <button
-                          onClick={() => handleOpenDeleteModal(category.id)}
+                        onClick={() => handleOpenDeleteModal(category.id)}
                         className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                       >
                         <Trash size={20} weight="light" />
@@ -195,12 +201,19 @@ const Category = ({ data }) => {
               <input
                 type="text"
                 id="name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={
+                  !error
+                    ? "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    : "bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full h-8 p-2 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                }
                 placeholder="Input Category Name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (error) setError("");
+                }}
               />
+              {error && <HandleError error={error} />}
             </div>
           </form>
         </Modal.Body>
@@ -225,10 +238,15 @@ const Category = ({ data }) => {
         </Modal.Footer>
       </Modal>
       {/* Modal Delete */}
-      <Modal open={openDeleteModal} onClose={handleCloseModal} size="sm" placement="center">
+      <Modal
+        open={openDeleteModal}
+        onClose={handleCloseModal}
+        size="sm"
+        placement="center"
+      >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
-            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200">
+            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-red-600">
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg text-center font-normal text-gray-500 dark:text-gray-400">

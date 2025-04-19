@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
+import Joi from "joi";
 
 export async function GET() {
   const benefits = await prisma.benefit.findMany({
@@ -20,12 +21,29 @@ export async function GET() {
   );
 }
 
+const schema = Joi.object({
+  name: Joi.string().required().messages({
+    "any.required": "Benefit name must be filled",
+    "string.empty": "Benefit name must be filled",
+  }),
+});
+
 export async function POST(request) {
   const body = await request.json();
-  const { name } = body;
+  const { error, result } = schema.validate(body, { abortEarly: false });
+
+  if (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.details[0].message,
+      },
+      { status: 400 }
+    );
+  }
   const benefits = await prisma.benefit.create({
     data: {
-      name: name,
+      name: value.name,
     },
   });
 

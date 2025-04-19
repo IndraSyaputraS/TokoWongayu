@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
+import Joi from "joi";
 
 export async function GET() {
   const brands = await prisma.brand.findMany({
-    orderBy: { 
-      id: 'asc'
-  }
+    orderBy: {
+      id: "asc",
+    },
   });
-  
+
   return NextResponse.json(
     {
       sucess: true,
@@ -20,21 +21,38 @@ export async function GET() {
   );
 }
 
+const schema = Joi.object({
+  name: Joi.string().required().messages({
+    "string.empty": "Brand name must be filled",
+  }),
+});
+
 export async function POST(request) {
-    const body = await request.json();
-    const { name } = body;
-    const brands = await prisma.brand.create({
-      data: {
-        name: name
-      },
-    });
-  
+  const body = await request.json();
+  const { error, result } = schema.validate(body, { abortEarly: false });
+
+  if (error) {
     return NextResponse.json(
       {
-        success: true,
-        message: "Brand Created Successfully!",
-        data: brands,
+        success: false,
+        message: error.details[0].message, // kirim error pertama
       },
-      { status: 201 }
+      { status: 400 }
     );
   }
+
+  const brands = await prisma.brand.create({
+    data: {
+      name: value.name,
+    },
+  });
+
+  return NextResponse.json(
+    {
+      success: true,
+      message: "Brand Created Successfully!",
+      data: brands,
+    },
+    { status: 201 }
+  );
+}

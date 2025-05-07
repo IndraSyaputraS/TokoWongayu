@@ -1,10 +1,13 @@
-"use client"
+"use client";
+
+import { UserCircle } from "@phosphor-icons/react";
+
 const Navbar = () => {
-  return(
+  return (
     <nav className="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
       <div className="flex flex-wrap justify-between items-center">
         <div className="flex justify-start items-center">
-          <button
+          {/* <button
             data-drawer-target="drawer-navigation"
             data-drawer-toggle="drawer-navigation"
             aria-controls="drawer-navigation"
@@ -37,42 +40,38 @@ const Navbar = () => {
               ></path>
             </svg>
             <span className="sr-only">Toggle sidebar</span>
-          </button>
-          <a href="https://flowbite.com" className="flex items-center justify-between mr-4">
-            <img
-              src="https://flowbite.s3.amazonaws.com/logo.svg"
-              className="mr-3 h-8"
-              alt="Flowbite Logo"
-            />
-            <span className="self-center text-2xl font-extrabold whitespace-nowrap leading-tight dark:text-white">Wongayu</span>
+          </button> */}
+          <a
+            href="#"
+            className="flex items-center justify-between mr-4"
+          >
+            <span className="self-center text-2xl font-extrabold whitespace-nowrap leading-tight dark:text-white">
+              Wongayu
+            </span>
           </a>
         </div>
         <div className="flex items-center lg:order-2">
           <button
             type="button"
-            className="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+            className="flex mx-3 text-sm bg-white dark:bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
             id="user-menu-button"
             aria-expanded="false"
             data-dropdown-toggle="dropdown"
           >
             <span className="sr-only">Open user menu</span>
-            <img
-              className="w-8 h-8 rounded-full"
-              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gough.png"
-              alt="user photo"
-            />
+            <UserCircle size={32} weight="bold"/>
           </button>
           <div
             className="hidden z-50 my-4 w-56 text-base list-none bg-white divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
             id="dropdown"
           >
             <div className="py-3 px-4">
-              <span
-                className="block text-sm font-semibold text-gray-900 dark:text-white"
-                >Neil Sims</span>
-              <span
-                className="block text-sm text-gray-900 truncate dark:text-white"
-                >name@flowbite.com</span>
+              <span className="block text-sm font-semibold text-gray-900 dark:text-white">
+                Neil Sims
+              </span>
+              <span className="block text-sm text-gray-900 truncate dark:text-white">
+                name@flowbite.com
+              </span>
             </div>
             <ul
               className="py-1 text-gray-700 dark:text-gray-300"
@@ -82,14 +81,17 @@ const Navbar = () => {
                 <a
                   href="#"
                   className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
-                  >My profile
-                  </a>
+                >
+                  My profile
+                </a>
               </li>
               <li>
                 <a
                   href="#"
                   className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
-                  >Account settings</a>
+                >
+                  Account settings
+                </a>
               </li>
             </ul>
             <ul
@@ -100,13 +102,15 @@ const Navbar = () => {
                 <a
                   href="#"
                   className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >Sign out</a>
+                >
+                  Sign out
+                </a>
               </li>
             </ul>
           </div>
         </div>
       </div>
     </nav>
-  )
-}
-export default Navbar
+  );
+};
+export default Navbar;

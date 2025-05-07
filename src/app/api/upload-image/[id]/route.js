@@ -18,7 +18,12 @@ export async function DELETE(request, { params }) {
     if (!existingImage) {
       return NextResponse.json({ error: "Image not found." }, { status: 404 });
     }
-    const filePath = path.join(process.cwd(), "public", existingImage.imageUrl);
+    const filePath = path.join(
+      process.cwd(),
+      "public",
+      existingImage.imageUrl.replace(/^\/+/, "")
+    );
+
     try {
       await unlink(filePath);
     } catch (err) {

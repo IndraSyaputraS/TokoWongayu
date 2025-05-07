@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Trash } from "@phosphor-icons/react";
 import { HandleError } from "@/components";
+import toast from "react-hot-toast";
 
 const ProductCreate = ({ brands, categories, benefits, product }) => {
   const [form, setForm] = useState({
@@ -17,7 +18,7 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
     image: null,
     preview: product?.imageUrl || null,
     uploadedImageUrl: product?.imageUrl || "",
-    uploadedImageId: product?.imageId || "",
+    uploadedImageId: product?.imageId || null,
     oldUploadedImageId: "",
   });
   const [errors, setErrors] = useState({});
@@ -74,94 +75,77 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
   };
 
   const handleDeleteImage = async () => {
-    if (!form.uploadedImageId || form.uploadedImageId === "undefined") return;
+    // Cek jika tidak ada gambar yang di-upload (mungkin gambar default)
+    if (!form.uploadedImageId && !form.uploadedImageUrl) return;
 
-    const res = await fetch(`/api/upload-image/${form.uploadedImageId}`, {
-      method: "DELETE",
-    });
+    // Jika ada gambar yang sudah di-upload sebelumnya
+    if (form.uploadedImageId) {
+      const res = await fetch(`/api/upload-image/${form.uploadedImageId}`, {
+        method: "DELETE",
+      });
 
-    if (res.ok) {
-      updateForm("uploadedImageId", "");
+      if (res.ok) {
+        updateForm("uploadedImageId", "");
+        updateForm("uploadedImageUrl", "");
+        updateForm("image", null);
+        updateForm("preview", null);
+      } else {
+        console.error("Failed to delete image");
+      }
+    } else {
+      // Jika gambar adalah gambar default (tanpa ID)
       updateForm("uploadedImageUrl", "");
       updateForm("image", null);
       updateForm("preview", null);
-    } else {
-      console.error("Failed to delete image");
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const method = product ? "PUT" : "POST";
-  //   const endpoint = product
-  //     ? `/api/products/${product.id}`
-  //     : "/api/products";
-
-  //   const res = await fetch(endpoint, {
-  //     method,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       name: form.name,
-  //       brandId: form.brandId,
-  //       itemCode: form.itemCode,
-  //       price: form.price,
-  //       stock: form.stock,
-  //       benefitId: form.benefitId,
-  //       categoryId: form.categoryId,
-  //       imageId: form.uploadedImageId,
-  //       imageUrl: form.uploadedImageUrl,
-  //     }),
-  //   });
-
-  //   if (res.ok) {
-  //     router.push("/product");
-  //   } else {
-  //     console.error(
-  //       "Failed to " + (initialData ? "update" : "create") + " product"
-  //     );
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({}); // clear old errors
-
+    setErrors({});
+  
     const method = product ? "PUT" : "POST";
     const endpoint = product ? `/api/products/${product.id}` : "/api/products";
-
-    const res = await fetch(endpoint, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: form.name,
-        brandId: form.brandId,
-        itemCode: form.itemCode,
-        price: form.price,
-        stock: form.stock,
-        benefitId: form.benefitId,
-        categoryId: form.categoryId,
-        imageId: form.uploadedImageId,
-        imageUrl: form.uploadedImageUrl,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      router.push("/product");
-    } else {
-      if (data.errors) {
-        setErrors(data.errors);
-      } else {
-        console.error(
-          "Failed to " + (product ? "update" : "create") + " product"
-        );
+  
+    try {
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          itemCode: form.itemCode,
+          price: form.price ? parseFloat(form.price) : null,
+          stock: form.stock ? parseInt(form.stock) : null,
+          brandId: parseInt(form.brandId),
+          benefitId: parseInt(form.benefitId),
+          categoryId: parseInt(form.categoryId),
+          imageId: form.uploadedImageId || null,
+          imageUrl: form.uploadedImageUrl,
+        }),
+      });
+  
+      let data = {};
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : {};
+      } catch (err) {
+        console.error("Failed to parse JSON:", err);
       }
+  
+      if (res.ok) {
+        toast.success(method ? "Success Edit Product" : "Success Add Product")
+        router.push("/product");
+      } else {
+        if (data.errors) {
+          setErrors(data.errors);
+        } else {
+          console.error("Failed to " + (product ? "update" : "create") + " product");
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -230,7 +214,9 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
               id="category"
               value={form.categoryId}
               onChange={(e) => updateForm("categoryId", e.target.value)}
-              className={!errors.categoryId ? "input-field" : "input-field-error"}
+              className={
+                !errors.categoryId ? "input-field" : "input-field-error"
+              }
             >
               <option value="">Select Category</option>
               {categories.map((category) => (
@@ -250,7 +236,9 @@ const ProductCreate = ({ brands, categories, benefits, product }) => {
               id="benefit"
               value={form.benefitId}
               onChange={(e) => updateForm("benefitId", e.target.value)}
-              className={!errors.benefitId ? "input-field" : "input-field-error"}
+              className={
+                !errors.benefitId ? "input-field" : "input-field-error"
+              }
             >
               <option value="">Select Benefit</option>
               {benefits.map((benefit) => (

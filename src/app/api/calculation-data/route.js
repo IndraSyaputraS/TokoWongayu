@@ -6,6 +6,9 @@ export async function GET() {
   const calcs = await prisma.calculationData.findMany({
     include:{
         Product: true
+    },
+    orderBy:{
+      id:'asc'
     }
   });
   return NextResponse.json(

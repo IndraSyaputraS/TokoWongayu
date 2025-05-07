@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 import path from "path";
 import { writeFile } from "fs/promises";
+import sharp from "sharp"; // npm install sharp
 
 export async function GET() {
   const images = await prisma.image.findMany();
@@ -30,11 +31,21 @@ export async function POST(request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = file.name.replace(/\s+/g, "_");
-    const filePath = path.join("public/images", filename);
-    const imageUrl = `/images/${filename}`;
 
-    await writeFile(path.join(process.cwd(), filePath), buffer);
+    // Ambil nama tanpa ekstensi dan tambahkan timestamp
+    const originalName = path.parse(file.name).name.replace(/\s+/g, "_");
+    const timestamp = Date.now();
+    const filename = `${originalName}_${timestamp}.webp`;
+
+    const filePath = path.join("public/images", filename);
+    const fullOutputPath = path.join(process.cwd(), filePath);
+
+    // Konversi gambar ke webp menggunakan sharp
+    await sharp(buffer)
+      .webp({ quality: 80 }) // bisa diatur quality-nya
+      .toFile(fullOutputPath);
+
+    const imageUrl = `/images/${filename}`;
 
     // Simpan ke database
     const newImage = await prisma.image.create({
@@ -47,24 +58,20 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: true,
-        message: "Image Created Successfully!",
+        message: "Image Created and Converted to WebP Successfully!",
         data: newImage,
       },
-      {
-        status: 201,
-      }
+      { status: 201 }
     );
   } catch (error) {
     console.error("Error occurred: ", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Failed",
+        message: "Failed to upload and convert image.",
         error: error.message,
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }

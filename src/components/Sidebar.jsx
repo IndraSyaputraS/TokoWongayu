@@ -95,7 +95,7 @@ const Sidebar = () => {
     {
       href: "/dashboard",
       icon: <ChartBar size={24} weight="fill" className="text-gray-500" />,
-      label: "Overview",
+      label: "Dashboard",
     },
     {
       href: "/brand",
@@ -123,14 +123,14 @@ const Sidebar = () => {
       label: "Calculation Data",
     },
     {
-      href: "/recomendation",
-      icon: <Calculator size={24} weight="fill" className="text-gray-500" />,
-      label: "Recomendation",
-    },
-    {
       href: "/bundle-category",
       icon: <Stack size={24} weight="fill" className="text-gray-500" />,
       label: "Bundle Category",
+    },
+    {
+      href: "/recomendation",
+      icon: <Calculator size={24} weight="fill" className="text-gray-500" />,
+      label: "Recomendation",
     },
   ];
 

@@ -1,29 +1,23 @@
 "use client";
+
+import { ShoppingCart, UserCircle } from "@phosphor-icons/react";
+
 const NavbarMain = () => {
   return (
-    <nav className="bg-white dark:bg-gray-800 antialiased">
-      <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
+    <nav className="bg-white dark:bg-[#213448] fixed w-full shadow-md h-20 z-50">
+      <div className="w-full px-4 md:px-20 mx-auto py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
             <div className="shrink-0">
-              <a href="#" title="" className="">
-                <img
-                  className="block w-auto h-8 dark:hidden"
-                  src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/logo-full.svg"
-                  alt=""
-                />
-                <img
-                  className="hidden w-auto h-8 dark:block"
-                  src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/logo-full-dark.svg"
-                  alt=""
-                />
+              <a href="/home-page" className="text-2xl font-bold">
+                WONGAYU
               </a>
             </div>
 
             <ul className="hidden lg:flex items-center justify-start gap-6 md:gap-8 py-3 sm:justify-center">
               <li>
                 <a
-                  href="#"
+                  href="/home-page"
                   title=""
                   className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
                 >
@@ -32,11 +26,11 @@ const NavbarMain = () => {
               </li>
               <li className="shrink-0">
                 <a
-                  href="#"
+                  href="/product-menu"
                   title=""
                   className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
                 >
-                  Best Sellers
+                  Produk
                 </a>
               </li>
               <li className="shrink-0">
@@ -45,31 +39,49 @@ const NavbarMain = () => {
                   title=""
                   className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
                 >
-                  Gift Ideas
+                  Rekomendasi
                 </a>
               </li>
+              {/* <li className="shrink-0">
+                <a
+                  href="#"
+                  title=""
+                  className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
+                >
+                  On Sale
+                </a>
+              </li> */}
               <li className="shrink-0">
                 <a
                   href="#"
                   title=""
                   className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
                 >
-                  Today's Deals
-                </a>
-              </li>
-              <li className="shrink-0">
-                <a
-                  href="#"
-                  title=""
-                  className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500"
-                >
-                  Sell
+                  Brand
                 </a>
               </li>
             </ul>
           </div>
 
-          <div className="flex items-center lg:space-x-2"></div>
+          <div className="flex items-center lg:space-x-2">
+            {/* <button
+              id="userDropdownButton1"
+              data-dropdown-toggle="userDropdown1"
+              type="button"
+              className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white"
+            >
+              <ShoppingCart size={20} />
+            </button> */}
+            <button
+              id="userDropdownButton1"
+              data-dropdown-toggle="userDropdown1"
+              type="button"
+              title="Profile"
+              className="inline-flex trancate items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white"
+            >
+              <UserCircle size={32} weight="bold"/>
+            </button>
+          </div>
         </div>
       </div>
     </nav>

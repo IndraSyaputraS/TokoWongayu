@@ -56,7 +56,7 @@ const schema = Joi.object({
     "any.invalid": "Benefit must be selected",
   }),
   imageUrl: Joi.string().allow("", null),
-  imageId: Joi.number().allow(null).messages({
+  imageId: Joi.number().allow("", null).messages({
     "number.base": "Image ID must be a number",
   }),
 });
@@ -114,7 +114,7 @@ export async function POST(req) {
         benefitId,
         price,
         stock,
-        imageUrl: imageUrl || "/images/noimage.png",
+        imageUrl: imageUrl || "/assets/noImage.png",
         imageId,
       },
     });
@@ -173,7 +173,7 @@ export async function POST(req) {
           stock: 0,
           categoryId: category?.id || null,
           benefitId: benefit?.id || null,
-          imageUrl: "/images/noimage.png",
+          imageUrl: "/assets/noImage.png",
           imageId: null,
         });
       }

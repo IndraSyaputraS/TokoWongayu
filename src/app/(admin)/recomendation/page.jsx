@@ -13,10 +13,9 @@ async function fetchData(endpoint) {
   return data.data;
 }
 const RecomendationPage = async () => {
-  const [products, itemRecomendations, calculationData] = await Promise.all([
+  const [products, recomendations] = await Promise.all([
     fetchData("products"),
     fetchData("recomendations"),
-    fetchData("calculation-data"),
   ]);
   return (
     <>
@@ -44,7 +43,10 @@ const RecomendationPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Recomendation
       </h2>
-      <Recomendation data={itemRecomendations} products={products} calcs={calculationData}/>
+      <Recomendation
+        data={recomendations}
+        products={products}
+      />
     </>
   );
 };

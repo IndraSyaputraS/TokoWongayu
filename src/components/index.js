@@ -7,3 +7,6 @@ export { default as Spinner } from "./Spinner";
 export { default as MultiSelect } from "./MultiSelect";
 export { default as HandleError } from "./HandleError";
 export { default as NavbarMain } from "./NavbarMain";
+export { default as Footer } from "./Footer";
+export { default as ProductCard } from "./ProductCard";
+export { default as Filter } from "./Filter";

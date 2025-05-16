@@ -5,17 +5,28 @@ import { writeFile } from "fs/promises";
 import sharp from "sharp"; // npm install sharp
 
 export async function GET() {
-  const images = await prisma.image.findMany();
-  return NextResponse.json(
-    {
-      success: true,
-      message: "List Data Images",
-      data: images,
-    },
-    {
-      status: 200,
-    }
-  );
+  try {
+    const images = await prisma.image.findMany();
+    return NextResponse.json(
+      {
+        success: true,
+        message: "List Data Images",
+        data: images,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (err) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to fetch",
+        error: err,
+      },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(request) {
@@ -64,12 +75,11 @@ export async function POST(request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error occurred: ", error);
     return NextResponse.json(
       {
         success: false,
         message: "Failed to upload and convert image.",
-        error: error.message,
+        error: error,
       },
       { status: 500 }
     );

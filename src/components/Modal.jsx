@@ -16,6 +16,7 @@ const Modal = ({
   outsideClose = false,
   dialogClass,
   children,
+  background = "wh",
   ...props
 }) => {
   const backdropClasses = "fixed inset-0 z-50 bg-gray-900/50";
@@ -29,6 +30,11 @@ const Modal = ({
     lg: "max-w-4xl",
     xl: "max-w-7xl",
   };
+
+  const backgrounds = {
+    wh: "bg-white",
+    gy: "bg-gray-50",
+  }
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "unset";
@@ -92,7 +98,7 @@ const Modal = ({
         >
           <div className="relative bg-white rounded-lg shadow dark:bg-gray-800 w-full"> */}
         <div className={`flex relative ${sizes[size]} w-full`}>
-          <div className="bg-white rounded-lg shadow dark:bg-gray-800 w-full flex flex-col mx-auto h-auto max-h-max">
+          <div className={`${backgrounds[background]} rounded-lg shadow dark:bg-gray-800 w-full flex flex-col mx-auto h-auto max-h-max`}>
             {(header || title) && (
               <div
                 className={twMerge(

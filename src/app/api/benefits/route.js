@@ -3,22 +3,30 @@ import prisma from "@libs/prismaClient";
 import Joi from "joi";
 
 export async function GET() {
-  const benefits = await prisma.benefit.findMany({
-    orderBy: {
-      id: "asc",
-    },
-  });
+  try {
+    const benefits = await prisma.benefit.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
 
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "List Data Benefits",
-      data: benefits,
-    },
-    {
-      status: 200,
-    }
-  );
+    return NextResponse.json(
+      {
+        sucess: true,
+        message: "List Data Benefits",
+        data: benefits,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (err) {
+    return NextResponse.json({
+      sucess: false,
+      message: "Failed to fetch",
+      error: err,
+    });
+  }
 }
 
 const schema = Joi.object({
@@ -29,30 +37,38 @@ const schema = Joi.object({
 });
 
 export async function POST(request) {
-  const body = await request.json();
-  const { error, result } = schema.validate(body, { abortEarly: false });
+  try {
+    const body = await request.json();
+    const { error, result } = schema.validate(body, { abortEarly: false });
 
-  if (error) {
+    if (error) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: error.details[0].message,
+        },
+        { status: 400 }
+      );
+    }
+    const benefits = await prisma.benefit.create({
+      data: {
+        name: value.name,
+      },
+    });
+
     return NextResponse.json(
       {
-        success: false,
-        message: error.details[0].message,
+        success: true,
+        message: "Benefit Created Successfully!",
+        data: benefits,
       },
-      { status: 400 }
+      { status: 201 }
     );
+  } catch (err) {
+    return NextResponse.json({
+      sucess: false,
+      message: "Failed to fetch",
+      error: err,
+    });
   }
-  const benefits = await prisma.benefit.create({
-    data: {
-      name: value.name,
-    },
-  });
-
-  return NextResponse.json(
-    {
-      success: true,
-      message: "Benefit Created Successfully!",
-      data: benefits,
-    },
-    { status: 201 }
-  );
 }

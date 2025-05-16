@@ -2,57 +2,59 @@ import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 
 export async function GET() {
-  const itemRec = await prisma.itemRecomendation.findMany({
-    include:{
-      Product:{
-        include:{
-          Category:true,
-          Benefit:true
-        }
-      }
-    },
-    orderBy: {
-      id: "asc",
-    },
-  });
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "List Data Category",
-      data: itemRec,
-    },
-    {
-      status: 200,
-    }
-  );
-}
-
-export async function POST(req) {
   try {
-    const { productIds } = await req.json();
+    const savedBundles = await prisma.savedBundle.findMany({
+      include: {
+        items: {
+          include: {
+            product: {
+              include: {
+                Category: true,
+                Benefit: true,
+              },
+            },
+          },
+        },
+        benefit: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
 
-    if (!productIds || !Array.isArray(productIds)) {
-      return NextResponse.json(
-        { error: "Invalid productIds" },
-        { status: 400 }
-      );
-    }
-
-    // Optional: bersihkan data sebelumnya
-    await prisma.itemRecomendation.deleteMany();
-
-    // Simpan data baru
-    const data = productIds.map((id) => ({
-      productId: id,
+    const formattedBundles = savedBundles.map((bundle) => ({
+      id: bundle.id,
+      benefitId: bundle.benefitId,
+      benefitName: bundle.benefit?.name,
+      budget: bundle.budget,
+      totalPrice: bundle.totalPrice,
+      totalScore: bundle.totalScore.toFixed(3),
+      signature: bundle.signature,
+      items: bundle.items.map((item) => ({
+        productId: item.productId,
+        price: item.price,
+        score: item.score,
+        name: item.product.name,
+        category: item.product.Category?.name,
+        benefit: item.product.Benefit?.name,
+      })),
     }));
 
-    await prisma.itemRecomendation.createMany({ data });
-
-    return NextResponse.json({ message: "Similarity results saved", data });
-  } catch (error) {
-    console.error("POST error:", error);
     return NextResponse.json(
-      { error: "Failed to save similarity results" },
+      {
+        success: true,
+        message: "List of saved bundles",
+        data: formattedBundles,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to fetch saved bundles",
+        error: error,
+      },
       { status: 500 }
     );
   }

@@ -1,16 +1,7 @@
 import { Filter, ProductCard } from "@/components";
 import { CaretRight, Faders, HouseLine } from "@phosphor-icons/react/dist/ssr";
-async function fetchProduct() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`);
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch ategory:", err);
-  }
-}
+
 const ProductMenuPage = async () => {
-  const data = await fetchProduct();
-  const products = data.data;
   return (
     <>
       <nav className="mx-14 my-4 flex" aria-label="Breadcrumb">
@@ -42,7 +33,7 @@ const ProductMenuPage = async () => {
               Filters
             </h2>
             <div className="flex justify-end">
-              <Faders size={32} className="opacity-40"/>
+              <Faders size={32} className="opacity-40" />
             </div>
             <hr className="col-span-2 border border-gray-200 dark:border-gray-700" />
             <div className="col-span-2 py-4">
@@ -54,11 +45,7 @@ const ProductMenuPage = async () => {
         {/* Product list */}
         <div className="col-span-12 md:col-span-10">
           <span className="text-4xl font-bold">Product</span>
-          <ProductCard
-            data={products}
-            visibleCount={12}
-            disableAnimation={true}
-          />
+          <ProductCard visibleCount={12} disableAnimation={true} />
         </div>
       </div>
     </>

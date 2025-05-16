@@ -3,22 +3,30 @@ import prisma from "@libs/prismaClient";
 import Joi from "joi";
 
 export async function GET() {
-  const brands = await prisma.brand.findMany({
-    orderBy: {
-      id: "asc",
-    },
-  });
+  try {
+    const brands = await prisma.brand.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
 
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "List Data Brands",
-      data: brands,
-    },
-    {
-      status: 200,
-    }
-  );
+    return NextResponse.json(
+      {
+        sucess: true,
+        message: "List Data Brands",
+        data: brands,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (err) {
+    return NextResponse.json({
+      sucess: false,
+      message: "Failed to fetch",
+      error: err,
+    });
+  }
 }
 
 const schema = Joi.object({
@@ -28,31 +36,39 @@ const schema = Joi.object({
 });
 
 export async function POST(request) {
-  const body = await request.json();
-  const { error, result } = schema.validate(body, { abortEarly: false });
+  try {
+    const body = await request.json();
+    const { error, result } = schema.validate(body, { abortEarly: false });
 
-  if (error) {
+    if (error) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: error.details[0].message, // kirim error pertama
+        },
+        { status: 400 }
+      );
+    }
+
+    const brands = await prisma.brand.create({
+      data: {
+        name: value.name,
+      },
+    });
+
     return NextResponse.json(
       {
-        success: false,
-        message: error.details[0].message, // kirim error pertama
+        success: true,
+        message: "Brand Created Successfully!",
+        data: brands,
       },
-      { status: 400 }
+      { status: 201 }
     );
+  } catch (err) {
+    return NextResponse.json({
+      sucess: false,
+      message: "Failed to fetch",
+      error: err,
+    });
   }
-
-  const brands = await prisma.brand.create({
-    data: {
-      name: value.name,
-    },
-  });
-
-  return NextResponse.json(
-    {
-      success: true,
-      message: "Brand Created Successfully!",
-      data: brands,
-    },
-    { status: 201 }
-  );
 }

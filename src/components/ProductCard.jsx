@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { formatPriceBase } from "@/utils/formatPrice";
-import Pagination from "./Pagination"; // Pastikan path-nya benar
+import Pagination from "./Pagination";
+import { useRouter } from "next/navigation";
 
-const ProductCard = ({
-  data,
-  visibleCount = 0,
-  disableAnimation = false, // false = berganti tiap interval, true = statis
-}) => {
+const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectProduct, setSelectProduct] = useState("");
+  const [data, setData] = useState([]);
+  const router = useRouter();
 
   const productsPerPage = visibleCount || 8;
   const totalPages = Math.ceil(data.length / productsPerPage);
@@ -31,6 +31,23 @@ const ProductCard = ({
     return () => clearInterval(interval);
   }, [data.length, productsPerPage, disableAnimation]);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/products`
+        );
+        const result = await res.json();
+        setData(result.data);
+      } catch (err) {
+        console.error("Failed to fetch benefits:", err);
+        toast.error("Failed to load benefits.");
+      } finally {
+      }
+    };
+    fetchProducts();
+  }, []);
+
   let visibleProducts = [];
 
   if (disableAnimation) {
@@ -44,6 +61,10 @@ const ProductCard = ({
         Math.max(0, currentIndex + productsPerPage - data.length)
       ),
     ];
+  }
+
+  function handleOverview(id) {
+    router.push(`/product-overview/${id}`);
   }
 
   return (
@@ -60,11 +81,15 @@ const ProductCard = ({
               className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-6 shadow-lg dark:border-gray-700 dark:bg-gray-800"
             >
               <div className="h-56 w-full px-6">
-                <a href="#">
+                <a
+                  onClick={() => handleOverview(product.id)}
+                  className="cursor-pointer"
+                >
                   <Image
                     className="mx-auto h-full"
                     src={product.imageUrl}
                     alt={product.name}
+                    priority={false}
                     width={200}
                     height={200}
                   />

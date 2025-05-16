@@ -31,6 +31,7 @@ model Product {
   Ratings           Ratings[]
   ItemRecomendation ItemRecomendation[]
   BundlingItem      BundlingItem[]
+  BundleItem        BundleItem[]
   createdAt         DateTime            @default(now()) @map("created_at")
   updatedAt         DateTime            @updatedAt @map("updated_at")
 
@@ -44,17 +45,18 @@ model Benefit {
   createdAt      DateTime         @default(now()) @map("created_at")
   updatedAt      DateTime         @updatedAt @map("updated_at")
   BundleCategory BundleCategory[]
+  SavedBundle    SavedBundle[]
 
   @@map("benefit")
 }
 
 model Category {
-  id             Int              @id @default(autoincrement())
-  name           String
-  Product        Product[]
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @updatedAt @map("updated_at")
-  PivotBunCat    PivotBunCat[]
+  id          Int           @id @default(autoincrement())
+  name        String
+  Product     Product[]
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  PivotBunCat PivotBunCat[]
 
   @@map("category")
 }
@@ -194,4 +196,28 @@ model Transaction {
   updatedAt       DateTime        @updatedAt @map("updated_at")
 
   @@map("transaction")
+}
+
+model SavedBundle {
+  id         Int      @id @default(autoincrement())
+  benefitId  Int @map("benefit_id")
+  budget     Float
+  totalScore Float @map("total_score")
+  signature  String   @unique
+  createdAt  DateTime @default(now())
+  totalPrice Float @map("total_price")
+  items BundleItem[]
+
+  benefit   Benefit  @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+}
+
+model BundleItem {
+  id        Int   @id @default(autoincrement())
+  bundleId  Int @map("bundle_id")
+  productId Int @map("product_id")
+  price     Float
+  score     Float
+
+  bundle  SavedBundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+  product Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
 }

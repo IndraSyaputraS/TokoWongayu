@@ -2,34 +2,7 @@ import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { Brand } from "@/views";
 import { Spinner } from "@/components";
 import Image from "next/image";
-async function fetchBrand() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/brands`);
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch brands: ${res.status}`);
-    }
-
-    return res.json();
-  } catch (err) {
-    console.error(err);
-    return { error: err.message };
-  }
-}
-const BrandPage = async () => {
-  const data = await fetchBrand();
-  if (data.error) {
-    return (
-      <div className="flex justify-center items-center">
-        <Image
-        src="/404.png"
-        width={500}
-        height={500}
-        alt="Brand Not Found"/>
-      </div>
-    );
-  }
-  const brands = data.data;
+const BrandPage = () => {
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -56,7 +29,7 @@ const BrandPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Brand
       </h2>
-      <Brand data={brands} />
+      <Brand />
     </>
   );
 };

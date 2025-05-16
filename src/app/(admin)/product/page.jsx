@@ -1,17 +1,7 @@
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { Product } from "@/views";
 
-async function fetchProduct() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`);
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch product:", err);
-  }
-}
 const ProductPage = async () => {
-  const data = await fetchProduct();
-  const products = data.data;
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -28,9 +18,7 @@ const ProductPage = async () => {
           <li>
             <div className="flex items-center">
               <CaretRight size={16} color="#9ca3af" weight="bold" />
-              <a
-                className="inline-flex items-center text-sm font-medium text-gray-700  dark:text-gray-400"
-              >
+              <a className="inline-flex items-center text-sm font-medium text-gray-700  dark:text-gray-400">
                 Product
               </a>
             </div>
@@ -40,7 +28,7 @@ const ProductPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Product
       </h2>
-      <Product data={products} />
+      <Product />
     </>
   );
 };

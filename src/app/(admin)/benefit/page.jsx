@@ -1,16 +1,6 @@
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { Benefit } from "@/views";
-async function fetchBenefit() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/benefits`);
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch benefits:", err);
-  }
-}
-const BenefitPage = async () => {
-  const data = await fetchBenefit();
-  const benefits = data.data;
+const BenefitPage = () => {
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -39,7 +29,7 @@ const BenefitPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Benefit
       </h2>
-      <Benefit data={benefits}/>
+      <Benefit/>
     </>
   );
 };

@@ -4,43 +4,50 @@ import prisma from "@libs/prismaClient";
 export async function GET(request, { params }) {
   const { id } = await params;
   const IntId = parseInt(id);
-  const bundleCategories = await prisma.bundleCategory.findUnique({
-    include: {
-      Benefit: true, // Mendapatkan Benefit terkait
-      categories: {
-        // Mendapatkan kategori-kategori yang terkait via PivotBunCat
-        include: {
-          Category: true, // Mendapatkan data Category untuk setiap pivot
+  try {
+    const bundleCategories = await prisma.bundleCategory.findUnique({
+      include: {
+        Benefit: true,
+        categories: {
+          include: {
+            Category: true,
+          },
         },
       },
-    },
-    where: {
-      id: IntId,
-    },
-  });
+      where: {
+        id: IntId,
+      },
+    });
 
-  if (!bundleCategories) {
+    if (!bundleCategories) {
+      return NextResponse.json(
+        {
+          sucess: true,
+          message: "Detail Bundle Category Not Found!",
+          data: null,
+        },
+        {
+          status: 404,
+        }
+      );
+    }
     return NextResponse.json(
       {
         sucess: true,
-        message: "Detail Bundle Category Not Found!",
-        data: null,
+        message: "Detail Data Bundle Category",
+        data: brands,
       },
       {
-        status: 404,
+        status: 200,
       }
     );
+  } catch (err) {
+    return NextResponse.json({
+      sucess: false,
+      message: "Failed to fetch",
+      error: err,
+    });
   }
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "Detail Data Bundle Category",
-      data: brands,
-    },
-    {
-      status: 200,
-    }
-  );
 }
 
 export async function PUT(request, { params }) {
@@ -50,7 +57,6 @@ export async function PUT(request, { params }) {
   const { benefitId, categoryIds } = body;
 
   try {
-    // 1. Cek apakah bundleCategory dengan ID tersebut ada
     const existingBundle = await prisma.bundleCategory.findUnique({
       where: { id: IntId },
     });
@@ -64,8 +70,6 @@ export async function PUT(request, { params }) {
         { status: 404 }
       );
     }
-
-    // 2. Update data bundleCategory
     const updatedBundle = await prisma.bundleCategory.update({
       where: { id: IntId },
       data: {
@@ -73,12 +77,10 @@ export async function PUT(request, { params }) {
       },
     });
 
-    // 3. Hapus data pivot lama
     await prisma.pivotBunCat.deleteMany({
       where: { bundleCategoryId: IntId },
     });
 
-    // 4. Tambahkan data pivot baru
     const pivotData = categoryIds
       .map((catId) => ({
         bundleCategoryId: IntId,
@@ -99,11 +101,11 @@ export async function PUT(request, { params }) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error updating bundle:", error);
     return NextResponse.json(
       {
         success: false,
         message: "Failed to update bundle.",
+        error: error,
       },
       { status: 500 }
     );
@@ -115,7 +117,6 @@ export async function DELETE(request, { params }) {
   const IntId = parseInt(id);
 
   try {
-    // Cek apakah bundleCategory ada
     const existingBundle = await prisma.bundleCategory.findUnique({
       where: { id: IntId },
     });
@@ -130,12 +131,10 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Hapus relasi dari tabel pivot terlebih dahulu
     await prisma.pivotBunCat.deleteMany({
       where: { bundleCategoryId: IntId },
     });
 
-    // Hapus bundleCategory-nya
     await prisma.bundleCategory.delete({
       where: { id: IntId },
     });
@@ -148,11 +147,11 @@ export async function DELETE(request, { params }) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting bundle:", error);
     return NextResponse.json(
       {
         success: false,
         message: "Failed to delete bundle.",
+        error: error,
       },
       { status: 500 }
     );

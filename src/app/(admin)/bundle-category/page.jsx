@@ -1,23 +1,7 @@
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { BundleCategory } from "@/views";
 
-async function fetchData(endpoint) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/${endpoint}`,
-    {
-      cache: "no-store",
-    }
-  );
-  if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
-  const data = await res.json();
-  return data.data;
-}
-const BundleCategoryPage = async () => {
-  const [benefits, categories, bundleCategories] = await Promise.all([
-    fetchData("benefits"),
-    fetchData("categories"),
-    fetchData("bundle-categories"),
-  ]);
+const BundleCategoryPage = () => {
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -44,11 +28,7 @@ const BundleCategoryPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Bundle Category
       </h2>
-      <BundleCategory
-        data={bundleCategories}
-        benefits={benefits}
-        categories={categories}
-      />
+      <BundleCategory />
     </>
   );
 };

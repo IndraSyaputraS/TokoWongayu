@@ -1,5 +1,5 @@
 "use client";
-import { Pagination, Modal } from "@/components";
+import { Pagination, Modal, TableSkeletonLoader } from "@/components";
 import {
   CloudArrowUp,
   FileArrowDown,
@@ -11,10 +11,24 @@ import {
   Warning,
   XCircle,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-const CalculationData = ({ data, products, getTransaction }) => {
+
+async function fetchData(endpoint) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/${endpoint}`,
+    {
+      cache: "no-store",
+    }
+  );
+  if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
+  const data = await res.json();
+  return data.data;
+}
+
+const CalculationData = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [form, setForm] = useState({
     transaction: "",
     productId: "",
@@ -29,18 +43,33 @@ const CalculationData = ({ data, products, getTransaction }) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [calcToDelete, setCalcToDelete] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [calcs, setCalcs] = useState([]);
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true);
+      const [prod, calculation] = await Promise.all([
+        fetchData("products"),
+        fetchData("calculation-data"),
+      ]);
+      setProducts(prod);
+      setCalcs(calculation);
+      setIsLoading(false);
+    }
+    loadData();
+  }, []);
+  const totalPages = Math.ceil(calcs.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedCalcs = data.slice(startIndex, startIndex + itemsPerPage);
-
+  const paginatedCalcs = calcs.slice(startIndex, startIndex + itemsPerPage);
   const router = useRouter();
+
   function handleOpenModal() {
     setOpenModal(true);
   }
   function handleCloseModal() {
-    setSelectedFile(null)
+    setSelectedFile(null);
     setOpenModal(false);
   }
 
@@ -171,94 +200,98 @@ const CalculationData = ({ data, products, getTransaction }) => {
   };
   return (
     <>
-      <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-          <div className="flex items-center flex-1 space-x-4">
-            <h5>
-              <span className="text-gray-500">All Calculation Data: </span>
-              <span className="dark:text-white">{data?.length}</span>
-            </h5>
+      {isLoading ? (
+        <TableSkeletonLoader columns={4} rows={10} />
+      ) : (
+        <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+          <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div className="flex items-center flex-1 space-x-4">
+              <h5>
+                <span className="text-gray-500">All Calculation Data: </span>
+                <span className="dark:text-white">{calcs?.length}</span>
+              </h5>
+            </div>
+            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+              <button
+                onClick={handleOpenCreateModal}
+                type="button"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              >
+                <Plus size="24" color="#d9e3f0" />
+                Add
+              </button>
+            </div>
+            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+              <button
+                type="button"
+                onClick={handleOpenModal}
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              >
+                <FileArrowDown size="24" />
+                Import
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-            <button
-              onClick={handleOpenCreateModal}
-              type="button"
-              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-            >
-              <Plus size="24" color="#d9e3f0" />
-              Add
-            </button>
-          </div>
-          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-            <button
-              type="button"
-              onClick={handleOpenModal}
-              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-            >
-              <FileArrowDown size="24" />
-              Import
-            </button>
-          </div>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="w-[20px] px-4 py-3">
-                  No
-                </th>
-                <th scope="col" className="w-[20px] px-4 py-3">
-                  Transaction
-                </th>
-                <th scope="col" className="px-4 py-3">
-                  Product
-                </th>
-                <th scope="col" className="text-center px-4 py-3">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedCalcs.map((calc, index) => (
-                <tr
-                  key={index}
-                  className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <td className="px-4 py-3">{data.indexOf(calc) + 1}</td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {calc.transaction}
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {calc.Product?.name}
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex justify-center gap-2">
-                      <button
-                        className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
-                        onClick={() => handleEdit(calc)}
-                      >
-                        <PencilLine size={20} weight="thin" />
-                      </button>
-                      <button
-                        onClick={() => handleOpenDeleteModal(calc.id)}
-                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                      >
-                        <Trash size={20} weight="light" />
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="w-[20px] px-4 py-3">
+                    No
+                  </th>
+                  <th scope="col" className="w-[20px] px-4 py-3">
+                    Transaction
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Product
+                  </th>
+                  <th scope="col" className="text-center px-4 py-3">
+                    Action
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
+              </thead>
+              <tbody>
+                {paginatedCalcs.map((calc, index) => (
+                  <tr
+                    key={index}
+                    className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <td className="px-4 py-3">{calcs.indexOf(calc) + 1}</td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {calc.transaction}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {calc.Product?.name}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
+                          onClick={() => handleEdit(calc)}
+                        >
+                          <PencilLine size={20} weight="thin" />
+                        </button>
+                        <button
+                          onClick={() => handleOpenDeleteModal(calc.id)}
+                          className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        >
+                          <Trash size={20} weight="light" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </div>
         </div>
-      </div>
+      )}
       {/* Modal Create Edit */}
       <Modal
         open={openCreateModal}
@@ -284,7 +317,7 @@ const CalculationData = ({ data, products, getTransaction }) => {
                   type="text"
                   id="transaction"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={getTransaction}
+                  placeholder="p"
                   value={form.transaction}
                   onChange={(e) => updateForm("transaction", e.target.value)}
                   required
@@ -360,7 +393,7 @@ const CalculationData = ({ data, products, getTransaction }) => {
                     onClick={() => setSelectedFile(null)}
                     className="ml-2"
                   >
-                    <XCircle size={28} color="#d42121" weight="thin"/>
+                    <XCircle size={28} color="#d42121" weight="thin" />
                   </button>
                 </div>
               ) : (

@@ -2,110 +2,126 @@ import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 
 export async function GET(request, { params }) {
-  const { id } = await params;
+  const { id } = params;
   const IntId = parseInt(id);
-  const categories = await prisma.category.findUnique({
-    where: {
-      id: IntId,
-    },
-  });
+  try {
+    const category = await prisma.category.findUnique({
+      where: { id: IntId },
+    });
 
-  if (!categories) {
+    if (!category) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Detail Category Not Found!",
+          data: null,
+        },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
       {
-        sucess: true,
-        message: "Detail Category Not Found!",
-        data: null,
+        success: true,
+        message: "Detail Data Category",
+        data: category,
       },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
       {
-        status: 404,
-      }
+        success: false,
+        message: "Failed to fetch category",
+        error: err,
+      },
+      { status: 500 }
     );
   }
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "Detail Data Category",
-      data: categories
-    },
-    {
-      status: 200,
-    }
-  );
 }
 
 export async function PUT(request, { params }) {
-  const { id } = await params;
+  const { id } = params;
   const IntId = parseInt(id);
   const body = await request.json();
   const { name } = body;
-  const categories = await prisma.category.findUnique({
-    where: {
-      id: IntId,
-    },
-  });
-  if (!categories) {
+  try {
+    const existing = await prisma.category.findUnique({
+      where: { id: IntId },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Category Not Found!",
+        },
+        { status: 404 }
+      );
+    }
+
+    const updated = await prisma.category.update({
+      where: { id: IntId },
+      data: { name },
+    });
+
     return NextResponse.json(
       {
-        sucess: true,
-        message: "Category Not Found!",
+        success: true,
+        message: "Data Category Updated!",
+        data: updated,
       },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
       {
-        status: 404,
-      }
+        success: false,
+        message: "Failed to update category",
+        error: err,
+      },
+      { status: 500 }
     );
   }
-  await prisma.category.update({
-    where: {
-      id: IntId,
-    },
-    data: {
-      name: name,
-    },
-  });
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "Data Category Updated!",
-      data: categories,
-    },
-    {
-      status: 200,
-    }
-  );
 }
 
 export async function DELETE(request, { params }) {
-  const { id } = await params;
+  const { id } = params;
   const IntId = parseInt(id);
-  const categories = await prisma.category.findUnique({
-    where: {
-      id: IntId,
-    },
-  });
-  if (!categories) {
+  try {
+    const existing = await prisma.category.findUnique({
+      where: { id: IntId },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Category Not Found!",
+        },
+        { status: 404 }
+      );
+    }
+
+    await prisma.category.delete({
+      where: { id: IntId },
+    });
+
     return NextResponse.json(
       {
-        sucess: true,
-        message: "Category Not Found!",
+        success: true,
+        message: "Category Deleted!",
       },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
       {
-        status: 404,
-      }
+        success: false,
+        message: "Failed to delete category",
+        error: err,
+      },
+      { status: 500 }
     );
   }
-  await prisma.category.delete({
-    where: {
-      id: IntId,
-    },
-  });
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "Category Deleted!",
-    },
-    {
-      status: 200,
-    }
-  );
 }

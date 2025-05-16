@@ -2,10 +2,21 @@
 import { Modal, MultiSelect, Pagination } from "@/components";
 import { PencilLine, Plus, Trash, Warning } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+async function fetchData(endpoint) {
+  try {
+    const res = await fetch(`/api/${endpoint}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
+    const json = await res.json();
+    return json.data;
+  } catch (err) {
+    toast.error(err.message);
+    return [];
+  }
+}
 
-const BundleCategory = ({ data, benefits, categories }) => {
+const BundleCategory = ({}) => {
   const [form, setForm] = useState({
     benefitId: "",
   });
@@ -16,13 +27,32 @@ const BundleCategory = ({ data, benefits, categories }) => {
   const [selectedBundCat, setSelectedBundCat] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [bundCatToDelete, setBundCatToDelete] = useState(null);
+  const [benefits, setBenefits] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [bundleCategories, setBundleCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(bundleCategories.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedBunCat = data.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedBunCat = bundleCategories.slice(startIndex, startIndex + itemsPerPage);
 
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      const [bens, cats, bunds] = await Promise.all([
+        fetchData("benefits"),
+        fetchData("categories"),
+        fetchData("bundle-categories"),
+      ]);
+      setBenefits(bens);
+      setCategories(cats);
+      setBundleCategories(bunds);
+      setLoading(false);
+    }
+    loadData();
+  }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -56,7 +86,7 @@ const BundleCategory = ({ data, benefits, categories }) => {
         setOpenModal(false);
         setEditMode(false);
         setSelectedBundCat(null);
-        setSelectedCategory([])
+        setSelectedCategory([]);
         router.refresh();
       } else {
         console.error("Failed to save Bundle Category:", await res.text());
@@ -140,7 +170,7 @@ const BundleCategory = ({ data, benefits, categories }) => {
           <div className="flex items-center flex-1 space-x-4 justify-between">
             <h5>
               <span className="text-gray-500">All Bundle Category: </span>
-              <span className="dark:text-white">{data?.length}</span>
+              <span className="dark:text-white">{bundleCategories?.length}</span>
             </h5>
             <button
               onClick={handleOpenModal}
@@ -176,7 +206,7 @@ const BundleCategory = ({ data, benefits, categories }) => {
                   key={index}
                   className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <td className="px-4 py-3">{data.indexOf(bundCat) + 1}</td>
+                  <td className="px-4 py-3">{bundleCategories.indexOf(bundCat) + 1}</td>
                   <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {bundCat.Benefit?.name}
                   </td>

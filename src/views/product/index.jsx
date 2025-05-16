@@ -1,5 +1,5 @@
 "use client";
-import { Modal, Pagination } from "@/components";
+import { Modal, Pagination, TableSkeletonLoader } from "@/components";
 import {
   CloudArrowUp,
   FileArrowDown,
@@ -11,7 +11,7 @@ import {
   Warning,
   XCircle,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -26,12 +26,38 @@ const Product = ({ data }) => {
   const [productToDelete, setProductToDelete] = useState(null);
   const [productList, setProductList] = useState([]);
   const [editMode, setEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState([]);
   const router = useRouter();
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = data.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
+  // useEffect(() => {
+  //   if (Array.isArray(data)) {
+  //     setIsLoading(false);
+  //   }
+  // }, [data]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/products`
+        );
+        const result = await res.json();
+        setProducts(result.data);
+      } catch (err) {
+        console.error("Failed to fetch benefits:", err);
+        toast.error("Failed to load benefits.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   function handleOpenModal() {
     setOpenModal(true);
@@ -107,139 +133,145 @@ const Product = ({ data }) => {
 
   return (
     <>
-      <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-          <div className="flex items-center flex-1 space-x-4">
-            <h5>
-              <span className="text-gray-500">All Product: </span>
-              <span className="dark:text-white">{data?.length}</span>
-            </h5>
-          </div>
-          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-            <Link href="/product/create">
+      {isLoading ? (
+        <TableSkeletonLoader columns={8} rows={10} />
+      ) : (
+        <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+          <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div className="flex items-center flex-1 space-x-4">
+              <h5>
+                <span className="text-gray-500">All Product: </span>
+                <span className="dark:text-white">{products?.length}</span>
+              </h5>
+            </div>
+            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+              <Link href="/product/create">
+                <button
+                  type="button"
+                  className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                >
+                  <Plus size="24" color="#d9e3f0" />
+                  Add
+                </button>
+              </Link>
+            </div>
+            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
               <button
                 type="button"
+                onClick={handleOpenModal}
                 className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
               >
-                <Plus size="24" color="#d9e3f0" />
-                Add
+                <FileArrowDown size="24" />
+                Import
               </button>
-            </Link>
+            </div>
           </div>
-          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-            <button
-              type="button"
-              onClick={handleOpenModal}
-              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-            >
-              <FileArrowDown size="24" />
-              Import
-            </button>
-          </div>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="min-w-16 px-4 py-3">
-                  No
-                </th>
-                <th scope="col" className="min-w-28 px-4 py-3">
-                  Item Code
-                </th>
-                <th scope="col" className="min-w-96 px-4 py-3">
-                  Product
-                </th>
-                <th scope="col" className="min-w-32 px-4 py-3">
-                  Brand
-                </th>
-                <th scope="col" className="min-w-40 px-4 py-3">
-                  Category
-                </th>
-                <th scope="col" className="min-w-56 px-4 py-3">
-                  Benefit
-                </th>
-                <th scope="col" className="min-w-24 px-4 py-3">
-                  Price
-                </th>
-                {/* <th scope="col" className="px-4 py-3">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="min-w-16 px-4 py-3">
+                    No
+                  </th>
+                  <th scope="col" className="min-w-28 px-4 py-3">
+                    Item Code
+                  </th>
+                  <th scope="col" className="min-w-96 px-4 py-3">
+                    Product
+                  </th>
+                  <th scope="col" className="min-w-32 px-4 py-3">
+                    Brand
+                  </th>
+                  <th scope="col" className="min-w-40 px-4 py-3">
+                    Category
+                  </th>
+                  <th scope="col" className="min-w-56 px-4 py-3">
+                    Benefit
+                  </th>
+                  <th scope="col" className="min-w-24 px-4 py-3">
+                    Price
+                  </th>
+                  {/* <th scope="col" className="px-4 py-3">
                   Stock
                 </th> */}
-                <th scope="col" className="text-center px-4 py-3">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedProducts.map((product, index) => (
-                <tr
-                  key={index}
-                  className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <td className="whitespace-nowrap px-4 py-3">
-                    {data.indexOf(product) + 1}
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {product.itemCode}
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <div className="flex items-center gap-2">
-                      {product.imageUrl ? (
-                        <Image
-                          src={product.imageUrl}
-                          alt={product.name}
-                          width={35}
-                          height={35}
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-400 text-xs">No Image</span>
-                      )}
-                      <span>{product.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {product.Brand?.name}
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {product.Category?.name}
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {product.Benefit?.name}
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {product.price}
-                  </td>
-                  {/* <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <th scope="col" className="text-center px-4 py-3">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedProducts.map((product, index) => (
+                  <tr
+                    key={index}
+                    className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <td className="whitespace-nowrap px-4 py-3">
+                      {products.indexOf(product) + 1}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {product.itemCode}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      <div className="flex items-center gap-2">
+                        {product.imageUrl ? (
+                          <Image
+                            src={product.imageUrl}
+                            alt={product.name}
+                            width={35}
+                            height={35}
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span className="text-gray-400 text-xs">
+                            No Image
+                          </span>
+                        )}
+                        <span>{product.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {product.Brand?.name}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {product.Category?.name}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {product.Benefit?.name}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {product.price}
+                    </td>
+                    {/* <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {product.stock}
                   </td> */}
-                  <td className="px-3 py-2">
-                    <div className="flex justify-center gap-2">
-                      <Link href={`/product/edit/${product.id}`}>
-                        <button className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700">
-                          <PencilLine size={20} weight="thin" />
+                    <td className="px-3 py-2">
+                      <div className="flex justify-center gap-2">
+                        <Link href={`/product/edit/${product.id}`}>
+                          <button className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700">
+                            <PencilLine size={20} weight="thin" />
+                          </button>
+                        </Link>
+                        <button
+                          onClick={() => handleOpenDeleteModal(product.id)}
+                          className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        >
+                          <Trash size={20} weight="light" />
                         </button>
-                      </Link>
-                      <button
-                        onClick={() => handleOpenDeleteModal(product.id)}
-                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                      >
-                        <Trash size={20} weight="light" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      </div>
+      )}
       {/* Modal Import */}
       <Modal
         open={openModal}

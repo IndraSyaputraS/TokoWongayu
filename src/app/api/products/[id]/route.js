@@ -2,40 +2,51 @@ import { NextResponse } from "next/server";
 import prisma from "@/libs/prismaClient";
 
 export async function GET(request, { params }) {
-  const { id } = await params;
+  const { id } = params;
   const IntId = parseInt(id);
-  const products = await prisma.product.findUnique({
-    where: {
-      id: IntId,
-    },
-  });
+  try {
+    const products = await prisma.product.findUnique({
+      where: { id: IntId },
+      include: {
+        Brand: true,
+        Category: true,
+        Benefit: true,
+      },
+    });
 
-  if (!products) {
+    if (!products) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Detail Product Not Found!",
+          data: null,
+        },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
       {
-        sucess: true,
-        message: "Detail Product Not Found!",
-        data: null,
+        success: true,
+        message: "Detail Data Product",
+        data: products,
       },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
       {
-        status: 404,
-      }
+        success: false,
+        message: "Failed to fetch product details.",
+        error: error,
+      },
+      { status: 500 }
     );
   }
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "Detail Data Product",
-      data: products,
-    },
-    {
-      status: 200,
-    }
-  );
 }
 
 export async function PUT(request, { params }) {
-  const { id } = await params;
+  const { id } = params;
   const IntId = parseInt(id);
   const body = await request.json();
   const {
@@ -49,99 +60,93 @@ export async function PUT(request, { params }) {
     imageUrl,
     imageId,
   } = body;
-  const products = await prisma.product.update({
-    include: {
-      Brand: true,
-      Category: true,
-      Benefit: true,
-    },
-    where: {
-      id: IntId,
-    },
-    data: {
-      name,
-      brandId: parseInt(brandId),
-      itemCode,
-      categoryId: parseInt(categoryId),
-      benefitId: parseInt(benefitId),
-      price: parseFloat(price) || 0,
-      stock: parseInt(stock) || 0,
-      imageUrl,
-      imageId: parseInt(imageId),
-    },
-  });
-  if (!products) {
+  try {
+    const products = await prisma.product.update({
+      where: { id: IntId },
+      data: {
+        name,
+        brandId: parseInt(brandId),
+        itemCode,
+        categoryId: parseInt(categoryId),
+        benefitId: parseInt(benefitId),
+        price: parseFloat(price) || 0,
+        stock: parseInt(stock) || 0,
+        imageUrl,
+        imageId: imageId ? parseInt(imageId) : null,
+      },
+      include: {
+        Brand: true,
+        Category: true,
+        Benefit: true,
+      },
+    });
+
     return NextResponse.json(
       {
-        sucess: true,
-        message: "Product Not Found!",
-        data: null,
+        success: true,
+        message: "Data Product Updated!",
+        data: products,
       },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
       {
-        status: 404,
-      }
+        success: false,
+        message: "Failed to update product.",
+        error: error,
+      },
+      { status: 500 }
     );
   }
-  return NextResponse.json(
-    {
-      sucess: true,
-      message: "Data Product Updated!",
-      data: products,
-    },
-    {
-      status: 200,
-    }
-  );
 }
 
 export async function DELETE(request, { params }) {
   const { id } = params;
   const IntId = parseInt(id);
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: IntId },
+    });
 
-  // Ambil data produk terlebih dahulu
-  const product = await prisma.product.findUnique({
-    where: {
-      id: IntId,
-    },
-  });
+    if (!product) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Product Not Found!",
+          data: null,
+        },
+        { status: 404 }
+      );
+    }
 
-  // Kalau produk tidak ditemukan
-  if (!product) {
+    // Hapus gambar jika ada
+    if (product.imageId) {
+      await prisma.image.delete({
+        where: { id: product.imageId },
+      });
+    }
+
+    // Hapus produk
+    await prisma.product.delete({
+      where: { id: IntId },
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Product and Image Deleted!",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        message: "Product Not Found!",
-        data: null,
+        message: "Failed to delete product.",
+        error: error,
       },
-      {
-        status: 404,
-      }
+      { status: 500 }
     );
   }
-
-  // Hapus gambar jika ada imageId
-  if (product.imageId) {
-    await prisma.image.delete({
-      where: {
-        id: product.imageId,
-      },
-    });
-  }
-
-  // Hapus produk
-  await prisma.product.delete({
-    where: {
-      id: IntId,
-    },
-  });
-
-  return NextResponse.json(
-    {
-      success: true,
-      message: "Product and Image Deleted!",
-    },
-    {
-      status: 200,
-    }
-  );
 }

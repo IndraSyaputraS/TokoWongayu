@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 
 export async function GET() {
+  try{
   const calcs = await prisma.calculationData.findFirst({
     orderBy: {
       id: "desc",
@@ -32,4 +33,16 @@ export async function GET() {
       status: 200,
     }
   );
+}catch (err){
+   return NextResponse.json(
+    {
+      success: false,
+      message: "Failed to fetch",
+      error: err,
+    },
+    {
+      status: 500,
+    }
+  );
+}
 }

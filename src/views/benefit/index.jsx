@@ -1,11 +1,16 @@
 "use client";
-import { HandleError, Modal, Pagination } from "@/components";
+import {
+  HandleError,
+  Modal,
+  Pagination,
+  TableSkeletonLoader,
+} from "@/components";
 import { PencilLine, Plus, Trash, Warning } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
-const Benefit = ({ data }) => {
+const Benefit = ({}) => {
   const [openModal, setOpenModal] = useState(false);
   const [name, setName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,8 +19,29 @@ const Benefit = ({ data }) => {
   const [benefitToDelete, setBenefitToDelete] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
   const router = useRouter();
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    const fetchBenefits = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/benefits`
+        );
+        const result = await res.json();
+        setData(result.data);
+      } catch (err) {
+        console.error("Failed to fetch benefits:", err);
+        toast.error("Failed to load benefits.");
+      } finally {
+        setIsLoading(false); // pastikan loading berhenti baik sukses atau error
+      }
+    };
+
+    fetchBenefits();
+  }, []);
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -105,78 +131,82 @@ const Benefit = ({ data }) => {
   }
   return (
     <>
-      <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-          <div className="flex items-center flex-1 space-x-4">
-            <h5>
-              <span className="text-gray-500">All Benefit: </span>
-              <span className="dark:text-white">{data?.length}</span>
-            </h5>
+      {isLoading ? (
+        <TableSkeletonLoader columns={3} rows={10} />
+      ) : (
+        <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+          <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div className="flex items-center flex-1 space-x-4">
+              <h5>
+                <span className="text-gray-500">All Benefit: </span>
+                <span className="dark:text-white">{data?.length}</span>
+              </h5>
+            </div>
+            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+              <button
+                onClick={handleOpenModal}
+                type="button"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              >
+                <Plus size="24" color="#d9e3f0" />
+                Add
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-            <button
-              onClick={handleOpenModal}
-              type="button"
-              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-            >
-              <Plus size="24" color="#d9e3f0" />
-              Add
-            </button>
-          </div>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="w-[64px] px-4 py-3">
-                  No
-                </th>
-                <th scope="col" className="w-[600px] px-4 py-3">
-                  Benefit
-                </th>
-                <th scope="col" className="text-center px-4 py-3">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedBenefits.map((benefit, index) => (
-                <tr
-                  key={index}
-                  className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <td className="px-4 py-3">{data.indexOf(benefit) + 1}</td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {benefit.name}
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex justify-center gap-2">
-                      <button
-                        className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
-                        onClick={() => handleEdit(benefit)}
-                      >
-                        <PencilLine size={20} weight="thin" />
-                      </button>
-                      <button
-                        onClick={() => handleOpenDeleteModal(benefit.id)}
-                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                      >
-                        <Trash size={20} weight="light" />
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="w-[64px] px-4 py-3">
+                    No
+                  </th>
+                  <th scope="col" className="w-[600px] px-4 py-3">
+                    Benefit
+                  </th>
+                  <th scope="col" className="text-center px-4 py-3">
+                    Action
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
+              </thead>
+              <tbody>
+                {paginatedBenefits.map((benefit, index) => (
+                  <tr
+                    key={index}
+                    className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <td className="px-4 py-3">{data.indexOf(benefit) + 1}</td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {benefit.name}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
+                          onClick={() => handleEdit(benefit)}
+                        >
+                          <PencilLine size={20} weight="thin" />
+                        </button>
+                        <button
+                          onClick={() => handleOpenDeleteModal(benefit.id)}
+                          className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        >
+                          <Trash size={20} weight="light" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </div>
         </div>
-      </div>
+      )}
       {/* Modal Create Update */}
       <Modal
         open={openModal}

@@ -76,6 +76,7 @@
 "use client";
 
 import {
+  BagSimple,
   Calculator,
   ChartBar,
   CirclesFour,
@@ -94,43 +95,48 @@ const Sidebar = () => {
   const navItems = [
     {
       href: "/dashboard",
-      icon: <ChartBar size={24} weight="fill" className="text-gray-500" />,
+      icon: <ChartBar size={24} weight="fill" />,
       label: "Dashboard",
     },
     {
       href: "/brand",
-      icon: <Tag size={24} weight="fill" className="text-gray-500" />,
+      icon: <Tag size={24} weight="fill" />,
       label: "Brand",
     },
     {
       href: "/category",
-      icon: <CirclesFour size={24} weight="fill" className="text-gray-500" />,
+      icon: <CirclesFour size={24} weight="fill" />,
       label: "Category",
     },
     {
       href: "/benefit",
-      icon: <Note size={24} weight="fill" className="text-gray-500" />,
+      icon: <Note size={24} weight="fill" />,
       label: "Benefit",
     },
     {
       href: "/product",
-      icon: <Package size={24} weight="fill" className="text-gray-500" />,
+      icon: <Package size={24} weight="fill" />,
       label: "Product",
     },
     {
       href: "/calculation-data",
-      icon: <HardDrive size={24} weight="fill" className="text-gray-500" />,
+      icon: <HardDrive size={24} weight="fill" />,
       label: "Calculation Data",
     },
     {
       href: "/bundle-category",
-      icon: <Stack size={24} weight="fill" className="text-gray-500" />,
+      icon: <Stack size={24} weight="fill" />,
       label: "Bundle Category",
     },
     {
       href: "/recomendation",
-      icon: <Calculator size={24} weight="fill" className="text-gray-500" />,
+      icon: <Calculator size={24} weight="fill" />,
       label: "Recomendation",
+    },
+    {
+      href: "/bundling-result",
+      icon: <BagSimple size={24} weight="fill" />,
+      label: "Bundling Result",
     },
   ];
 
@@ -155,7 +161,15 @@ const Sidebar = () => {
                         : "text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                     }`}
                 >
-                  {item.icon}
+                  <div
+                    className={`${
+                      isActive
+                        ? "text-white bg-blue-600 dark:bg-gray-700"
+                        : "text-gray-500 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    {item.icon}
+                  </div>
                   <span className="ml-3">{item.label}</span>
                 </Link>
               </li>

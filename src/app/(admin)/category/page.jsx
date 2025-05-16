@@ -1,19 +1,7 @@
 import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { Category } from "@/views";
-async function fetchCategory() {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/categories`
-    );
-    return res.json();
-  } catch (err) {
-    console.error("Failed to fetch ategory:", err);
-  }
-}
-const CategoryPage = async () => {
-  const data = await fetchCategory();
-  const categories = data.data;
-  
+
+const CategoryPage = () => {
   return (
     <>
       <nav className="mb-4 flex" aria-label="Breadcrumb">
@@ -40,7 +28,7 @@ const CategoryPage = async () => {
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
         Category
       </h2>
-      <Category data={categories} />
+      <Category />
     </>
   );
 };

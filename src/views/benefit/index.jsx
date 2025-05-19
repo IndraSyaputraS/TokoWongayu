@@ -24,22 +24,22 @@ const Benefit = ({}) => {
   const router = useRouter();
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchBenefits = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/benefits`
-        );
-        const result = await res.json();
-        setData(result.data);
-      } catch (err) {
-        console.error("Failed to fetch benefits:", err);
-        toast.error("Failed to load benefits.");
-      } finally {
-        setIsLoading(false); // pastikan loading berhenti baik sukses atau error
-      }
-    };
+  const fetchBenefits = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/benefits`
+      );
+      const result = await res.json();
+      setData(result.data);
+    } catch (err) {
+      console.error("Failed to fetch benefits:", err);
+      toast.error("Failed to load benefits.");
+    } finally {
+      setIsLoading(false); // pastikan loading berhenti baik sukses atau error
+    }
+  };
 
+  useEffect(() => {
     fetchBenefits();
   }, []);
 
@@ -76,7 +76,7 @@ const Benefit = ({}) => {
         setOpenModal(false);
         setEditMode(false);
         setSelectedBenefit(null);
-        router.refresh();
+        fetchBenefits();
       } else {
         console.error("Failed to save benefit:", await res.text());
       }
@@ -94,7 +94,7 @@ const Benefit = ({}) => {
       if (res.ok) {
         toast.success("Benefit deleted successfully.");
         setOpenDeleteModal(false);
-        router.refresh();
+        fetchBenefits();
       } else {
         toast.error("Failed to delete benefit.");
       }

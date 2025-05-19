@@ -27,23 +27,27 @@ const Category = () => {
 
   const totalPages = Math.ceil(categories.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedCategories = categories.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedCategories = categories.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/categories`
+      );
+      const result = await res.json();
+      setCategories(result.data);
+    } catch (err) {
+      console.error("Failed to fetch benefits:", err);
+      toast.error("Failed to load benefits.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/categories`
-        );
-        const result = await res.json();
-        setCategories(result.data);
-      } catch (err) {
-        console.error("Failed to fetch benefits:", err);
-        toast.error("Failed to load benefits.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchCategories();
   }, []);
 
@@ -75,7 +79,7 @@ const Category = () => {
         setOpenModal(false);
         setEditMode(false);
         setSelectedCategory(null);
-        router.refresh();
+        fetchCategories();
       } else {
         console.error("Failed to save cateegory:", await res.text());
       }
@@ -94,7 +98,7 @@ const Category = () => {
         setCategoryList((prev) => prev.filter((data) => data.id !== id));
         toast.success("Category deleted successfully.");
         setOpenDeleteModal(false);
-        router.refresh();
+        fetchCategories();
       } else {
         toast.error("Failed to delete category.");
       }
@@ -175,7 +179,9 @@ const Category = () => {
                     key={index}
                     className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
-                    <td className="px-4 py-3">{categories.indexOf(category) + 1}</td>
+                    <td className="px-4 py-3">
+                      {categories.indexOf(category) + 1}
+                    </td>
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {category.name}
                     </td>

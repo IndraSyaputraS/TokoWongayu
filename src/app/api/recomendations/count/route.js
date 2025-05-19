@@ -1,6 +1,24 @@
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
-import crypto from "crypto";
+import Joi from "joi";
+
+const schema = Joi.object({
+  productIds: Joi.array()
+    .items(Joi.number().integer())
+    .min(1)
+    .required()
+    .messages({
+      "array.base": "Product list must be an array",
+      "array.min": "You must select at least one product",
+      "any.required": "Product selection is required",
+    }),
+  budget: Joi.number().positive().required().messages({
+    "number.base": "Budget must be a number",
+    "number.positive": "Silahkan isi budget",
+    "any.required": "Budget is required",
+  }),
+});
+
 // Fungsi untuk menghitung Cosine Similarity
 const cosineSimilarity = (vecA, vecB) => {
   const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
@@ -54,7 +72,6 @@ export async function GET(req) {
     const productIds =
       searchParams.get("productId")?.split(",").map(Number) || [];
     const maxBudget = parseInt(searchParams.get("budget"));
-    const role = searchParams.get("role");
 
     if (productIds.length === 0) {
       return NextResponse.json({ error: "Missing productId" }, { status: 400 });
@@ -184,26 +201,15 @@ export async function GET(req) {
     const rataScore =
       topSimilar.length > 0 ? (totalScore / topSimilar.length).toFixed(3) : 0;
 
-    if (role == 1) {
-      return NextResponse.json({
-        selectedProductIds: productIds,
-        dominantBenefitId: benefitDominantId,
-        recommendedBundle: topSimilar,
-        maxBudget,
-        totalScore: totalScore.toFixed(3),
-        rataScore,
-        bundles: sortedBundles,
-      });
-    } else {
-      return NextResponse.json({
-        selectedProductIds: productIds,
-        dominantBenefitId: benefitDominantId,
-        maxBudget,
-        totalScore: totalScore.toFixed(3),
-        rataScore,
-        bundles: sortedBundles,
-      });
-    }
+    return NextResponse.json({
+      selectedProductIds: productIds,
+      dominantBenefitId: benefitDominantId,
+      recommendedBundle: topSimilar,
+      maxBudget,
+      totalScore: totalScore.toFixed(3),
+      rataScore,
+      bundles: sortedBundles.slice(0, 5),
+    });
   } catch (error) {
     return NextResponse.json(
       {
@@ -217,15 +223,31 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const body = await req.json();
-  const { productIds, budget } = body;
   try {
-    if (!Array.isArray(productIds) || productIds.length === 0 || !budget) {
+    const body = await req.json();
+    const { error, value } = schema.validate(body, { abortEarly: false });
+    if (error) {
+      const errorObject = {};
+      error.details.forEach((detail) => {
+        const field = detail.path[0];
+        if (field === "productIds") {
+          errorObject["product"] = detail.message;
+        } else {
+          errorObject[field] = detail.message;
+        }
+      });
+
       return NextResponse.json(
-        { error: "Missing productIds or budget" },
+        {
+          success: false,
+          message: "Validation failed",
+          errors: errorObject,
+        },
         { status: 400 }
       );
     }
+
+    const { productIds, budget } = value;
 
     const selectedProducts = await prisma.product.findMany({
       where: { id: { in: productIds } },

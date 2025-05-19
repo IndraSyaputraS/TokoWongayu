@@ -20,7 +20,7 @@ const RecomendationCard = ({ bundles = [] }) => {
               <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                 Bundling {index + 1}
               </h5>
-              <ul className="mb-3 space-y-1 text-gray-700 dark:text-gray-300 text-md">
+              <ul className="mb-3 space-y-1 text-gray-900 dark:text-gray-300 text-md">
                 {bundleGroup.bundle.map((product) => (
                   <li key={product.id}>
                     <span className="font-medium">{product.name}</span> <br />
@@ -35,7 +35,7 @@ const RecomendationCard = ({ bundles = [] }) => {
                   </li>
                 ))}
               </ul>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-800 dark:text-gray-400">
                 <p>
                   Total Harga:{" "}
                   <span className="font-semibold">Rp{bundleGroup.total}</span>

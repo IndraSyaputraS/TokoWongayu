@@ -39,9 +39,8 @@ const HeroSection = () => {
         {/* Brand Section */}
         <div className="mx-auto grid max-w-screen-xl grid-cols-2 gap-8 px-2 text-gray-500 dark:text-gray-400 sm:grid-cols-3 sm:gap-12 lg:grid-cols-6">
           {brands.map((brand, index) => (
-            <a
+            <div
               key={index}
-              href="#"
               className="flex items-center justify-center"
             >
               <Image
@@ -51,7 +50,7 @@ const HeroSection = () => {
                 width={200}
                 height={200}
               />
-            </a>
+            </div>
           ))}
         </div>
       </section>

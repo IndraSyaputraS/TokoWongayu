@@ -45,25 +45,29 @@ const CalculationData = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [products, setProducts] = useState([]);
   const [calcs, setCalcs] = useState([]);
+  const [getLast, setGetLast] = useState("");
   const itemsPerPage = 10;
-
-  useEffect(() => {
-    async function loadData() {
-      setIsLoading(true);
-      const [prod, calculation] = await Promise.all([
-        fetchData("products"),
-        fetchData("calculation-data"),
-      ]);
-      setProducts(prod);
-      setCalcs(calculation);
-      setIsLoading(false);
-    }
-    loadData();
-  }, []);
   const totalPages = Math.ceil(calcs.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedCalcs = calcs.slice(startIndex, startIndex + itemsPerPage);
   const router = useRouter();
+
+  const loadData = async () => {
+    setIsLoading(true);
+    const [prod, calculation, last] = await Promise.all([
+      fetchData("products"),
+      fetchData("calculation-data"),
+      fetchData("calculation-data/get-last"),
+    ]);
+    setProducts(prod);
+    setCalcs(calculation);
+    setGetLast(last);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   function handleOpenModal() {
     setOpenModal(true);
@@ -90,13 +94,13 @@ const CalculationData = () => {
     setSelectedFile(file);
   };
   const handleFileUpload = async (e) => {
-    e.preventDefault(); // penting!
+    e.preventDefault();
     if (!selectedFile) {
       toast.error("No file selected.");
       return;
     }
 
-    setIsImporting(true); // start loading
+    setIsImporting(true);
 
     const formData = new FormData();
     formData.append("file", selectedFile);
@@ -111,7 +115,7 @@ const CalculationData = () => {
         toast.success("Data imported successfully");
         setSelectedFile(null);
         handleCloseModal();
-        router.refresh();
+        loadData();
       } else {
         toast.error("Failed to import data.");
       }
@@ -149,7 +153,7 @@ const CalculationData = () => {
         setOpenCreateModal(false);
         setEditMode(false);
         setSelectedCalc(null);
-        router.refresh();
+        loadData();
       } else {
         console.error("Failed to save calculation data:", await res.text());
       }
@@ -189,7 +193,7 @@ const CalculationData = () => {
         setCalcList((prev) => prev.filter((data) => data.id !== calcToDelete));
         toast.success("Calculation Data deleted successfully.");
         setOpenDeleteModal(false);
-        router.refresh();
+        loadData();
       } else {
         toast.error("Failed to delete Calculation Data.");
       }
@@ -317,7 +321,7 @@ const CalculationData = () => {
                   type="text"
                   id="transaction"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="p"
+                  placeholder={getLast}
                   value={form.transaction}
                   onChange={(e) => updateForm("transaction", e.target.value)}
                   required

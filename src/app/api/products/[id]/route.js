@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/libs/prismaClient";
 
 export async function GET(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const IntId = parseInt(id);
   try {
     const products = await prisma.product.findUnique({
@@ -46,7 +46,7 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const IntId = parseInt(id);
   const body = await request.json();
   const {
@@ -102,7 +102,7 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const { id } = params;
+  const { id } = await params;
   const IntId = parseInt(id);
   try {
     const product = await prisma.product.findUnique({

@@ -1,4 +1,4 @@
-import { ProductCard } from "@/components";
+import { BundlingRecCard, ProductCard } from "@/components";
 import { HeroSection } from "@/views";
 
 const HomePage = async () => {
@@ -23,7 +23,8 @@ const HomePage = async () => {
       <div className="flex items-center justify-center md:pt-8">
         <a className="text-4xl font-bold">BUNDLING RECOMENDATION</a>
       </div>
-      <div className="w-full text-center md:pb-8">
+      <BundlingRecCard/>
+      {/* <div className="w-full text-center md:pb-8">
         <a href="/product-menu">
           <button
             type="button"
@@ -32,7 +33,7 @@ const HomePage = async () => {
             Show more
           </button>
         </a>
-      </div>
+      </div> */}
     </>
   );
 };

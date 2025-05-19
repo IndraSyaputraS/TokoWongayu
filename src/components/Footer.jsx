@@ -15,7 +15,7 @@ const Footer = () => {
         <div className="px-10 py-2 w-full">
           <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0 max-w-md">
-              <a href="https://flowbite.com" className="flex items-center">
+              <a className="flex items-center">
                 <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
                   WONGAYU
                 </span>
@@ -30,7 +30,7 @@ const Footer = () => {
           <div className="sm:flex sm:items-center sm:justify-between">
             <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
               © 2022{" "}
-              <a href="/" className="hover:underline">
+              <a href="#" className="hover:underline">
                 Wongayu™
               </a>
               . All Rights Reserved.

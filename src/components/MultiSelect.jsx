@@ -94,7 +94,7 @@ const MultiSelect = ({
         {isOpen && (
           <div
             className={
-              "border-gray-300 dark:border-gray-600 border-[1px] absolute z-10 mt-1.5 w-full bg-gray-50 dark:bg-gray-700 rounded-lg max-h-40 overflow-y-auto space-y-1 shadow-md"
+              "border-gray-300 dark:border-gray-600 border-[1px] absolute z-10 mt-1.5 w-full bg-gray-50 dark:bg-gray-700 rounded-lg max-h-96 overflow-y-auto space-y-1 shadow-md"
             }
           >
             <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">

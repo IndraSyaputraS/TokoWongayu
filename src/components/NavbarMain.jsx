@@ -7,7 +7,6 @@ const navLinks = [
   { name: "Home", href: "/home-page" },
   { name: "Produk", href: "/product-menu" },
   { name: "Rekomendasi", href: "/recomendation-page" },
-  { name: "Brand", href: "/brand" },
 ];
 
 const NavbarMain = () => {

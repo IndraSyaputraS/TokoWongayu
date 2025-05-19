@@ -1,102 +1,17 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { ArrowRight, CaretRight, HouseLine } from "@phosphor-icons/react";
-import { ProductCardRec, SpeedDial } from "@/components";
-import { useCallback } from "react";
+import { Breadcrumb } from "@/components";
+import { RecomendationUser } from "@/views";
 
 const RecomendationUserPage = () => {
-  const [results, setResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [budget, setBudget] = useState("");
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await fetch(`/api/products`);
-        const data = await res.json();
-        setResults(Array.isArray(data) ? data : data.data);
-      } catch (err) {
-        console.error("Gagal mengambil data:", err);
-        setResults([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, []);
-
-  const handleSelect = useCallback(
-    (selectedIds) => {
-      const selected = results
-        .filter((product) => selectedIds.includes(product.id))
-        .map((product) => ({
-          id: product.id,
-          name: product.name,
-        }));
-
-      setSelectedProducts(selected);
-    },
-    [results]
-  );
-
   return (
     <>
-      {/* Breadcrumb */}
-      <nav className="mx-14 my-4 flex" aria-label="Breadcrumb">
-        <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-          <li className="inline-flex items-center">
-            <a
-              href="/home-page"
-              className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white"
-            >
-              <HouseLine size={16} className="mr-1" />
-              Home
-            </a>
-          </li>
-          <li>
-            <div className="flex items-center">
-              <CaretRight size={16} color="#9ca3af" weight="bold" />
-              <span className="ms-1 text-sm font-medium text-gray-700 dark:text-gray-400">
-                Rekomendasi
-              </span>
-            </div>
-          </li>
-        </ol>
-      </nav>
-
-      <div className="grid grid-cols-2">
-        <a className="text-4xl font-bold mx-14 my-4">Pilih Produk</a>
-        <div className="grid grid-cols-2 gap-4 mx-14 my-4">
-          <label className="text-sm font-medium text-gray-900 dark:text-white flex justify-end items-center">
-            Anggaran
-          </label>
-          <input
-            type="number"
-            id="budget"
-            value={budget}
-            placeholder="0"
-            onChange={(e) => {
-              setBudget(e.target.value);
-            }}
-            className="block p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          />
-        </div>
+      <div className="mx-14 my-4 flex">
+        <Breadcrumb
+          root={{ label: "Home", href: "/home-page" }}
+          items={[{ label: "Rekoemndasi", href: "/recomendation-page" }]}
+        />
       </div>
 
-      {/* Product Card */}
-      {!isLoading ? (
-        <div>
-          <ProductCardRec data={results} onSelect={handleSelect} />
-          <SpeedDial selectedProducts={selectedProducts} budget={budget} />
-        </div>
-      ) : (
-        <div className="text-center py-10 text-gray-500 dark:text-gray-400">
-          Memuat data produk...
-        </div>
-      )}
+      <RecomendationUser />
     </>
   );
 };

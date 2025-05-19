@@ -73,7 +73,7 @@ const BundlingResult = () => {
   return (
     <>
       {isLoading ? (
-        <TableSkeletonLoader columns={3} rows={10} />
+        <TableSkeletonLoader columns={7} rows={10} />
       ) : (
         <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-lg sm:rounded-lg">
           <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">

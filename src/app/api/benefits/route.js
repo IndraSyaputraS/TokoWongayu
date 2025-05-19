@@ -39,7 +39,7 @@ const schema = Joi.object({
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { error, result } = schema.validate(body, { abortEarly: false });
+    const { error, value } = schema.validate(body, { abortEarly: false });
 
     if (error) {
       return NextResponse.json(

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
-const Brand = ({}) => {
+const Brand = () => {
   const [name, setName] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,25 +35,20 @@ const Brand = ({}) => {
   //   }
   // }, [data]);
 
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/brands`
-        );
+  const fetchBrands = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/brands`);
+      const result = await res.json();
+      setData(result.data);
+    } catch (err) {
+      console.error("Failed to fetch benefits:", err);
+      toast.error("Failed to load benefits.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        if (!res.ok) {
-          throw new Error(`Failed to fetch brands: ${res.status}`);
-        }
-        const result = await res.json();
-        setData(result.data);
-      } catch (err) {
-        console.error("Failed to fetch benefits:", err);
-        toast.error("Failed to load benefits.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  useEffect(() => {
     fetchBrands();
   }, []);
 
@@ -87,7 +82,7 @@ const Brand = ({}) => {
         setEditMode(false);
         setSelectedBrand(null);
         setError("");
-        router.refresh();
+        fetchBrands();
       } else {
         setError(response.message || "Something went wrong");
       }
@@ -106,7 +101,7 @@ const Brand = ({}) => {
       if (res.ok) {
         toast.success("Brand deleted successfully.");
         setOpenDeleteModal(false);
-        router.refresh();
+        fetchBrands();
       } else {
         toast.error("Failed to delete brand.");
       }

@@ -1,30 +1,16 @@
-import { Filter, ProductCard } from "@/components";
-import { CaretRight, Faders, HouseLine } from "@phosphor-icons/react/dist/ssr";
+import { Breadcrumb, Filter, ProductCard } from "@/components";
+import { Faders } from "@phosphor-icons/react/dist/ssr";
 
 const ProductMenuPage = async () => {
   return (
     <>
-      <nav className="mx-14 my-4 flex" aria-label="Breadcrumb">
-        <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-          <li className="inline-flex items-center">
-            <a
-              href="/home-page"
-              className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white"
-            >
-              <HouseLine size={16} className="mr-1" />
-              Home
-            </a>
-          </li>
-          <li>
-            <div className="flex items-center">
-              <CaretRight size={16} color="#9ca3af" weight="bold" />
-              <a className="ms-1 text-sm font-medium text-gray-700 dark:text-gray-400">
-                Product
-              </a>
-            </div>
-          </li>
-        </ol>
-      </nav>
+      <div className="mx-14 my-4 flex">
+        <Breadcrumb
+          root={{ label: "Home", href: "/home-page" }}
+          items={[{ label: "Produk", href: "/product-menu" }]}
+        />
+      </div>
+
       <div className="grid grid-cols-12 gap-6 px-14">
         {/* Sidebar filter */}
         <div className="col-span-12 md:col-span-2">

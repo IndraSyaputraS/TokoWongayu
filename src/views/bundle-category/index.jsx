@@ -1,5 +1,10 @@
 "use client";
-import { Modal, MultiSelect, Pagination } from "@/components";
+import {
+  Modal,
+  MultiSelect,
+  Pagination,
+  TableSkeletonLoader,
+} from "@/components";
 import { PencilLine, Plus, Trash, Warning } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -36,10 +41,13 @@ const BundleCategory = ({}) => {
 
   const totalPages = Math.ceil(bundleCategories.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedBunCat = bundleCategories.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedBunCat = bundleCategories.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
-  useEffect(() => {
-    async function loadData() {
+  const loadData = async () => {
+    try {
       setLoading(true);
       const [bens, cats, bunds] = await Promise.all([
         fetchData("benefits"),
@@ -49,10 +57,18 @@ const BundleCategory = ({}) => {
       setBenefits(bens);
       setCategories(cats);
       setBundleCategories(bunds);
+    } catch (error) {
+      console.error("Gagal memuat data:", error);
+      // setIsError(true);
+    } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
     loadData();
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -87,7 +103,7 @@ const BundleCategory = ({}) => {
         setEditMode(false);
         setSelectedBundCat(null);
         setSelectedCategory([]);
-        router.refresh();
+        loadData();
       } else {
         console.error("Failed to save Bundle Category:", await res.text());
       }
@@ -105,7 +121,7 @@ const BundleCategory = ({}) => {
       if (res.ok) {
         toast.success("Bundle Category deleted successfully.");
         setOpenDeleteModal(false);
-        router.refresh();
+        loadData();
       } else {
         toast.error("Failed to delete Bundle Category.");
       }
@@ -165,85 +181,93 @@ const BundleCategory = ({}) => {
   };
   return (
     <>
-      <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-lg sm:rounded-lg">
-        <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-          <div className="flex items-center flex-1 space-x-4 justify-between">
-            <h5>
-              <span className="text-gray-500">All Bundle Category: </span>
-              <span className="dark:text-white">{bundleCategories?.length}</span>
-            </h5>
-            <button
-              onClick={handleOpenModal}
-              type="button"
-              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-            >
-              <Plus size="24" color="#d9e3f0" className="mr-1" />
-              Add
-            </button>
+      {loading ? (
+        <TableSkeletonLoader columns={4} rows={10} />
+      ) : (
+        <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-lg sm:rounded-lg">
+          <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div className="flex items-center flex-1 space-x-4 justify-between">
+              <h5>
+                <span className="text-gray-500">All Bundle Category: </span>
+                <span className="dark:text-white">
+                  {bundleCategories?.length}
+                </span>
+              </h5>
+              <button
+                onClick={handleOpenModal}
+                type="button"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              >
+                <Plus size="24" color="#d9e3f0" className="mr-1" />
+                Add
+              </button>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="w-[64px] px-4 py-3">
+                    No
+                  </th>
+                  <th scope="col" className="w-[450px] px-4 py-3">
+                    Perawatan
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Category
+                  </th>
+                  <th scope="col" className="text-center px-4 py-3">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedBunCat.map((bundCat, index) => (
+                  <tr
+                    key={index}
+                    className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <td className="px-4 py-3">
+                      {bundleCategories.indexOf(bundCat) + 1}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {bundCat.Benefit?.name}
+                    </td>
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {bundCat.categories && bundCat.categories.length > 0
+                        ? bundCat.categories
+                            .map((c) => c.Category?.name)
+                            .join(", ")
+                        : "-"}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
+                          onClick={() => handleEdit(bundCat)}
+                        >
+                          <PencilLine size={20} weight="thin" />
+                        </button>
+                        <button
+                          onClick={() => handleOpenDeleteModal(bundCat.id)}
+                          className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        >
+                          <Trash size={20} weight="light" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="w-[64px] px-4 py-3">
-                  No
-                </th>
-                <th scope="col" className="w-[450px] px-4 py-3">
-                  Perawatan
-                </th>
-                <th scope="col" className="px-4 py-3">
-                  Category
-                </th>
-                <th scope="col" className="text-center px-4 py-3">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedBunCat.map((bundCat, index) => (
-                <tr
-                  key={index}
-                  className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <td className="px-4 py-3">{bundleCategories.indexOf(bundCat) + 1}</td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {bundCat.Benefit?.name}
-                  </td>
-                  <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {bundCat.categories && bundCat.categories.length > 0
-                      ? bundCat.categories
-                          .map((c) => c.Category?.name)
-                          .join(", ")
-                      : "-"}
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex justify-center gap-2">
-                      <button
-                        className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700"
-                        onClick={() => handleEdit(bundCat)}
-                      >
-                        <PencilLine size={20} weight="thin" />
-                      </button>
-                      <button
-                        onClick={() => handleOpenDeleteModal(bundCat.id)}
-                        className="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full p-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                      >
-                        <Trash size={20} weight="light" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
-        </div>
-      </div>
+      )}
       {/* Modal Create Edit */}
       <Modal
         open={openModal}

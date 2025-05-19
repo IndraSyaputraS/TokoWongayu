@@ -33,7 +33,10 @@ const Product = ({ data }) => {
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedProducts = products.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // useEffect(() => {
   //   if (Array.isArray(data)) {
@@ -41,21 +44,22 @@ const Product = ({ data }) => {
   //   }
   // }, [data]);
 
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/products`
+      );
+      const result = await res.json();
+      setProducts(result.data);
+    } catch (err) {
+      console.error("Failed to fetch benefits:", err);
+      toast.error("Failed to load benefits.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/products`
-        );
-        const result = await res.json();
-        setProducts(result.data);
-      } catch (err) {
-        console.error("Failed to fetch benefits:", err);
-        toast.error("Failed to load benefits.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchProducts();
   }, []);
 
@@ -121,7 +125,7 @@ const Product = ({ data }) => {
         );
         toast.success("Benefit deleted successfully.");
         setOpenDeleteModal(false);
-        router.refresh();
+        fetchProducts();
       } else {
         toast.error("Failed to delete benefit.");
       }

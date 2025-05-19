@@ -15,3 +15,6 @@ export { default as TableSkeletonLoader } from "./Skeleton";
 export { default as RecomendationCard } from "./RecomendationCard";
 export { default as RecomendationCardUser } from "./RecomendationCardUser";
 export { default as SpeedDial } from "./SpeedDial";
+export { default as Error } from "./Error";
+export { default as Breadcrumb } from "./Breadcrumb";
+export { default as BundlingRecCard } from "./BundlingRecCard";

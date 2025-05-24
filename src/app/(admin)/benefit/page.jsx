@@ -1,7 +1,9 @@
-import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { Benefit } from "@/views";
 import { Breadcrumb } from "@/components";
-const BenefitPage = () => {
+import { requireAuth } from "@/libs/authCheck";
+
+const BenefitPage = async () => {
+  const user = await requireAuth();
   return (
     <>
       <Breadcrumb items={[{ label: "Benefit", href: "/benefit" }]} />

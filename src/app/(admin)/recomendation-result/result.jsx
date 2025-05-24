@@ -25,7 +25,7 @@ const ResultClient = ({ productId, budget }) => {
         );
         const data = await res.json();
 
-        setResults(data.recommendedBundle || []);
+        setResults(data.recommended || []);
         setBundles(data.bundles || []);
         setSelectedProductIds(data.selectedProductIds || []);
       } catch (err) {

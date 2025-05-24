@@ -1,8 +1,9 @@
-import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { Brand } from "@/views";
 import { Breadcrumb } from "@/components";
-import Image from "next/image";
-const BrandPage = () => {
+import { requireAuth } from "@/libs/authCheck";
+
+const BrandPage = async () => {
+  const user = await requireAuth()
   return (
     <>
       <Breadcrumb

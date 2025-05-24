@@ -1,9 +1,11 @@
 import { Breadcrumb } from "@/components";
 import { ProductCreate } from "@/views";
+import { requireAuth } from "@/libs/authCheck";
 
 const ProductEditPage = async ({ params }) => {
   const { id } = await params;
-   return (
+  const user = await requireAuth();
+  return (
     <>
       <Breadcrumb
         items={[
@@ -15,9 +17,7 @@ const ProductEditPage = async ({ params }) => {
         Edit Product
       </h2>
 
-      <ProductCreate
-        productId={id}
-      />
+      <ProductCreate productId={id} />
     </>
   );
 };

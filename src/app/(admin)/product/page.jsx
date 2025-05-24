@@ -1,8 +1,9 @@
-import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { Product } from "@/views";
 import { Breadcrumb } from "@/components";
+import { requireAuth } from "@/libs/authCheck";
 
 const ProductPage = async () => {
+  const user = await requireAuth();
   return (
     <>
       <Breadcrumb items={[{ label: "Product", href: "/product" }]} />

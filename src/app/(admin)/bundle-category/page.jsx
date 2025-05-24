@@ -1,8 +1,9 @@
-import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 import { BundleCategory } from "@/views";
 import { Breadcrumb } from "@/components";
+import { requireAuth } from "@/libs/authCheck";
 
-const BundleCategoryPage = () => {
+const BundleCategoryPage = async () => {
+  const user = await requireAuth()
   return (
     <>
       <Breadcrumb items={[{ label: "Bundle Category", href: "/bundle-category" }]} />

@@ -1,9 +1,9 @@
-// app/product/create/page.jsx
 import { Breadcrumb } from "@/components";
 import { ProductCreate } from "@/views";
-import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
+import { requireAuth } from "@/libs/authCheck";
 
 const ProductCreatePage = async () => {
+  const user = await requireAuth();
   return (
     <>
       <Breadcrumb

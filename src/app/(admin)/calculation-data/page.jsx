@@ -1,8 +1,9 @@
 import { Breadcrumb } from "@/components";
 import { CalculationData } from "@/views";
-import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
+import { requireAuth } from "@/libs/authCheck";
 
-const CalculationDataPage = () => {
+const CalculationDataPage = async () => {
+  const user = await requireAuth()
   return (
     <>
       <Breadcrumb

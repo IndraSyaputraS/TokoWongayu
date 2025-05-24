@@ -1,7 +1,9 @@
 import ResultClient from "./result";
 import { Breadcrumb } from "@/components";
+import { requireAuth } from "@/libs/authCheck";
 
 const ResultPage = async ({ searchParams }) => {
+  const user = await requireAuth();
   const { productId, budget } = await searchParams;
 
   return (

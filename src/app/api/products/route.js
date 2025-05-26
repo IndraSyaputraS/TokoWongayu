@@ -12,7 +12,7 @@ export async function GET() {
         Benefit: true,
       },
       orderBy: {
-        id: "asc",
+        name: "asc",
       },
     });
     return NextResponse.json(
@@ -55,7 +55,6 @@ const schema = Joi.object({
     "number.base": "Price must be a number",
     "any.required": "Price must be filled",
   }),
-  stock: Joi.number().allow("", null),
   categoryId: Joi.number().required().messages({
     "number.base": "Category must be a number",
     "any.required": "Category must be selected",
@@ -70,6 +69,7 @@ const schema = Joi.object({
   imageId: Joi.number().allow("", null).messages({
     "number.base": "Image ID must be a number",
   }),
+  description: Joi.string().allow("", null),
 });
 
 export async function POST(req) {
@@ -112,11 +112,11 @@ export async function POST(req) {
         brandId,
         itemCode,
         price,
-        stock,
         categoryId,
         benefitId,
         imageUrl,
         imageId,
+        description,
       } = value;
 
       const product = await prisma.product.create({
@@ -127,9 +127,9 @@ export async function POST(req) {
           categoryId,
           benefitId,
           price,
-          stock,
           imageUrl: imageUrl || "/assets/noImage.png",
           imageId,
+          description,
         },
       });
 
@@ -166,6 +166,7 @@ export async function POST(req) {
         const namaCategory = row["Category"];
         const namaBenefit = row["Benefit"];
         const price = row["Price"];
+        const description = row["Description"];
 
         const brand = await prisma.brand.findFirst({
           where: { name: namaBrand },
@@ -187,11 +188,11 @@ export async function POST(req) {
             brandId: brand?.id || null,
             itemCode: itemCode,
             price: parseFloat(price) || null,
-            stock: 0,
             categoryId: category?.id || null,
             benefitId: benefit?.id || null,
             imageUrl: "/assets/noImage.png",
             imageId: null,
+            description: description,
           });
         }
       }

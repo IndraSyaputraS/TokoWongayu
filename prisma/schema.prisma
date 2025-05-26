@@ -14,26 +14,23 @@ datasource db {
 }
 
 model Product {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  brandId           Int?                @map("brand_id")
-  Brand             Brand?              @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  itemCode          String              @map("item_code")
-  price             Float?
-  stock             Int?
-  categoryId        Int?                @map("category_id")
-  Category          Category?           @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  benefitId         Int?                @map("benefit_id")
-  Benefit           Benefit?            @relation(fields: [benefitId], references: [id], onDelete: Cascade)
-  imageId           Int?                @map("image_id")
-  imageUrl          String?             @map("image_url")
-  CalculationData   CalculationData[]
-  Ratings           Ratings[]
-  ItemRecomendation ItemRecomendation[]
-  BundlingItem      BundlingItem[]
-  BundleItem        BundleItem[]
-  createdAt         DateTime            @default(now()) @map("created_at")
-  updatedAt         DateTime            @updatedAt @map("updated_at")
+  id              Int               @id @default(autoincrement())
+  name            String
+  brandId         Int?              @map("brand_id")
+  Brand           Brand?            @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  itemCode        String            @map("item_code")
+  price           Float?
+  categoryId      Int?              @map("category_id")
+  Category        Category?         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  benefitId       Int?              @map("benefit_id")
+  Benefit         Benefit?          @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+  imageId         Int?              @map("image_id")
+  imageUrl        String?           @map("image_url")
+  description     String?
+  CalculationData CalculationData[]
+  BundleItem      BundleItem[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
   @@map("product")
 }
@@ -83,29 +80,13 @@ model CalculationData {
   @@map("calculation_data")
 }
 
-model Users {
-  id          Int           @id @default(autoincrement())
-  name        String
-  username    String
-  password    String
-  role        String        @default("user")
-  address     String
-  phone       String
-  Ratings     Ratings[]
-  Transaction Transaction[]
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
-
-  @@map("users")
-}
-
 model BundleCategory {
   id         Int           @id @default(autoincrement())
   benefitId  Int           @map("benefit_id")
   Benefit    Benefit       @relation(fields: [benefitId], references: [id], onDelete: Cascade)
   categories PivotBunCat[] // relasi ke kategori (pivot)
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
 
   @@map("bundle_category")
 }
@@ -125,20 +106,6 @@ model PivotBunCat {
   @@map("pivot_bun_cat")
 }
 
-model Ratings {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  Users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId Int      @map("product_id")
-  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  rating    Int
-  review    String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("ratings")
-}
-
 model Image {
   id        Int      @id @default(autoincrement())
   image     String
@@ -149,74 +116,28 @@ model Image {
   @@map("image")
 }
 
-model ItemRecomendation {
-  id        Int      @id @default(autoincrement())
-  productId Int      @map("product_id")
-  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("item_recomendation")
-}
-
-model BundlingItem {
-  id              Int             @id @default(autoincrement())
-  bundlingPackId  Int             @map("bundling_pack_id")
-  BundlingPackage BundlingPackage @relation(fields: [bundlingPackId], references: [id], onDelete: Cascade)
-  productId       Int             @map("product_id")
-  Product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
-
-  @@map("bundling_item")
-}
-
-model BundlingPackage {
-  id           Int            @id @default(autoincrement())
-  benefit      String
-  price        Float
-  BundlingItem BundlingItem[]
-  Transaction  Transaction[]
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
-
-  @@map("bundling_package")
-}
-
-model Transaction {
-  id              Int             @id @default(autoincrement())
-  userId          Int             @map("user_id")
-  Users           Users           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bundlingPackId  Int             @map("bundling_pack_id")
-  BundlingPackage BundlingPackage @relation(fields: [bundlingPackId], references: [id], onDelete: Cascade)
-  totalPrice      Float           @map("total_price")
-  paymentStatus   String          @map("payment_status")
-  orderNumber     String          @map("order_number")
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
-
-  @@map("transaction")
-}
-
 model SavedBundle {
-  id         Int      @id @default(autoincrement())
-  benefitId  Int @map("benefit_id")
+  id         Int          @id @default(autoincrement())
+  benefitId  Int          @map("benefit_id")
   budget     Float
-  totalScore Float @map("total_score")
-  signature  String   @unique
-  createdAt  DateTime @default(now())
-  totalPrice Float @map("total_price")
-  items BundleItem[]
+  totalScore Float        @map("total_score")
+  signature  String       @unique
+  totalPrice Float        @map("total_price")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  items      BundleItem[]
 
-  benefit   Benefit  @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+  benefit Benefit @relation(fields: [benefitId], references: [id], onDelete: Cascade)
 }
 
 model BundleItem {
-  id        Int   @id @default(autoincrement())
-  bundleId  Int @map("bundle_id")
-  productId Int @map("product_id")
+  id        Int      @id @default(autoincrement())
+  bundleId  Int      @map("bundle_id")
+  productId Int      @map("product_id")
   price     Float
   score     Float
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   bundle  SavedBundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
   product Product     @relation(fields: [productId], references: [id], onDelete: Cascade)

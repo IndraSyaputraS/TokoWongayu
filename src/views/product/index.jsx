@@ -38,12 +38,6 @@ const Product = ({ data }) => {
     startIndex + itemsPerPage
   );
 
-  // useEffect(() => {
-  //   if (Array.isArray(data)) {
-  //     setIsLoading(false);
-  //   }
-  // }, [data]);
-
   const fetchProducts = async () => {
     try {
       const res = await fetch(
@@ -73,6 +67,7 @@ const Product = ({ data }) => {
     const file = e.target.files[0];
     setSelectedFile(file);
   };
+
   const handleFileUpload = async (e) => {
     e.preventDefault(); // penting!
     if (!selectedFile) {
@@ -95,7 +90,7 @@ const Product = ({ data }) => {
         toast.success("Data imported successfully");
         setSelectedFile(null);
         handleCloseModal();
-        router.refresh();
+        fetchProducts();
       } else {
         toast.error("Failed to import data.");
       }
@@ -106,6 +101,7 @@ const Product = ({ data }) => {
       setIsImporting(false); // stop loading
     }
   };
+
   function handleCloseDeleteModal() {
     setOpenDeleteModal(false);
   }
@@ -196,9 +192,9 @@ const Product = ({ data }) => {
                   <th scope="col" className="min-w-24 px-4 py-3">
                     Price
                   </th>
-                  {/* <th scope="col" className="px-4 py-3">
-                  Stock
-                </th> */}
+                  <th scope="col" className="px-4 py-3">
+                    Description
+                  </th>
                   <th scope="col" className="text-center px-4 py-3">
                     Action
                   </th>
@@ -246,9 +242,9 @@ const Product = ({ data }) => {
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {product.price}
                     </td>
-                    {/* <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {product.stock}
-                  </td> */}
+                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {product.description}
+                    </td>
                     <td className="px-3 py-2">
                       <div className="flex justify-center gap-2">
                         <Link href={`/product/edit/${product.id}`}>
@@ -300,7 +296,10 @@ const Product = ({ data }) => {
                   <button
                     type="button"
                     onClick={() => setSelectedFile(null)}
-                    className="ml-2"
+                    className={`ml-2 ${
+                      isImporting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={isImporting}
                   >
                     <XCircle size={28} color="#d42121" weight="thin" />
                   </button>
@@ -346,7 +345,7 @@ const Product = ({ data }) => {
           >
             {isImporting ? (
               <>
-                <Spinner size={16} />
+                <Spinner size={16} className="animate-spin" />
                 Importing...
               </>
             ) : (

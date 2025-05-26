@@ -9,7 +9,7 @@ const SpeedDial = ({ selectedProducts = [], budget }) => {
   const router = useRouter();
   const productIds = selectedProducts.map((p) => p.id);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({});
+  const [errorMessage, setErrorMessage] = useState({}); 
 
   const handleClick = async () => {
     if (selectedProducts.length === 0) {

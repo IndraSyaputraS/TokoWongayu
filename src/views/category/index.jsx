@@ -261,12 +261,12 @@ const Category = () => {
             {editMode ? (
               <>
                 <PencilLine size={20} className="mr-2" />
-                Update Brand
+                Update Category
               </>
             ) : (
               <>
                 <Plus size={20} className="mr-2" />
-                Add New Brand
+                Add New Category
               </>
             )}
           </button>
@@ -281,7 +281,7 @@ const Category = () => {
       >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
-            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-red-600">
+            <div className="mx-auto mb-4 text-red-600 w-12 h-12">
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg text-center font-normal text-gray-500 dark:text-gray-400">

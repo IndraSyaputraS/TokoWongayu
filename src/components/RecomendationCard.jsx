@@ -38,7 +38,13 @@ const RecomendationCard = ({ bundles = [] }) => {
               <div className="text-sm text-gray-800 dark:text-gray-400">
                 <p>
                   Total Harga:{" "}
-                  <span className="font-semibold">Rp{bundleGroup.total}</span>
+                  <span className="font-semibold">Rp{bundleGroup.totalPrice}</span>
+                </p>
+                <p>
+                  Total Score:{" "}
+                  <span className="font-semibold">
+                    {bundleGroup.totalScore.toFixed(3)}
+                  </span>
                 </p>
                 <p>
                   Rata-rata Similarity:{" "}

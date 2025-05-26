@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { parseAuthCookie, verifyJwt } from "@/utils/jwt";
 
-const requireAuth = async () => {
+export async function requireAuth() {
   const headersList = await headers();
   const cookieHeader = headersList.get("cookie") || "";
   const token = parseAuthCookie(cookieHeader);
@@ -13,6 +13,4 @@ const requireAuth = async () => {
   }
 
   return payload; // bisa dikembalikan kalau mau dipakai info user
-};
-
-export default requireAuth;
+}

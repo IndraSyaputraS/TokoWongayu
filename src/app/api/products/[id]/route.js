@@ -46,21 +46,21 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
-  const { id } = await params;
-  const IntId = parseInt(id);
-  const body = await request.json();
-  const {
-    name,
-    brandId,
-    itemCode,
-    price,
-    stock,
-    categoryId,
-    benefitId,
-    imageUrl,
-    imageId,
-  } = body;
   try {
+    const { id } = await params;
+    const IntId = parseInt(id);
+    const body = await request.json();
+    const {
+      name,
+      brandId,
+      itemCode,
+      price,
+      categoryId,
+      benefitId,
+      imageUrl,
+      imageId,
+      description,
+    } = body;
     const products = await prisma.product.update({
       where: { id: IntId },
       data: {
@@ -70,9 +70,9 @@ export async function PUT(request, { params }) {
         categoryId: parseInt(categoryId),
         benefitId: parseInt(benefitId),
         price: parseFloat(price) || 0,
-        stock: parseInt(stock) || 0,
         imageUrl,
         imageId: imageId ? parseInt(imageId) : null,
+        description,
       },
       include: {
         Brand: true,

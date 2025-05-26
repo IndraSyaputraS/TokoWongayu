@@ -30,7 +30,6 @@ const ProductCreate = ({ productId }) => {
     brandId: "",
     itemCode: "",
     price: "",
-    stock: "",
     benefitId: "",
     categoryId: "",
     image: null,
@@ -38,6 +37,7 @@ const ProductCreate = ({ productId }) => {
     uploadedImageUrl: "",
     uploadedImageId: null,
     oldUploadedImageId: "",
+    description: "",
   });
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -50,12 +50,12 @@ const ProductCreate = ({ productId }) => {
         brandId: products.brandId || "",
         itemCode: products.itemCode || "",
         price: products.price || "",
-        stock: products.stock || "",
         benefitId: products.benefitId || "",
         categoryId: products.categoryId || "",
         preview: products.imageUrl || null,
         uploadedImageUrl: products.imageUrl || "",
         uploadedImageId: products.imageId || null,
+        description: products.description || "",
       }));
     }
   }, [products]);
@@ -186,14 +186,15 @@ const ProductCreate = ({ productId }) => {
           name: form.name,
           itemCode: form.itemCode,
           price: form.price ? parseFloat(form.price) : null,
-          stock: form.stock ? parseInt(form.stock) : null,
           brandId: parseInt(form.brandId),
           benefitId: parseInt(form.benefitId),
           categoryId: parseInt(form.categoryId),
           imageId: form.uploadedImageId || null,
           imageUrl: form.uploadedImageUrl,
+          description: form.description,
         }),
       });
+      console.log(res);
 
       let data = {};
       try {
@@ -354,6 +355,19 @@ const ProductCreate = ({ productId }) => {
                 onChange={(e) => updateForm("price", e.target.value)}
               />
               {errors.price && <HandleError error={errors.price} />}
+            </div>
+            <div className="col-span-2">
+              <label htmlFor="message" className="form-label">
+                Description
+              </label>
+              <textarea
+                id="description"
+                rows="4"
+                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Write your thoughts here..."
+                value={form.description}
+                onChange={(e) => updateForm("description", e.target.value)}
+              ></textarea>
             </div>
 
             <div className="sm:col-span-2 flex justify-end mt-auto">

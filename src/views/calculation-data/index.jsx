@@ -376,7 +376,7 @@ const CalculationData = () => {
         open={openModal}
         onClose={handleCloseModal}
         size="sm"
-        title="Create Product"
+        title="Import History Transaction"
       >
         <Modal.Body>
           <form id="import" onSubmit={handleFileUpload}>
@@ -395,7 +395,10 @@ const CalculationData = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedFile(null)}
-                    className="ml-2"
+                    className={`ml-2 ${
+                      isImporting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={isImporting}
                   >
                     <XCircle size={28} color="#d42121" weight="thin" />
                   </button>

@@ -121,7 +121,7 @@ const Sidebar = () => {
     {
       href: "/calculation-data",
       icon: <HardDrive size={24} weight="fill" />,
-      label: "Calculation Data",
+      label: "History Transaction",
     },
     {
       href: "/bundle-category",

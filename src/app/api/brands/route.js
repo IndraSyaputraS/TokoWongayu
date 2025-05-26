@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const brands = await prisma.brand.findMany({
       orderBy: {
-        id: "asc",
+        name: "asc",
       },
     });
 

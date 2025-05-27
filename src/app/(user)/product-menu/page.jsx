@@ -10,14 +10,10 @@ const ProductMenuPage = async () => {
           items={[{ label: "Produk", href: "/product-menu" }]}
         />
       </div>
-{/* 
-      <div className="grid grid-cols-12 gap-6 px-14">
-       
-      </div> */}
-        <div className="px-4">
-          <span className="text-4xl font-bold">Product</span>
-          <ProductCard visibleCount={12} disableAnimation={true} />
-        </div>
+      <div className="px-4">
+        <span className="text-4xl font-bold lg:px-10">Produk</span>
+        <ProductCard visibleCount={12} disableAnimation={true} />
+      </div>
     </>
   );
 };

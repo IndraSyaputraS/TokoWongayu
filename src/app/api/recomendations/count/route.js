@@ -288,10 +288,15 @@ export async function POST(req) {
         });
 
         if (existing) return existing;
+        const benefit = await prisma.benefit.findUnique({
+          where: { id: parseInt(benefitDominantId) },
+        });
 
+        const benefitName = benefit?.name || "Unknown";
         const savedBundle = await prisma.savedBundle.create({
           data: {
             benefitId: parseInt(benefitDominantId),
+            name: `Bundling ${benefitName}`,
             budget,
             totalScore: bundle.avgScore,
             signature,

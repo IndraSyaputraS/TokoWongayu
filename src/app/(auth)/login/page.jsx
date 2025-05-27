@@ -1,11 +1,11 @@
-import { Login } from "@/views"
+import { Login } from "@/views";
 
-const LoginPage = () =>{
-return(
+const LoginPage = () => {
+  return (
     <>
-    <Login/>
+      <Login />
     </>
-)
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;

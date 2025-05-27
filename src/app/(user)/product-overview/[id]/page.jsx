@@ -15,7 +15,7 @@ const ProductOverviewPage = async ({ params }) => {
         />
       </div>
       <div className="px-4 lg:px-14">
-          <span className="text-4xl font-bold">Product Detail</span>
+          <span className="text-4xl font-bold">Detail Produk</span>
       </div>
       <ProductOverview productId={id} />
     </>

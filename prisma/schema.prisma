@@ -119,6 +119,7 @@ model Image {
 model SavedBundle {
   id         Int          @id @default(autoincrement())
   benefitId  Int          @map("benefit_id")
+  name       String
   budget     Float
   totalScore Float        @map("total_score")
   signature  String       @unique

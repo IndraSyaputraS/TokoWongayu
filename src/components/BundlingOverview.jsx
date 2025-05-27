@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 const BundlingOverview = ({ bundlingId }) => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [savedBundle, setSavedBundle] = useState([]);
 
   const fetchBundlingById = async (id) => {
     try {
@@ -34,9 +35,7 @@ const BundlingOverview = ({ bundlingId }) => {
         {isLoading ? (
           <div className="h-10 bg-gray-200 rounded w-2/3 animate-pulse"></div>
         ) : (
-          <p className="text-3xl sm:text-4xl font-bold truncate">
-            {data.signature}
-          </p>
+          <p className="text-3xl sm:text-4xl font-bold truncate">{data.name}</p>
         )}
       </div>
 

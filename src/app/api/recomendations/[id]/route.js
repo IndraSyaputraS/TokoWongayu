@@ -39,6 +39,7 @@ export async function GET(request, { params }) {
     const formatted = {
       id: savedBundle.id,
       benefitId: savedBundle.benefitId,
+      name: savedBundle.name,
       budget: savedBundle.budget,
       totalPrice: savedBundle.totalPrice,
       totalScore: savedBundle.totalScore,

@@ -48,9 +48,9 @@ const ProductCardRec = ({ data, onSelect }) => {
   );
 
   return (
-    <section className="bg-white antialiased dark:bg-gray-900 md:pt-4 px-4 sm:px-6 lg:px-8 mx-auto max-w-[1280px]">
+    <section className="bg-white antialiased dark:bg-gray-900 md:pt-4 px-4 sm:px-6 lg:px-14 mx-auto max-w-full">
       <div className="mx-auto w-full px-0 2xl:px-0">
-        <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mb-4 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading
             ? Array.from({ length: productsPerPage }).map((_, idx) => (
                 <SkeletonCard key={idx} />

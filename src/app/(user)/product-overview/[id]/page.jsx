@@ -5,7 +5,7 @@ const ProductOverviewPage = async ({ params }) => {
   const { id } = await params;
   return (
     <>
-      <div className="mx-14 my-4 flex">
+      <div className="mx-4 my-4 lg:mx-14 flex">
         <Breadcrumb
           root={{ label: "Home", href: "/home-page" }}
           items={[
@@ -14,7 +14,7 @@ const ProductOverviewPage = async ({ params }) => {
           ]}
         />
       </div>
-      <div className="px-14">
+      <div className="px-4 lg:px-14">
           <span className="text-4xl font-bold">Product Detail</span>
       </div>
       <ProductOverview productId={id} />

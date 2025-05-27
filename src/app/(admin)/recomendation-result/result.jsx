@@ -64,8 +64,8 @@ const ResultClient = ({ productId, budget }) => {
 
   return (
     <>
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
+      <div className="grid gap-3 sm:grid-cols-1 md:grid-cols-2">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
           Result
         </h2>
 

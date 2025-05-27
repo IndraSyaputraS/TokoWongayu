@@ -43,7 +43,7 @@ const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
         setCurrentIndex((prev) => (prev + productsPerPage) % data.length);
         setFade(true);
       }, 500);
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [data.length, productsPerPage, disableAnimation]);
@@ -86,10 +86,10 @@ const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
   }
 
   return (
-    <section className="bg-white antialiased dark:bg-gray-900 md:pt-8">
-      <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <section className="bg-white antialiased dark:bg-gray-900 md:pt-4 pt-4">
+      <div className="mx-auto max-w-screen-xl sm:px-6 2xl:px-0">
         <div
-          className={`mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-500 ${
+          className={`mb-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-500 ${
             disableAnimation ? "" : fade ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -100,28 +100,24 @@ const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
             : visibleProducts.map((product, idx) => (
                 <div
                   key={idx}
-                  className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-6 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                  onClick={() => handleOverview(product.id)}
+                  className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-4 shadow-md dark:border-gray-700 dark:bg-gray-800"
                 >
-                  <div className="h-56 w-full px-6">
-                    <a
-                      onClick={() => handleOverview(product.id)}
-                      className="cursor-pointer"
-                    >
-                      <Image
-                        className="mx-auto h-full"
-                        src={product.imageUrl}
-                        alt={product.name}
-                        priority={false}
-                        width={200}
-                        height={200}
-                      />
-                    </a>
+                  <div className="h-52 sm:h-56 w-full px-4 sm:px-6">
+                    <Image
+                      className="mx-auto h-full object-contain"
+                      src={product.imageUrl}
+                      alt={product.name}
+                      priority={false}
+                      width={200}
+                      height={200}
+                    />
                   </div>
                   <hr className="border border-gray-200 dark:border-gray-700" />
-                  <div className="pt-6 w-full bg-white px-6 pb-6 rounded-b-lg">
+                  <div className="pt-4 sm:pt-6 w-full bg-white px-4 sm:px-6 pb-6 rounded-b-lg">
                     <a
                       href="#"
-                      className="block w-full truncate text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
+                      className="block w-full truncate text-base sm:text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
                       title={product.name}
                     >
                       {product.name}
@@ -147,7 +143,7 @@ const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
                       </p>
                     </div>
                     <div className="mt-4 flex items-center justify-between gap-4">
-                      <p className="text-2xl font-extrabold text-gray-900 dark:text-white">
+                      <p className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white">
                         Rp. {formatPriceBase(product.price)}
                       </p>
                     </div>
@@ -156,7 +152,6 @@ const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
               ))}
         </div>
 
-        {/* Tampilkan pagination hanya kalau disableAnimation true */}
         {disableAnimation && totalPages > 1 && (
           <Pagination
             currentPage={currentPage}

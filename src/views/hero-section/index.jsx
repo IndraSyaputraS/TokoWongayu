@@ -14,7 +14,7 @@ const brands = [
 const HeroSection = () => {
   return (
     <>
-      <section className="bg-[#F2F0F1] py-8 antialiased dark:bg-[#547792] md:py-10">
+      <section className="bg-[#F2F0F1] py-8 px-4 antialiased dark:bg-[#547792] md:py-10">
         <div className="mx-auto grid max-w-screen-xl md:grid-cols-12 lg:gap-12 xl:gap-0">
           <div className="content-center justify-self-start md:col-span-7 md:text-start">
             <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight dark:text-white md:max-w-2xl md:text-5xl xl:text-6xl">

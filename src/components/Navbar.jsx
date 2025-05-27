@@ -1,9 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { User, UserCircle } from "@phosphor-icons/react";
+import { List, UserCircle } from "@phosphor-icons/react";
 import { useState, useRef, useEffect } from "react";
 
-const Navbar = () => {
+const Navbar = ({ setSidebarOpen }) => {
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -27,6 +27,13 @@ const Navbar = () => {
     <nav className="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
       <div className="flex flex-wrap justify-between items-center">
         <div className="flex justify-start items-center">
+          <button
+            onClick={() => setSidebarOpen((prev) => !prev)}
+            className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+          >
+            <List size={24} />
+          </button>
+
           <a href="#" className="flex items-center justify-between mr-4">
             <span className="self-center text-2xl font-extrabold whitespace-nowrap leading-tight dark:text-white">
               Wongayu
@@ -46,7 +53,6 @@ const Navbar = () => {
             <UserCircle size={32} />
           </button>
 
-          {/* Dropdown menu */}
           {dropdownOpen && (
             <div
               id="dropdown"

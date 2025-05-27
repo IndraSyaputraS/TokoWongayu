@@ -144,24 +144,20 @@ const Product = ({ data }) => {
                 <span className="dark:text-white">{products?.length}</span>
               </h5>
             </div>
-            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
-              <Link href="/product/create">
-                <button
-                  type="button"
-                  className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-                >
-                  <Plus size="24" color="#d9e3f0" />
-                  Add
-                </button>
+            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center md:space-y-0 md:space-x-3 lg:justify-end">
+              <Link
+                href="/product/create"
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              >
+                <Plus size="24" color="#d9e3f0" className="mr-1" />
+                Add
               </Link>
-            </div>
-            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
               <button
                 type="button"
                 onClick={handleOpenModal}
                 className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
               >
-                <FileArrowDown size="24" />
+                <FileArrowDown size="24" className="mr-1" />
                 Import
               </button>
             </div>
@@ -242,7 +238,7 @@ const Product = ({ data }) => {
                     <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {product.price}
                     </td>
-                    <td className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <td className="px-4 py-2 max-w-xs overflow-hidden whitespace-nowrap text-ellipsis font-medium text-gray-900 dark:text-white">
                       {product.description}
                     </td>
                     <td className="px-3 py-2">
@@ -278,6 +274,7 @@ const Product = ({ data }) => {
         onClose={handleCloseModal}
         size="sm"
         title="Import Product"
+        dismissable={!isImporting}
       >
         <Modal.Body>
           <form id="import" onSubmit={handleFileUpload}>

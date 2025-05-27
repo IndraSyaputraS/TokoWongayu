@@ -6,10 +6,6 @@ import { useRouter } from "next/navigation";
 const renderSkeleton = () => {
   return (
     <div className="w-full mx-auto px-6 py-6 max-w-7xl">
-      <h3 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">
-        Bundling Rekomendasi Produk
-      </h3>
-
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {[...Array(4)].map((_, index) => (
           <div

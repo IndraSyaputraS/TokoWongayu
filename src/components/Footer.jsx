@@ -10,9 +10,9 @@ import {
 const Footer = () => {
   return (
     <>
-      <hr className="border-t border-gray-200 dark:border-gray-700" />
-      <footer className="p-4 bg-[#F0F0F0] sm:p-6 dark:bg-gray-800">
-        <div className="px-10 py-2 w-full">
+      {/* <hr className="border-t border-gray-200 dark:border-gray-700" /> */}
+      <footer className="px-4 py-4 bg-[#F0F0F0] sm:p-6 dark:bg-gray-800">
+        <div className="w-full">
           <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0 max-w-md">
               <a className="flex items-center">

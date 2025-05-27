@@ -13,8 +13,8 @@ const RecomendationCardUser = ({ bundles = [] }) => {
     router.push(`/bundling-overview/${id}`);
   }
   return (
-    <div className="w-full mx-auto px-14 py-6">
-      <h5 className="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+    <div className="w-full mx-auto px-4 lg:px-14">
+      <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
         Bundling Rekomendasi Produk
       </h5>
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">

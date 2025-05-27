@@ -1,7 +1,7 @@
 "use client";
-
+import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, UserCircle } from "@phosphor-icons/react";
+import { ShoppingCart, UserCircle, List, X } from "@phosphor-icons/react";
 
 const navLinks = [
   { name: "Home", href: "/home-page" },
@@ -10,6 +10,7 @@ const navLinks = [
 ];
 
 const NavbarMain = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const linkClass = (href) =>
@@ -20,17 +21,16 @@ const NavbarMain = () => {
     }`;
 
   return (
-    <nav className="bg-white dark:bg-[#213448] fixed w-full shadow-md h-20 z-50">
+    <nav className=" bg-white dark:bg-[#213448] fixed w-full shadow-md h-20 z-50">
       <div className="w-full px-4 md:px-14 mx-auto py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <div className="shrink-0">
-              <a href="/home-page" className="text-2xl font-bold">
-                WONGAYU
-              </a>
-            </div>
+          <div className="flex items-center space-x-4">
+            <a href="/home-page" className="text-2xl font-bold">
+              WONGAYU
+            </a>
 
-            <ul className="hidden lg:flex items-center justify-start gap-6 md:gap-8 py-3 sm:justify-center">
+            {/* Desktop Menu */}
+            <ul className="hidden lg:flex items-center gap-6 py-3">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a href={link.href} className={linkClass(link.href)}>
@@ -41,18 +41,29 @@ const NavbarMain = () => {
             </ul>
           </div>
 
-          <div className="flex items-center lg:space-x-2">
+          <div className="flex items-center space-x-4">
+            {/* Hamburger menu on mobile */}
             <button
-              id="userDropdownButton1"
-              data-dropdown-toggle="userDropdown1"
-              type="button"
-              title="Profile"
-              className="inline-flex items-center rounded-lg justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium leading-none text-gray-900 dark:text-white"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="lg:hidden p-2 text-gray-900 dark:text-white"
             >
-              <UserCircle size={32} weight="bold" />
+              {menuOpen ? <X size={28} /> : <List size={28} />}
             </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <ul className="absolute top-20 left-0 right-0 w-full flex flex-col gap-4 bg-white dark:bg-[#213448] px-6 py-4 shadow-md z-40 lg:hidden">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <a href={link.href} className={linkClass(link.href)}>
+                  {link.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </nav>
   );

@@ -15,7 +15,7 @@ const ProductOverviewPage = async ({ params }) => {
 
   return (
     <>
-      <div className="mx-14 my-4 flex">
+      <div className="mx-4 lg:mx-14 my-4 flex">
         <Breadcrumb
           root={{ label: "Home", href: "/home-page" }}
           items={[

@@ -377,6 +377,7 @@ const CalculationData = () => {
         onClose={handleCloseModal}
         size="sm"
         title="Import History Transaction"
+        dismissable={!isImporting}
       >
         <Modal.Body>
           <form id="import" onSubmit={handleFileUpload}>

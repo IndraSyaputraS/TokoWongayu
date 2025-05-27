@@ -40,10 +40,10 @@ const RecomendationUser = () => {
   );
   return (
     <>
-      <div className="grid grid-cols-2">
-        <a className="text-4xl font-bold mx-14 my-4">Pilih Produk</a>
-        <div className="grid grid-cols-2 gap-4 mx-14 my-4">
-          <label className="text-sm font-medium text-gray-900 dark:text-white flex justify-end items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 mx-4 lg:mx-14">
+        <a className="text-4xl font-bold">Pilih Produk</a>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4 items-center">
+          <label className="text-sm font-medium text-gray-900 dark:text-white text-left lg:text-right">
             Anggaran
           </label>
           <input
@@ -51,10 +51,8 @@ const RecomendationUser = () => {
             id="budget"
             value={budget}
             placeholder="0"
-            onChange={(e) => {
-              setBudget(e.target.value);
-            }}
-            className="block p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            onChange={(e) => setBudget(e.target.value)}
+            className="w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
       </div>
@@ -62,7 +60,7 @@ const RecomendationUser = () => {
       {/* Product Card */}
       <div>
         <ProductCardRec data={results} onSelect={handleSelect} />
-        <SpeedDial selectedProducts={selectedProducts} budget={budget}/>
+        <SpeedDial selectedProducts={selectedProducts} budget={budget} />
       </div>
     </>
   );

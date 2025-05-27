@@ -48,9 +48,9 @@ const ProductCardRec = ({ data, onSelect }) => {
   );
 
   return (
-    <section className="bg-white antialiased dark:bg-gray-900 md:pt-4 mx-24">
-      <div className="mx-auto w-full px-4 2xl:px-0">
-        <div className="mb-4 grid gap-4 sm:grid-cols-3 md:mb-8 lg:grid-cols-3 xl:grid-cols-5">
+    <section className="bg-white antialiased dark:bg-gray-900 md:pt-4 px-4 sm:px-6 lg:px-8 mx-auto max-w-[1280px]">
+      <div className="mx-auto w-full px-0 2xl:px-0">
+        <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading
             ? Array.from({ length: productsPerPage }).map((_, idx) => (
                 <SkeletonCard key={idx} />
@@ -60,20 +60,21 @@ const ProductCardRec = ({ data, onSelect }) => {
                 return (
                   <div
                     key={idx}
-                    className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                    className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg dark:border-gray-700 dark:bg-gray-800 flex flex-col"
                   >
-                    <div className="h-56 w-full px-3 py-3">
+                    <div className="w-full px-3 py-3 h-72 sm:h-64 md:h-72 lg:h-64 xl:h-72 flex justify-center items-center">
                       <Image
-                        className="mx-auto h-full"
+                        className="object-contain"
                         src={product.imageUrl}
                         alt={product.name}
                         priority={false}
                         width={200}
                         height={200}
+                        style={{ height: "100%", width: "auto" }}
                       />
                     </div>
                     <hr className="border border-gray-200 dark:border-gray-700" />
-                    <div className="pt-6 w-full bg-white px-6 pb-6 rounded-b-lg dark:bg-gray-900">
+                    <div className="pt-6 w-full bg-white px-6 pb-6 rounded-b-lg dark:bg-gray-900 flex flex-col flex-grow">
                       <div
                         className="block w-full truncate text-lg font-semibold leading-tight text-gray-900 dark:text-white"
                         title={product.name}
@@ -90,7 +91,7 @@ const ProductCardRec = ({ data, onSelect }) => {
                           </p>
                         </div>
                       </div>
-                      <div className="mt-2 flex items-center justify-between gap-4">
+                      <div className="mt-2 flex items-center justify-between gap-4 flex-grow">
                         <p className="text-sm font-extrabold text-gray-900 dark:text-white">
                           {formatPrice(product.price)}
                         </p>

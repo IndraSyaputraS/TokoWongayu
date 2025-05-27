@@ -225,198 +225,210 @@ const ProductCreate = ({ productId }) => {
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col md:flex-row items-start gap-4"
-      >
-        {/* Form Input Fields */}
-        {isLoading ? (
-          <div className="w-full md:w-3/4 grid gap-4 sm:grid-cols-2 animate-pulse">
-            {[...Array(6)].map((_, idx) => (
-              <div key={idx} className="flex flex-col gap-1">
-                <div className="h-4 w-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
-                <div className="h-10 bg-gray-200 dark:bg-gray-600 rounded-md"></div>
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col lg:flex-row items-start gap-6">
+          <div className="w-full lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {isLoading ? (
+              [...Array(6)].map((_, idx) => (
+                <div key={idx} className="flex flex-col gap-2 animate-pulse">
+                  <div className="h-4 w-24 bg-gray-300 rounded" />
+                  <div className="h-10 bg-gray-200 rounded-md" />
+                </div>
+              ))
+            ) : (
+              <>
+                {/* Name */}
+                <div>
+                  <label htmlFor="name" className="form-label">
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Input Product Name"
+                    className={
+                      !errors.name ? "input-field" : "input-field-error"
+                    }
+                    value={form.name}
+                    onChange={(e) => updateForm("name", e.target.value)}
+                  />
+                  {errors.name && <HandleError error={errors.name} />}
+                </div>
+
+                {/* Item Code */}
+                <div>
+                  <label htmlFor="itemCode" className="form-label">
+                    Item Code
+                  </label>
+                  <input
+                    type="text"
+                    id="itemCode"
+                    className={
+                      !errors.itemCode ? "input-field" : "input-field-error"
+                    }
+                    placeholder="Input Item Code"
+                    value={form.itemCode}
+                    onChange={(e) => updateForm("itemCode", e.target.value)}
+                  />
+                  {errors.itemCode && <HandleError error={errors.itemCode} />}
+                </div>
+
+                {/* Brand */}
+                <div>
+                  <label htmlFor="brand" className="form-label">
+                    Brand
+                  </label>
+                  <select
+                    id="brand"
+                    value={form.brandId}
+                    onChange={(e) => updateForm("brandId", e.target.value)}
+                    className={
+                      !errors.brandId ? "input-field" : "input-field-error"
+                    }
+                  >
+                    <option value="">Select Brand</option>
+                    {brands.map((brand) => (
+                      <option key={brand.id} value={brand.id}>
+                        {brand.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.brandId && <HandleError error={errors.brandId} />}
+                </div>
+
+                {/* Category */}
+                <div>
+                  <label htmlFor="category" className="form-label">
+                    Category
+                  </label>
+                  <select
+                    id="category"
+                    value={form.categoryId}
+                    onChange={(e) => updateForm("categoryId", e.target.value)}
+                    className={
+                      !errors.categoryId ? "input-field" : "input-field-error"
+                    }
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.categoryId && (
+                    <HandleError error={errors.categoryId} />
+                  )}
+                </div>
+
+                {/* Benefit */}
+                <div>
+                  <label htmlFor="benefit" className="form-label">
+                    Benefit
+                  </label>
+                  <select
+                    id="benefit"
+                    value={form.benefitId}
+                    onChange={(e) => updateForm("benefitId", e.target.value)}
+                    className={
+                      !errors.benefitId ? "input-field" : "input-field-error"
+                    }
+                  >
+                    <option value="">Select Benefit</option>
+                    {benefits.map((benefit) => (
+                      <option key={benefit.id} value={benefit.id}>
+                        {benefit.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.benefitId && <HandleError error={errors.benefitId} />}
+                </div>
+
+                {/* Price */}
+                <div>
+                  <label htmlFor="price" className="form-label">
+                    Price
+                  </label>
+                  <input
+                    type="number"
+                    id="price"
+                    className={
+                      !errors.price ? "input-field" : "input-field-error"
+                    }
+                    placeholder="Input Price"
+                    value={form.price}
+                    onChange={(e) => updateForm("price", e.target.value)}
+                  />
+                  {errors.price && <HandleError error={errors.price} />}
+                </div>
+
+                {/* Description */}
+                <div className="sm:col-span-2">
+                  <label htmlFor="description" className="form-label">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    rows="4"
+                    className="input-field"
+                    placeholder="Write your thoughts here..."
+                    value={form.description}
+                    onChange={(e) => updateForm("description", e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Image Upload */}
+          <div className="w-full lg:w-1/4 flex flex-col items-center lg:items-stretch mt-6 lg:mt-0 h-full">
+            <label className="mb-2 text-sm font-medium text-center lg:text-left flex justify-center">
+              Add Image
+            </label>
+            {isLoading ? (
+              <div className="w-32 h-32 bg-gray-300 rounded-lg animate-pulse mx-auto" />
+            ) : form.preview ? (
+              <div className="relative group w-32 h-32 mx-auto">
+                <Image
+                  src={form.preview}
+                  alt="Preview"
+                  className="object-contain rounded-lg border w-full h-full"
+                  width={128}
+                  height={128}
+                />
+                <button
+                  type="button"
+                  onClick={handleDeleteImage}
+                  className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                >
+                  <Trash size={16} />
+                </button>
               </div>
-            ))}
-            <div className="sm:col-span-2 flex justify-end mt-auto">
-              <div className="w-32 h-10 bg-gray-300 dark:bg-gray-600 rounded-md"></div>
-            </div>
+            ) : (
+              <div className="w-32 h-32 bg-gray-100 dark:bg-gray-700 flex items-center justify-center rounded-lg text-gray-400 text-sm relative mx-auto">
+                No image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="w-full md:w-3/4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="name" className="form-label">
-                Product Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                placeholder="Input Product Name"
-                className={!errors.name ? "input-field" : "input-field-error"}
-                value={form.name}
-                onChange={(e) => updateForm("name", e.target.value)}
-              />
-              {errors.name && <HandleError error={errors.name} />}
-            </div>
+        </div>
+        {/* Input Fields */}
 
-            <div>
-              <label htmlFor="itemCode" className="form-label">
-                Item Code
-              </label>
-              <input
-                type="text"
-                id="itemCode"
-                className={
-                  !errors.itemCode ? "input-field" : "input-field-error"
-                }
-                placeholder="Input Item Code"
-                value={form.itemCode}
-                onChange={(e) => updateForm("itemCode", e.target.value)}
-              />
-              {errors.itemCode && <HandleError error={errors.itemCode} />}
-            </div>
-
-            <div>
-              <label htmlFor="brand" className="form-label">
-                Brand
-              </label>
-              <select
-                id="brand"
-                value={form.brandId}
-                onChange={(e) => updateForm("brandId", e.target.value)}
-                className={
-                  !errors.brandId ? "input-field" : "input-field-error"
-                }
-              >
-                <option value="">Select Brand</option>
-                {brands.map((brand) => (
-                  <option key={brand.id} value={brand.id}>
-                    {brand.name}
-                  </option>
-                ))}
-              </select>
-              {errors.brandId && <HandleError error={errors.brandId} />}
-            </div>
-
-            <div>
-              <label htmlFor="category" className="form-label">
-                Category
-              </label>
-              <select
-                id="category"
-                value={form.categoryId}
-                onChange={(e) => updateForm("categoryId", e.target.value)}
-                className={
-                  !errors.categoryId ? "input-field" : "input-field-error"
-                }
-              >
-                <option value="">Select Category</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              {errors.categoryId && <HandleError error={errors.categoryId} />}
-            </div>
-
-            <div>
-              <label htmlFor="benefit" className="form-label">
-                Benefit
-              </label>
-              <select
-                id="benefit"
-                value={form.benefitId}
-                onChange={(e) => updateForm("benefitId", e.target.value)}
-                className={
-                  !errors.benefitId ? "input-field" : "input-field-error"
-                }
-              >
-                <option value="">Select Benefit</option>
-                {benefits.map((benefit) => (
-                  <option key={benefit.id} value={benefit.id}>
-                    {benefit.name}
-                  </option>
-                ))}
-              </select>
-              {errors.benefitId && <HandleError error={errors.benefitId} />}
-            </div>
-
-            <div>
-              <label htmlFor="price" className="form-label">
-                Price
-              </label>
-              <input
-                type="number"
-                id="price"
-                className={!errors.price ? "input-field" : "input-field-error"}
-                placeholder="Input Price"
-                value={form.price}
-                onChange={(e) => updateForm("price", e.target.value)}
-              />
-              {errors.price && <HandleError error={errors.price} />}
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="message" className="form-label">
-                Description
-              </label>
-              <textarea
-                id="description"
-                rows="4"
-                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Write your thoughts here..."
-                value={form.description}
-                onChange={(e) => updateForm("description", e.target.value)}
-              ></textarea>
-            </div>
-
-            <div className="sm:col-span-2 flex justify-end mt-auto">
-              <button
-                type="submit"
-                className="px-5 py-2.5 text-sm font-medium text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900"
-              >
-                {productId ? "Update Product" : "Add Product"}
-              </button>
-            </div>
+        <div className="flex flex-col lg:flex-row items-start mt-4 gap-6">
+          <div className="w-full lg:w-3/4"></div>
+          <div className="lg:w-1/4 flex justify-center w-full">
+            <button
+              type="submit"
+              className="px-5 py-2.5 text-sm font-medium text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900"
+            >
+              {productId ? "Update Product" : "Add Product"}
+            </button>
           </div>
-        )}
-
-        {/* Image Upload */}
-        <div className="md:w-1/4 flex flex-col items-center h-200 mt-4 md:mt-0">
-          <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white text-center">
-            Add Image
-          </label>
-
-          {isLoading ? (
-            <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
-          ) : form.preview ? (
-            <div className="relative group w-32 h-32">
-              <Image
-                src={form.preview}
-                alt="Preview"
-                className="object-contain rounded-lg border border-gray-300 dark:border-gray-600 shadow w-full h-full bg-zinc-50 dark:bg-gray-700"
-                width={128}
-                height={128}
-              />
-              <button
-                type="button"
-                className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
-                onClick={handleDeleteImage}
-              >
-                <Trash size={16} />
-              </button>
-            </div>
-          ) : (
-            <div className="w-32 h-32 bg-gray-100 dark:bg-gray-700 flex items-center justify-center rounded-lg text-gray-400 text-sm relative">
-              No image
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-            </div>
-          )}
         </div>
 
         {/* Styling */}
@@ -432,15 +444,13 @@ const ProductCreate = ({ productId }) => {
           }
 
           .input-field-error {
-            background-color: #f9fafb;
+            background-color: #fef2f2;
             border: 1px solid #f87171;
             color: #111827;
             font-size: 0.875rem;
             border-radius: 0.5rem;
-            padding: 0.5rem;
+            padding: 0.625rem;
             width: 100%;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.5);
           }
 
           .input-field-error::placeholder {

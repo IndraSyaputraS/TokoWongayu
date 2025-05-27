@@ -96,12 +96,8 @@ const ProductOverview = ({ productId }) => {
             <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
 
             {/* Deskripsi */}
-            <p className="mb-4 text-gray-500 dark:text-gray-400">
-              Studio quality three mic array for crystal clear calls and voice
-              recordings...
-            </p>
-            <p className="text-gray-500 dark:text-gray-400">
-              Two Thunderbolt USB 4 ports...
+            <p className="mb-4 text-gray-500 dark:text-gray-400 text-justify">
+              {product.description}
             </p>
           </div>
         </div>

@@ -146,11 +146,13 @@ const Brand = () => {
       ) : (
         <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 rounded-lg sm:rounded-lg">
           <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
-            <div className="flex items-center flex-1 space-x-4 justify-between">
+            <div className="flex items-center flex-1 space-x-4">
               <h5>
                 <span className="text-gray-500">All Brand: </span>
                 <span className="dark:text-white">{data?.length}</span>
               </h5>
+            </div>
+            <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
               <button
                 onClick={handleOpenModal}
                 type="button"

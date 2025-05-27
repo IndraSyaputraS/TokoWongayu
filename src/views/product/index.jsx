@@ -216,7 +216,7 @@ const Product = ({ data }) => {
                             alt={product.name}
                             width={35}
                             height={35}
-                            className="object-cover"
+                            className="w-[35px] h-[35px] object-cover rounded"
                           />
                         ) : (
                           <span className="text-gray-400 text-xs">

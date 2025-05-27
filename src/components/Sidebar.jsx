@@ -72,18 +72,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       <div className="overflow-y-auto py-5 px-3 h-full bg-white dark:bg-gray-800">
         <ul className="space-y-2">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   onClick={() => setSidebarOpen(false)} // close sidebar on mobile
                   className={`flex items-center p-2 text-base font-medium rounded-lg group transition-colors
-                    ${
-                      isActive
-                        ? "text-white bg-blue-600 dark:bg-gray-700"
-                        : "text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                    }`}
+          ${
+            isActive
+              ? "text-white bg-blue-600 dark:bg-gray-700"
+              : "text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+          }`}
                 >
                   <div
                     className={`${

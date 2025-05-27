@@ -91,7 +91,7 @@ const Dashboard = () => {
     { label: "Category", icon: CirclesFour, total: categories.length },
     { label: "Benefit", icon: Note, total: benefits.length },
     { label: "Product", icon: Package, total: products.length },
-    { label: "Calculation Data", icon: HardDrive, total: calcs.length },
+    { label: "History Transaction", icon: HardDrive, total: calcs.length },
     { label: "Bundle Category", icon: Stack, total: bundCats.length },
     { label: "Bundling Result", icon: BagSimple, total: bundRes.length },
   ];

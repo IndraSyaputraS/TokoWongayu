@@ -29,16 +29,26 @@ const cosineSimilarity = (vecA, vecB) => {
     : 0;
 };
 
-function generateFlexibleBundles(candidatesByCategory, maxBudget, minAvgScore) {
+function generateFlexibleBundles(
+  candidatesByCategory,
+  maxBudget,
+  minAvgScore,
+  benefitId
+) {
   const result = [];
   const usedProductIds = new Set();
   const maxBundles = 10;
 
-  // Batasi kandidat tiap kategori hanya top 5 produk berdasarkan score
-  const trimmedCandidates = candidatesByCategory.map((categoryProducts) =>
-    categoryProducts
-      .filter((product) => product.score >= minAvgScore) // hanya yang >= minAvgScore
-      .sort((a, b) => b.score - a.score)
+  // Batasi kandidat tiap kategori hanya top 5 produk berdasarkan score dan filter benefitId
+  const trimmedCandidates = candidatesByCategory.map(
+    (categoryProducts) =>
+      categoryProducts
+        .filter(
+          (product) =>
+            product.score >= minAvgScore && product.benefitId === benefitId
+        ) // filter benefitId juga
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5) // batasi top 5
   );
 
   function backtrack(index, currentBundle, totalPrice) {
@@ -47,7 +57,6 @@ function generateFlexibleBundles(candidatesByCategory, maxBudget, minAvgScore) {
 
     if (index === trimmedCandidates.length) {
       if (currentBundle.length >= 3) {
-        // minimal 3 produk saja
         const avgScore =
           currentBundle.reduce((sum, p) => sum + p.score, 0) /
           currentBundle.length;
@@ -223,13 +232,18 @@ export async function POST(req) {
 
     // Cari produk terdekat berdasarkan similarity
     const averagedSimilarities = Object.values(scoreMap)
-      .map(({ maxScore, data }) => ({
-        id: data.id,
-        name: data.name,
-        category: data.category,
-        price: data.price,
-        score: +maxScore.toFixed(3),
-      }))
+      .map(({ maxScore, data }) => {
+        const productData = products.find((p) => p.id === data.id);
+        return {
+          id: data.id,
+          name: data.name,
+          category: data.category,
+          price: data.price,
+          score: +maxScore.toFixed(3),
+          benefitId: productData?.benefitId,
+          benefitName: productData?.Benefit?.name || null,
+        };
+      })
       .filter(
         (item) =>
           !selectedIndexes.includes(
@@ -257,7 +271,8 @@ export async function POST(req) {
     const allBundles = generateFlexibleBundles(
       candidatesByCategory,
       budget,
-      avgAllScore
+      avgAllScore,
+      parseInt(benefitDominantId)
     );
 
     const sortedBundles = allBundles
@@ -389,6 +404,7 @@ export async function GET(req) {
     const products = await prisma.product.findMany({
       include: {
         Category: { select: { name: true } },
+        Benefit: { select: { name: true } },
       },
     });
 
@@ -470,21 +486,40 @@ export async function GET(req) {
       }
     }
 
+    // const averagedSimilarities = Object.values(scoreMap)
+    //   .map(({ maxScore, data }) => ({
+    //     id: data.id,
+    //     name: data.name,
+    //     category: data.category,
+    //     price: data.price,
+    //     score: +maxScore.toFixed(3),
+    //   }))
+    //   .filter(
+    //     (item) =>
+    //       !selectedIndexes.includes(
+    //         products.findIndex((p) => p.id === item.id)
+    //       ) && item.score > 0
+    //   );
+    // averagedSimilarities.sort((a, b) => b.score - a.score);
     const averagedSimilarities = Object.values(scoreMap)
-      .map(({ maxScore, data }) => ({
-        id: data.id,
-        name: data.name,
-        category: data.category,
-        price: data.price,
-        score: +maxScore.toFixed(3),
-      }))
+      .map(({ maxScore, data }) => {
+        const productData = products.find((p) => p.id === data.id);
+        return {
+          id: data.id,
+          name: data.name,
+          category: data.category,
+          price: data.price,
+          score: +maxScore.toFixed(3),
+          benefitId: productData?.benefitId,
+          benefitName: productData?.Benefit?.name || null,
+        };
+      })
       .filter(
         (item) =>
           !selectedIndexes.includes(
             products.findIndex((p) => p.id === item.id)
           ) && item.score > 0
       );
-
     averagedSimilarities.sort((a, b) => b.score - a.score);
 
     const totalScore = averagedSimilarities.reduce(
@@ -503,10 +538,16 @@ export async function GET(req) {
       averagedSimilarities.filter((item) => item.category === kategori)
     );
 
+    // const allBundles = generateFlexibleBundles(
+    //   candidatesByCategory,
+    //   maxBudget,
+    //   avgAllScore
+    // );
     const allBundles = generateFlexibleBundles(
       candidatesByCategory,
       maxBudget,
-      avgAllScore
+      avgAllScore,
+      parseInt(benefitDominantId)
     );
 
     const sortedBundles = allBundles

@@ -25,7 +25,7 @@ const RecomendationCard = ({ bundles = [] }) => {
                   <li key={product.id}>
                     <span className="font-medium">{product.name}</span> <br />
                     <span className="text-xs">
-                      {product.category} –{" "}
+                      {product.benefitName} -{product.category} –{" "}
                       {product.price !== null
                         ? `Rp${product.price}`
                         : "Harga tidak tersedia"}{" "}

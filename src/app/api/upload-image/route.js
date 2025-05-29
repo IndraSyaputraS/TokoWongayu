@@ -112,14 +112,14 @@ export async function POST(request) {
     )}`;
     const uploadResult = await cloudinary.uploader.upload(base64Webp, {
       public_id: filename.replace(".webp", ""), // tanpa .webp
-      folder: "your_folder_name", // ganti sesuai kebutuhan
+      folder: "wongayu", // ganti sesuai kebutuhan
       format: "webp",
     });
 
     // Simpan ke database
     const newImage = await prisma.image.create({
       data: {
-        image: filename,
+        image: uploadResult.public_id,
         imageUrl: uploadResult.secure_url,
       },
     });

@@ -8,7 +8,7 @@ import Pagination from "./Pagination";
 const ProductCardRec = ({ data, onSelect }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(data.length === 0); // loading true jika data kosong
 
   const productsPerPage = 15;
   const totalPages = Math.ceil(data.length / productsPerPage);
@@ -28,10 +28,11 @@ const ProductCardRec = ({ data, onSelect }) => {
   }, [selectedProducts, onSelect]);
 
   useEffect(() => {
-    // Simulasi loading (hapus kalau tidak diperlukan)
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Jika data berubah dan sudah ada isi, langsung set loading false
+    if (data.length > 0) {
+      setIsLoading(false);
+    }
+  }, [data]);
 
   const SkeletonCard = () => (
     <div className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg dark:border-gray-700 dark:bg-gray-800 animate-pulse">

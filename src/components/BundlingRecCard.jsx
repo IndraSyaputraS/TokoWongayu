@@ -85,25 +85,32 @@ const BundlingRecCard = () => {
   if (bundlings.length === 0)
     return <p className="text-center py-8">No bundlings available.</p>;
 
-  const visibleBundles = [
-    ...bundlings.slice(currentIndex, currentIndex + visibleCount),
-    ...bundlings.slice(
-      0,
-      Math.max(0, currentIndex + visibleCount - bundlings.length)
-    ),
-  ];
-
+  const visibleBundles = Array.from(
+    new Map(
+      [
+        ...bundlings.slice(currentIndex, currentIndex + visibleCount),
+        ...bundlings.slice(
+          0,
+          Math.max(0, currentIndex + visibleCount - bundlings.length)
+        ),
+      ].map((b) => [b.id, b])
+    ).values()
+  );
   return (
     <div className="w-full mx-auto px-6 py-6 max-w-7xl">
       <div
-        className={`grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 transition-opacity duration-500 ${
+        className={`transition-opacity duration-500 ${
           fade ? "opacity-100" : "opacity-0"
+        } ${
+          visibleBundles.length < 4
+            ? "flex flex-wrap justify-center gap-6"
+            : "grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
         }`}
       >
         {visibleBundles.map((bundle, index) => (
           <div
             key={bundle.id}
-            className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between"
+            className="w-[300px] p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between"
           >
             <div>
               <h5 className="mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -114,8 +121,8 @@ const BundlingRecCard = () => {
               </h5>
 
               <ul className="mb-4 space-y-1 text-gray-700 dark:text-gray-300 text-md max-h-40 overflow-auto">
-                {(bundle.items || []).map((product) => (
-                  <li key={product.productId} className="truncate">
+                {(bundle.items || []).map((product, idx) => (
+                  <li key={`${product.id}-${idx}`} className="truncate">
                     <span className="font-medium">{product.name}</span> <br />
                     <span className="text-xs">
                       {product.category || "Kategori tidak tersedia"} –{" "}

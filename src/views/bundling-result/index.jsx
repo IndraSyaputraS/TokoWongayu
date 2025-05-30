@@ -13,13 +13,6 @@ const BundlingResult = () => {
   const [bundling, setBundling] = useState([]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     async function fetchData() {
       try {
         const res = await fetch(

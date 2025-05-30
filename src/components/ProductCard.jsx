@@ -22,31 +22,15 @@ const SkeletonCard = () => (
 );
 
 const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [fade, setFade] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectProduct, setSelectProduct] = useState("");
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fade, setFade] = useState(false); // untuk animasi fade
 
   const router = useRouter();
 
   const productsPerPage = visibleCount || 8;
   const totalPages = Math.ceil(data.length / productsPerPage);
-
-  useEffect(() => {
-    if (disableAnimation) return;
-
-    const interval = setInterval(() => {
-      setFade(false);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + productsPerPage) % data.length);
-        setFade(true);
-      }, 500);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [data.length, productsPerPage, disableAnimation]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -58,88 +42,88 @@ const ProductCard = ({ visibleCount = 0, disableAnimation = false }) => {
         setData(result.data);
       } catch (err) {
         console.error("Failed to fetch products:", err);
-        toast.error("Failed to load products.");
       } finally {
         setLoading(false);
+        setTimeout(() => setFade(true), 50); // aktifkan fade-in
       }
     };
     fetchProducts();
   }, []);
 
-  let visibleProducts = [];
-
-  if (disableAnimation) {
-    const startIndex = (currentPage - 1) * productsPerPage;
-    visibleProducts = data.slice(startIndex, startIndex + productsPerPage);
-  } else {
-    visibleProducts = [
-      ...data.slice(currentIndex, currentIndex + productsPerPage),
-      ...data.slice(
-        0,
-        Math.max(0, currentIndex + productsPerPage - data.length)
-      ),
-    ];
-  }
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const visibleProducts = disableAnimation
+    ? data.slice(startIndex, startIndex + productsPerPage)
+    : data.slice(0, productsPerPage);
 
   function handleOverview(id) {
     router.push(`/product-overview/${id}`);
+  }
+
+  if (loading) {
+    return (
+      <section className="bg-white antialiased dark:bg-gray-900 md:pt-4 pt-4">
+        <div className="mx-auto max-w-screen-xl sm:px-6 2xl:px-0">
+          <div className="mb-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: productsPerPage }).map((_, idx) => (
+              <SkeletonCard key={idx} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
     <section className="bg-white antialiased dark:bg-gray-900 md:pt-4 pt-4">
       <div className="mx-auto max-w-screen-xl sm:px-6 2xl:px-0">
         <div
-          className={`mb-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-500 ${
-            disableAnimation ? "" : fade ? "opacity-100" : "opacity-0"
+          className={`mb-4 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-500 ease-in-out ${
+            fade ? "opacity-100" : "opacity-0"
           }`}
         >
-          {loading
-            ? Array.from({ length: productsPerPage }).map((_, idx) => (
-                <SkeletonCard key={idx} />
-              ))
-            : visibleProducts.map((product, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => handleOverview(product.id)}
-                  className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-4 shadow-md dark:border-gray-700 dark:bg-gray-800"
+          {visibleProducts.map((product, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleOverview(product.id)}
+              className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-4 shadow-md dark:border-gray-700 dark:bg-gray-800 cursor-pointer"
+            >
+              <div className="h-52 sm:h-56 w-full px-4 sm:px-6">
+                <Image
+                  className="mx-auto h-full object-contain"
+                  src={product.imageUrl}
+                  alt={product.name}
+                  priority={false}
+                  width={200}
+                  height={200}
+                />
+              </div>
+              <hr className="border border-gray-200 dark:border-gray-700" />
+              <div className="pt-4 sm:pt-6 w-full bg-white px-4 sm:px-6 pb-6 rounded-b-lg">
+                <a
+                  href="#"
+                  className="block w-full truncate text-base sm:text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
+                  title={product.name}
                 >
-                  <div className="h-52 sm:h-56 w-full px-4 sm:px-6">
-                    <Image
-                      className="mx-auto h-full object-contain"
-                      src={product.imageUrl}
-                      alt={product.name}
-                      priority={false}
-                      width={200}
-                      height={200}
-                    />
-                  </div>
-                  <hr className="border border-gray-200 dark:border-gray-700" />
-                  <div className="pt-4 sm:pt-6 w-full bg-white px-4 sm:px-6 pb-6 rounded-b-lg">
-                    <a
-                      href="#"
-                      className="block w-full truncate text-base sm:text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white"
-                      title={product.name}
-                    >
-                      {product.name}
-                    </a>
-                    <div className="mt-2">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {product.Benefit?.name}
-                      </p>
-                      <div className="mt-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {product.Category?.name}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-4 flex items-center justify-between gap-4">
-                      <p className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white">
-                        Rp. {formatPriceBase(product.price)}
-                      </p>
-                    </div>
+                  {product.name}
+                </a>
+                <div className="mt-2">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {product.Benefit?.name}
+                  </p>
+                  <div className="mt-2">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {product.Category?.name}
+                    </p>
                   </div>
                 </div>
-              ))}
+                <div className="mt-4 flex items-center justify-between gap-4">
+                  <p className="text-xl sm:text-2xl font-extrabold text-gray-900 dark:text-white">
+                    Rp. {formatPriceBase(product.price)}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {disableAnimation && totalPages > 1 && (

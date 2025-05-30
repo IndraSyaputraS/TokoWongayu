@@ -9,7 +9,7 @@ const SpeedDial = ({ selectedProducts = [], budget }) => {
   const router = useRouter();
   const productIds = selectedProducts.map((p) => p.id);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({}); 
+  const [errorMessage, setErrorMessage] = useState({});
 
   const handleClick = async () => {
     if (selectedProducts.length === 0) {
@@ -33,10 +33,8 @@ const SpeedDial = ({ selectedProducts = [], budget }) => {
       const result = await res.json();
 
       if (!res.ok) {
-        // Error dari API response
         if (result.errors) {
           setErrorMessage(result.errors);
-
           Object.entries(result.errors).forEach(([field, msg]) => {
             toast.error(`${msg}`);
           });
@@ -76,7 +74,7 @@ const SpeedDial = ({ selectedProducts = [], budget }) => {
         <button
           type="button"
           onClick={handleClick}
-          className="relative flex items-center bg-blue-700 text-white rounded-full p-3 hover:bg-blue-800 transition-all duration-300 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
+          className="relative flex items-center bg-blue-700 text-white rounded-full p-3 hover:bg-blue-800 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300"
         >
           <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-1 transition-all duration-300">
             Dapatkan Rekomendasi
@@ -86,18 +84,18 @@ const SpeedDial = ({ selectedProducts = [], budget }) => {
           </div>
 
           {selectedProducts.length > 0 && (
-            <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900">
+            <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2">
               {selectedProducts.length}
             </div>
           )}
         </button>
 
         {selectedProducts.length > 0 && (
-          <div className="absolute bottom-16 end-0 hidden group-hover:flex flex-col items-end bg-blue-800 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg p-2 max-w-xs">
+          <div className="absolute bottom-16 end-0 hidden group-hover:flex flex-col items-end bg-blue-800 border border-gray-200 rounded-md shadow-lg p-2 max-w-xs">
             {selectedProducts.map((product, index) => (
               <span
                 key={index}
-                className="text-sm text-white dark:text-gray-200 truncate"
+                className="text-sm text-white truncate"
                 title={product.name}
               >
                 {product.name}

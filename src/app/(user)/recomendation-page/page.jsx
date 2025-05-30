@@ -7,7 +7,7 @@ const RecomendationUserPage = () => {
       <div className="mx-4 lg:mx-14 my-4 flex">
         <Breadcrumb
           root={{ label: "Home", href: "/home-page" }}
-          items={[{ label: "Rekoemndasi", href: "/recomendation-page" }]}
+          items={[{ label: "Rekomendasi", href: "/recomendation-page" }]}
         />
       </div>
 

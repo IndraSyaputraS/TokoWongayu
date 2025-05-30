@@ -5,11 +5,11 @@ import { Toaster } from "react-hot-toast";
 
 const UserLayout = ({ children }) => {
   return (
-    <div className="flex flex-col min-h-screen antialiased bg-white dark:bg-[#213448]">
+    <div className="flex flex-col min-h-screen antialiased bg-white">
       <Toaster position="top-right" />
       <NavbarMain />
       <main className="flex-1 pt-20 pb-8">{children}</main>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

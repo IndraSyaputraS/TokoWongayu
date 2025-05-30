@@ -11,7 +11,7 @@ const ProductMenuPage = async () => {
         />
       </div>
       <div className="px-4">
-        <span className="text-4xl font-bold lg:px-10">Produk</span>
+        <span className="text-4xl text-black font-bold lg:px-10">Produk</span>
         <ProductCard visibleCount={12} disableAnimation={true} />
       </div>
     </>

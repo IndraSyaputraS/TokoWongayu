@@ -35,11 +35,11 @@ const BundlingOverview = ({ bundlingId }) => {
         {isLoading ? (
           <div className="h-10 bg-gray-200 rounded w-2/3 animate-pulse"></div>
         ) : (
-          <p className="text-3xl sm:text-4xl font-bold truncate">{data.name}</p>
+          <p className="text-2xl lg:text-4xl text-gray-900 font-bold truncate">{data.name}</p>
         )}
       </div>
 
-      <section className="py-4 bg-white md:py-8 dark:bg-gray-900 antialiased flex justify-center items-center">
+      <section className="py-4 bg-white md:py-8 antialiased flex justify-center items-center">
         <div className="w-full px-4 mx-4 sm:mx-10 2xl:px-0 grid grid-cols-1 gap-8 md:grid-cols-2">
           {isLoading
             ? Array(4)
@@ -75,23 +75,23 @@ const BundlingOverview = ({ bundlingId }) => {
                     />
                   </div>
                   <div className="mt-4 md:mt-0 md:pl-6 md:text-left w-full">
-                    <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
+                    <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
                       {item.name}
                     </h1>
                     <div className="mt-3 sm:items-center sm:gap-4 sm:flex justify-center md:justify-start">
-                      <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white">
+                      <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
                         {formatPrice(item.price)}
                       </p>
                     </div>
-                    <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
-                    <p className="mb-2 text-gray-500 dark:text-gray-400">
-                      <span className="font-medium text-gray-700 dark:text-white">
+                    <hr className="my-6 md:my-8 border-gray-200" />
+                    <p className="mb-2 text-gray-500">
+                      <span className="font-medium text-gray-700">
                         Benefit:
                       </span>{" "}
                       {item.benefit}
                     </p>
-                    <p className="mb-2 text-gray-500 dark:text-gray-400">
-                      <span className="font-medium text-gray-700 dark:text-white">
+                    <p className="mb-2 text-gray-500">
+                      <span className="font-medium text-gray-700">
                         Category:
                       </span>{" "}
                       {item.category}

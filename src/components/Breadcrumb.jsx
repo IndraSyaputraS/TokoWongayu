@@ -12,7 +12,7 @@ const Breadcrumb = ({
         <li className="inline-flex items-center">
           <Link
             href={root.href}
-            className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white"
+            className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600"
           >
             <HouseLine size={16} className="mr-1" />
             {root.label}
@@ -25,13 +25,13 @@ const Breadcrumb = ({
               {item.href ? (
                 <Link
                   href={item.href}
-                  className="ms-1 text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-400 dark:hover:text-white"
+                  className="ms-1 text-sm font-medium text-gray-700 hover:text-primary-600"
                 >
                   {item.label}
                 </Link>
               ) : (
                 <span
-                  className="ms-1 text-sm font-medium text-gray-700 dark:text-gray-400"
+                  className="ms-1 text-sm font-medium text-gray-700"
                   aria-current="page"
                 >
                   {item.label}

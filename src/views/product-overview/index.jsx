@@ -5,17 +5,17 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const Skeleton = () => (
-  <section className="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased animate-pulse">
+  <section className="py-8 bg-white md:py-16 antialiased animate-pulse">
     <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
       <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
         <div className="shrink-0 max-w-md lg:max-w-lg mx-auto flex justify-center items-center">
-          <div className="w-[200px] h-[200px] bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="w-[200px] h-[200px] bg-gray-300 rounded"></div>
         </div>
 
         <div className="mt-6 sm:mt-8 lg:mt-0 space-y-4">
-          <div className="h-10 w-96 bg-gray-300 dark:bg-gray-700 rounded"></div>
-          <div className="h-8 w-32 bg-gray-300 dark:bg-gray-700 rounded"></div>
-          <div className="h-24 w-full bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="h-10 w-96 bg-gray-300 rounded"></div>
+          <div className="h-8 w-32 bg-gray-300 rounded"></div>
+          <div className="h-24 w-full bg-gray-300 rounded"></div>
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@ const ProductOverview = ({ productId }) => {
   if (!product) return <Skeleton />;
 
   return (
-    <section className="py-8 md:py-16 bg-white dark:bg-gray-900 antialiased max-w-screen-xl mx-auto">
+    <section className="py-8 md:py-16 bg-white antialiased max-w-screen-xl mx-auto">
       <div className="px-4 2xl:px-0">
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center">
           {/* Gambar Produk */}
@@ -69,12 +69,12 @@ const ProductOverview = ({ productId }) => {
 
           {/* Detail Produk */}
           <div className="mt-6 sm:mt-8 lg:mt-0">
-            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
               {product.name}
             </h1>
 
             {/* Brand, Category, Benefit */}
-            <div className="mt-4 text-gray-700 dark:text-gray-300 grid grid-cols-2 gap-x-4 gap-y-2 max-w-xs">
+            <div className="mt-4 text-gray-700 grid grid-cols-2 gap-x-4 gap-y-2 max-w-xs">
               <span className="font-semibold">Brand</span>
               <span>{product.Brand?.name || "-"}</span>
 
@@ -87,16 +87,16 @@ const ProductOverview = ({ productId }) => {
 
             {/* Harga */}
             <div className="mt-6">
-              <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white">
+              <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
                 {formatPrice(product.price)}
               </p>
             </div>
 
             {/* Garis pemisah */}
-            <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
+            <hr className="my-6 md:my-8 border-gray-200" />
 
             {/* Deskripsi */}
-            <p className="mb-4 text-gray-500 dark:text-gray-400 text-justify">
+            <p className="mb-4 text-gray-500 text-justify">
               {product.description}
             </p>
           </div>

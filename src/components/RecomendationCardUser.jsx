@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+
 const RecomendationCardUser = ({ bundles = [] }) => {
   if (bundles.length === 0) {
     return null;
@@ -14,20 +15,20 @@ const RecomendationCardUser = ({ bundles = [] }) => {
   }
   return (
     <div className="w-full mx-auto px-4 lg:px-14">
-      <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <h5 className="mb-4 text-2xl font-bold tracking-tight text-black">
         Bundling Rekomendasi Produk
       </h5>
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {bundles.map((bundleGroup, index) => (
           <div
             key={index}
-            className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between"
+            className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col justify-between"
           >
             <div>
-              <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900">
                 Bundling {index + 1}
               </h5>
-              <ul className="mb-3 space-y-1 text-gray-700 dark:text-gray-300 text-md">
+              <ul className="mb-3 space-y-1 text-gray-700 text-md">
                 {bundleGroup.bundle.map((product) => (
                   <li key={product.id}>
                     <span className="font-medium">{product.name}</span> <br />
@@ -40,7 +41,7 @@ const RecomendationCardUser = ({ bundles = [] }) => {
                   </li>
                 ))}
               </ul>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-600">
                 <p>
                   Total Harga:{" "}
                   <span className="font-semibold">Rp{bundleGroup.total}</span>
@@ -50,7 +51,7 @@ const RecomendationCardUser = ({ bundles = [] }) => {
             <div>
               <button
                 onClick={() => handleOverview(bundleGroup.bundleId)}
-                className="mt-4 inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="mt-4 inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
               >
                 Lihat Detail
               </button>

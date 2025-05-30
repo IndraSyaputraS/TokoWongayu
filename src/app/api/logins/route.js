@@ -34,7 +34,7 @@ export async function POST(request) {
     const { username, password } = body;
 
     // Simulated user database
-    const hashedPassword = await hash("admin", 10);
+    const hashedPassword = await hash("decatise", 10);
     const mockUsers = [
       { id: "1", username: "admin", password: hashedPassword, role: "admin" },
     ];

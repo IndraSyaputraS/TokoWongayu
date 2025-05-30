@@ -52,24 +52,24 @@ const ProductOverview = ({ productId }) => {
   if (!product) return <Skeleton />;
 
   return (
-    <section className="py-8 md:py-16 bg-white antialiased max-w-screen-xl mx-auto">
+    <section className="py-4 md:py-8 bg-white antialiased max-w-screen-xl mx-auto">
       <div className="px-4 2xl:px-0">
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center">
           {/* Gambar Produk */}
-          <div className="shrink-0 max-w-md lg:max-w-lg mx-auto flex justify-center items-center">
+          <div className="shrink-0 max-w-xs md:max-w-md lg:max-w-lg mx-auto flex justify-center items-center">
             <Image
               src={product.imageUrl}
               alt={product.name}
               priority={false}
-              width={200}
-              height={200}
+              width={150}
+              height={150}
               className="object-contain"
             />
           </div>
 
           {/* Detail Produk */}
           <div className="mt-6 sm:mt-8 lg:mt-0">
-            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
+            <h1 className="text-lg md:text-xl font-semibold text-gray-900 sm:text-2xl">
               {product.name}
             </h1>
 
@@ -87,7 +87,7 @@ const ProductOverview = ({ productId }) => {
 
             {/* Harga */}
             <div className="mt-6">
-              <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
+              <p className="text-xl md:text-2xl font-extrabold text-gray-900 sm:text-3xl">
                 {formatPrice(product.price)}
               </p>
             </div>

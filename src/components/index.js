@@ -20,3 +20,4 @@ export { default as Error } from "./Error";
 export { default as Breadcrumb } from "./Breadcrumb";
 export { default as BundlingRecCard } from "./BundlingRecCard";
 export { default as Loader } from "./Loader";
+export { default as ProductCardAnimated } from "./ProductCardAnimated";

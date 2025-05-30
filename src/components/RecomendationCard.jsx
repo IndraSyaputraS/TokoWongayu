@@ -10,7 +10,7 @@ const RecomendationCard = ({ bundles = [] }) => {
       <h5 className="mb-6 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
         Bundling Rekomendasi Produk
       </h5>
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {bundles.map((bundleGroup, index) => (
           <div
             key={index}
@@ -38,7 +38,9 @@ const RecomendationCard = ({ bundles = [] }) => {
               <div className="text-sm text-gray-800 dark:text-gray-400">
                 <p>
                   Total Harga:{" "}
-                  <span className="font-semibold">Rp{bundleGroup.totalPrice}</span>
+                  <span className="font-semibold">
+                    Rp{bundleGroup.totalPrice}
+                  </span>
                 </p>
                 <p>
                   Total Score:{" "}

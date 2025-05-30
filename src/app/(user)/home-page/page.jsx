@@ -1,4 +1,7 @@
-import { BundlingRecCard, ProductCard } from "@/components";
+import {
+  BundlingRecCard,
+  ProductCardAnimated,
+} from "@/components";
 import { HeroSection } from "@/views";
 
 const HomePage = async () => {
@@ -9,7 +12,7 @@ const HomePage = async () => {
         <a className="text-4xl text-black font-bold my-4">NEW ARRIVALS</a>
       </div>
       <div className="px-4">
-        <ProductCard visibleCount={4} />
+        <ProductCardAnimated visibleCount={4} />
       </div>
       <div className="w-full text-center md:pb-4 pb-4">
         <a href="/product-menu">

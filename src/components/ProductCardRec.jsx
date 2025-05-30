@@ -35,7 +35,7 @@ const ProductCardRec = ({ data, onSelect }) => {
 
   const SkeletonCard = () => (
     <div className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg animate-pulse">
-      <div className="h-56 w-full px-3 py-3 bg-gray-200 rounded"></div>
+      <div className="h-40 w-full px-3 py-3 bg-gray-200 rounded"></div>
       <hr className="border border-gray-200" />
       <div className="pt-6 w-full bg-white px-6 pb-6 rounded-b-lg">
         <div className="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
@@ -50,7 +50,7 @@ const ProductCardRec = ({ data, onSelect }) => {
   return (
     <section className="bg-white antialiased md:pt-4 px-4 sm:px-6 lg:px-14 mx-auto max-w-full">
       <div className="mx-auto w-full px-0 2xl:px-0">
-        <div className="mb-4 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mb-4 grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {isLoading
             ? Array.from({ length: productsPerPage }).map((_, idx) => (
                 <SkeletonCard key={idx} />
@@ -62,15 +62,15 @@ const ProductCardRec = ({ data, onSelect }) => {
                     key={idx}
                     className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg flex flex-col"
                   >
-                    <div className="w-full px-3 py-3 h-72 sm:h-64 md:h-72 lg:h-64 xl:h-72 flex justify-center items-center">
+                    <div className="w-full px-3 py-3 h-40 sm:h-64 md:h-72 lg:h-64 xl:h-72 flex justify-center items-center">
                       <Image
                         className="object-contain"
                         src={product.imageUrl}
                         alt={product.name}
                         priority={false}
-                        width={200}
-                        height={200}
-                        style={{ height: "100%", width: "auto" }}
+                        width={150}
+                        height={150}
+                        // style={{ height: "100%", width: "auto" }}
                       />
                     </div>
                     <hr className="border border-gray-200" />

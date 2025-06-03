@@ -39,7 +39,7 @@ function generateFlexibleBundles(
   const usedProductIds = new Set();
   const maxBundles = 10;
 
-  // Batasi kandidat tiap kategori hanya top 5 produk berdasarkan score dan filter benefitId
+  // Batasi kandidat tiap kategori produk berdasarkan score dan filter benefitId
   const trimmedCandidates = candidatesByCategory.map(
     (categoryProducts) =>
       categoryProducts
@@ -48,7 +48,6 @@ function generateFlexibleBundles(
             product.score >= minAvgScore && product.benefitId === benefitId
         ) // filter benefitId juga
         .sort((a, b) => b.score - a.score)
-        .slice(0, 5) // batasi top 5
   );
 
   function backtrack(index, currentBundle, totalPrice) {

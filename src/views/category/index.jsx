@@ -218,7 +218,7 @@ const Category = () => {
         open={openModal}
         onClose={handleCloseModal}
         size="sm"
-        title={editMode ? "Update Category" : "Create Category"}
+        title={editMode ? "Edit Category" : "Add Category"}
       >
         <Modal.Body>
           <form
@@ -261,7 +261,7 @@ const Category = () => {
             {editMode ? (
               <>
                 <PencilLine size={20} className="mr-2" />
-                Update Category
+                Edit Category
               </>
             ) : (
               <>

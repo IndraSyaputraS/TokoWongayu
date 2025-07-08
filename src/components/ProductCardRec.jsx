@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { formatPrice } from "@/utils/formatPrice";
+import { formatPrice, formatPriceBase } from "@/utils/formatPrice";
 import PaginationUser from "./PaginationUser";
 
 const ProductCardRec = ({ data, onSelect }) => {
@@ -35,7 +35,7 @@ const ProductCardRec = ({ data, onSelect }) => {
 
   const SkeletonCard = () => (
     <div className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg animate-pulse">
-      <div className="h-40 w-full px-3 py-3 bg-gray-200 rounded"></div>
+      <div className="h-[80px] w-full px-3 py-3 bg-gray-200 rounded"></div>
       <hr className="border border-gray-200" />
       <div className="pt-6 w-full bg-white px-6 pb-6 rounded-b-lg">
         <div className="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
@@ -62,38 +62,38 @@ const ProductCardRec = ({ data, onSelect }) => {
                     key={idx}
                     className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg flex flex-col"
                   >
-                    <div className="w-full px-3 py-3 h-40 sm:h-64 md:h-72 lg:h-64 xl:h-72 flex justify-center items-center">
+                    <div className="h-26 w-full px-4 md:h-52 py-2">
                       <Image
-                        className="object-contain"
+                        className="mx-auto md:h-full h-[80px] object-contain"
                         src={product.imageUrl}
                         alt={product.name}
                         priority={false}
-                        width={150}
-                        height={150}
-                        // style={{ height: "100%", width: "auto" }}
+                        width={200}
+                        height={200}
                       />
                     </div>
                     <hr className="border border-gray-200" />
-                    <div className="pt-6 w-full bg-white px-6 pb-6 rounded-b-lg flex flex-col flex-grow">
+                    <div className="pt-3 sm:pt-6 w-full bg-white px-3 sm:px-6 pb-3 rounded-b-lg">
                       <div
-                        className="block w-full truncate text-lg font-semibold leading-tight text-gray-900"
+                        href="#"
+                        className="block w-full truncate text-sm sm:text-base font-semibold leading-tight text-gray-900 hover:underline"
                         title={product.name}
                       >
                         {product.name}
                       </div>
-                      <div className="mt-2">
-                        <p className="text-sm font-medium text-gray-900">
-                          {product.Benefit?.name}
+                      <div className="mt-1 sm:mt-2">
+                        <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
+                          {product.Benefit?.name ? product.Benefit?.name : `-`}
                         </p>
-                        <div className="mt-2">
-                          <p className="text-sm font-medium text-gray-900">
-                            {product.Category?.name}
+                        <div className="mt-1 sm:mt-2">
+                          <p className="text-xs sm:text-sm font-medium text-gray-900">
+                            {product.Category?.name ? product.Category.name : `-`}
                           </p>
                         </div>
                       </div>
-                      <div className="mt-2 flex items-center justify-between gap-4 flex-grow">
-                        <p className="text-sm font-extrabold text-gray-900">
-                          {formatPrice(product.price)}
+                      <div className="mt-3 flex items-center justify-between gap-3">
+                        <p className="text-lg sm:text-xl font-extrabold text-gray-900">
+                          Rp. {formatPriceBase(product.price) ? formatPriceBase(product.price) : `-`}
                         </p>
                       </div>
                       <button

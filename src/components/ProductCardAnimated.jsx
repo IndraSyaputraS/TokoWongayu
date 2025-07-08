@@ -6,8 +6,8 @@ import { formatPriceBase } from "@/utils/formatPrice";
 import { useRouter } from "next/navigation";
 
 const SkeletonCard = () => (
-  <div className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-6 shadow-lg animate-pulse">
-    <div className="h-56 w-full bg-gray-300 px-6" />
+  <div className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg animate-pulse">
+    <div className="h-[80px] md:h-52 w-full bg-gray-300 px-4" />
     <hr className="border border-gray-200" />
     <div className="pt-6 w-full bg-white px-6 pb-6 rounded-b-lg">
       <div className="h-6 bg-gray-300 rounded w-3/4 mb-2" />
@@ -24,11 +24,11 @@ const ProductCard = ({ product, onClick }) => (
   <div
     key={product.id}
     onClick={() => onClick(product.id)}
-    className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-4 shadow-md cursor-pointer"
+    className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-md cursor-pointer"
   >
-    <div className="h-52 sm:h-56 w-full px-4 sm:px-6">
+    <div className="h-26 w-full px-4 md:h-52 py-2">
       <Image
-        className="mx-auto h-full object-contain"
+        className="mx-auto md:h-full h-[80px] object-contain"
         src={product.imageUrl || "/placeholder.png"}
         alt={product.name || "Product Image"}
         priority={false}
@@ -37,23 +37,26 @@ const ProductCard = ({ product, onClick }) => (
       />
     </div>
     <hr className="border border-gray-200" />
-    <div className="pt-4 sm:pt-6 w-full bg-white px-4 sm:px-6 pb-6 rounded-b-lg">
-      <p
-        className="block w-full truncate text-base sm:text-lg font-semibold leading-tight text-gray-900 hover:underline"
+    <div className="pt-3 sm:pt-6 w-full bg-white px-3 sm:px-6 pb-3 rounded-b-lg">
+      <a
+        href="#"
+        className="block w-full truncate text-sm sm:text-base font-semibold leading-tight text-gray-900 hover:underline"
         title={product.name}
       >
         {product.name}
-      </p>
-      <div className="mt-2">
-        <p className="text-sm font-medium text-gray-900">
-          {product.Benefit?.name || "-"}
+      </a>
+      <div className="mt-1 sm:mt-2">
+        <p className="text-xs sm:text-sm font-medium text-gray-900">
+          {product.Benefit?.name}
         </p>
-        <p className="text-sm font-medium text-gray-900 mt-1">
-          {product.Category?.name || "-"}
-        </p>
+        <div className="mt-1 sm:mt-2">
+          <p className="text-xs sm:text-sm font-medium text-gray-900">
+            {product.Category?.name}
+          </p>
+        </div>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-4">
-        <p className="text-xl sm:text-2xl font-extrabold text-gray-900">
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <p className="text-lg sm:text-xl font-extrabold text-gray-900">
           Rp. {formatPriceBase(product.price)}
         </p>
       </div>
@@ -118,7 +121,7 @@ const ProductCardAnimated = () => {
   );
 
   return (
-    <section className="bg-white antialiased pt-4 md:pt-4">
+    <section className="bg-white antialiased">
       <div className="mx-auto max-w-screen-xl sm:px-6 2xl:px-0">
         <div
           className={`mb-4 grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-500 ease-in-out ${

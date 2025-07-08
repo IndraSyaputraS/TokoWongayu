@@ -8,11 +8,11 @@ const CalculationDataPage = async () => {
     <>
       <Breadcrumb
         items={[
-          { label: "Calculation Data", href: "/calculation-data" },
+          { label: "History Transaction", href: "/calculation-data" },
         ]}
       />
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
-        Calculation Data
+        History Transaction
       </h2>
       <CalculationData />
       {/* <CalculationData data={calcs} products={products} getTransaction={getLast}/> */}

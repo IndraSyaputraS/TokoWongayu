@@ -211,7 +211,7 @@ const CalculationData = () => {
           <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
             <div className="flex items-center flex-1 space-x-4">
               <h5>
-                <span className="text-gray-500">All Calculation Data: </span>
+                <span className="text-gray-500">All History Transaction: </span>
                 <span className="dark:text-white">{calcs?.length}</span>
               </h5>
             </div>
@@ -301,7 +301,7 @@ const CalculationData = () => {
         open={openCreateModal}
         onClose={handleCloseCreateModal}
         size="sm"
-        title={editMode ? "Update Calculation Data" : "Create Calculation Data"}
+        title={editMode ? "Edit History Transaction" : "Add History Transaction"}
       >
         <Modal.Body>
           <form
@@ -360,12 +360,12 @@ const CalculationData = () => {
             {editMode ? (
               <>
                 <PencilLine size={20} className="mr-2" />
-                Update Calculation
+                Edit Transaction
               </>
             ) : (
               <>
                 <Plus size={20} className="mr-2" />
-                Add New Calculation
+                Add New Transaction
               </>
             )}
           </button>
@@ -460,16 +460,16 @@ const CalculationData = () => {
       <Modal
         open={openDeleteModal}
         onClose={handleCloseModal}
-        size="sm"
+        size="md"
         placement="center"
       >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
-            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-red-600">
+            <div className="mx-auto mb-4 text-red-600 w-12 h-12 dark:text-red-600">
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg font-normal text-center text-gray-500 dark:text-gray-400">
-              Are you sure you want to delete this Calculation Data?
+              Are you sure you want to delete this History Transaction?
             </h3>
             <div className="flex ">
               <button

@@ -1,6 +1,5 @@
 import { Breadcrumb } from "@/components";
 import BundlingOverview from "@/components/BundlingOverview";
-import { CaretRight, HouseLine } from "@phosphor-icons/react/dist/ssr";
 
 const ProductOverviewPage = async ({ params }) => {
   const { id } = await params;
@@ -15,7 +14,7 @@ const ProductOverviewPage = async ({ params }) => {
 
   return (
     <>
-      <div className="mx-4 lg:mx-14 my-4 flex">
+      <div className="mx-4 lg:mx-14 mt-4 flex">
         <Breadcrumb
           root={{ label: "Home", href: "/home-page" }}
           items={[

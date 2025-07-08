@@ -41,9 +41,9 @@ const RecomendationUser = () => {
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 mx-4 lg:mx-14">
-        <a className="text-4xl text-black font-bold">Pilih Produk</a>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4 items-center">
-          <label className="text-sm font-medium text-gray-900  text-left lg:text-right">
+        <a className="text-2xl md:text-4xl text-black font-bold">Pilih Produk</a>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-4 my-4 items-center">
+          <label className="text-sm font-medium text-gray-900 text-left lg:text-right">
             Anggaran
           </label>
           <input

@@ -221,7 +221,7 @@ const Brand = () => {
         open={openModal}
         onClose={handleCloseModal}
         size="sm"
-        title={editMode ? "Update Brand" : "Create Brand"}
+        title={editMode ? "Edit Brand" : "Add Brand"}
       >
         <Modal.Body>
           <form
@@ -264,7 +264,7 @@ const Brand = () => {
             {editMode ? (
               <>
                 <PencilLine size={20} className="mr-2" />
-                Update Brand
+                Edit Brand
               </>
             ) : (
               <>

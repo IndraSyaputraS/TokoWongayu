@@ -95,7 +95,7 @@ const BundlingRecCard = () => {
   );
 
   return (
-    <div className="w-full mx-auto px-4 py-6 max-w-7xl">
+    <div className="w-full mx-auto px-4 py-2 max-w-7xl">
       <div
         className={`transition-opacity duration-500 ${
           fade ? "opacity-100" : "opacity-0"
@@ -108,15 +108,15 @@ const BundlingRecCard = () => {
         {visibleBundles.map((bundle) => (
           <div
             key={bundle.id}
-            className="w-full sm:w-full md:w-auto p-6 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col justify-between"
+            className="w-full sm:w-full md:w-auto p-4 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col justify-between"
           >
             <div>
-              <h5 className="mb-1 text-xl font-bold tracking-tight text-gray-900">
-                Bundling
+              <h5 className="mb-1 text-lg md:text-xl font-bold tracking-tight text-gray-900">
+                Bundling {bundle.benefitName}
               </h5>
-              <h5 className="mb-3 text-xl font-bold tracking-tight text-gray-900">
+              {/* <h5 className="mb-3 text-lg md:text-xl font-bold tracking-tight text-gray-900">
                 {bundle.benefitName}
-              </h5>
+              </h5> */}
 
               <ul className="mb-4 space-y-1 text-gray-700 text-md max-h-40 overflow-auto">
                 {(bundle.items || []).map((product, idx) => (
@@ -124,7 +124,7 @@ const BundlingRecCard = () => {
                     key={`${product.id}-${idx}`}
                     className="whitespace-normal break-words"
                   >
-                    <span className="font-medium">{product.name}</span> <br />
+                    <span className="text-sm md:font-medium">{product.name}</span> <br />
                     <span className="text-xs">
                       {product.category || "Kategori tidak tersedia"} –{" "}
                       {product.price !== null && product.price !== undefined
@@ -135,7 +135,7 @@ const BundlingRecCard = () => {
                 ))}
               </ul>
 
-              <div className="text-sm text-gray-600">
+              <div className="text-xs md:text-sm text-gray-600">
                 <p>
                   Total Harga:{" "}
                   <span className="font-semibold">
@@ -151,7 +151,7 @@ const BundlingRecCard = () => {
             <div>
               <button
                 onClick={() => handleOverview(bundle.id)}
-                className="mt-4 w-full inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+                className="mt-4 w-full inline-flex justify-center items-center px-3 py-2 text-xs md:text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
               >
                 Lihat Detail
               </button>

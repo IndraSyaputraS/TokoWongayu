@@ -275,7 +275,7 @@ const BundleCategory = ({}) => {
         open={openModal}
         onClose={handleCloseModal}
         size="sm"
-        title={editMode ? "Update Bundle Category" : "Create Bundle Category"}
+        title={editMode ? "Edit Bundle Category" : "Add Bundle Category"}
       >
         <Modal.Body>
           <form
@@ -324,7 +324,7 @@ const BundleCategory = ({}) => {
             {editMode ? (
               <>
                 <PencilLine size={20} className="mr-2" />
-                Update Bundle Category
+                Edit Bundle Category
               </>
             ) : (
               <>
@@ -339,12 +339,12 @@ const BundleCategory = ({}) => {
       <Modal
         open={openDeleteModal}
         onClose={handleCloseModal}
-        size="sm"
+        size="md"
         placement="center"
       >
         <Modal.Body>
           <div className="flex flex-col justify-center items-center">
-            <div className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-red-600">
+            <div className="mx-auto mb-4 text-red-600 w-12 h-12 dark:text-red-600">
               <Warning size={64} />
             </div>
             <h3 className="mb-5 text-lg text-center font-normal text-gray-500 dark:text-gray-400">

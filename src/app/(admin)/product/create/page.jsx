@@ -13,7 +13,7 @@ const ProductCreatePage = async () => {
         ]}
       />
       <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl md:mb-6">
-        Create Product
+        Add Product
       </h2>
 
       <ProductCreate />

@@ -9,7 +9,7 @@ const HomePage = async () => {
     <>
       <HeroSection />
       <div className="flex items-center justify-center md:pt-4">
-        <a className="text-4xl text-black font-bold my-4">NEW ARRIVALS</a>
+        <a className="text-2xl md:text-4xl text-black font-bold my-2 md:my-4">NEW ARRIVALS</a>
       </div>
       <div className="px-4">
         <ProductCardAnimated visibleCount={4} />
@@ -25,8 +25,8 @@ const HomePage = async () => {
         </a>
       </div>
       <hr className="border border-gray-200" />
-      <div className="flex items-center justify-center md:pt-4">
-        <a className="text-4xl text-black font-bold my-4 text-center">
+      <div className="flex items-center justify-center">
+        <a className="text-2xl md:text-4xl text-black font-bold my-2 md:my-4 text-center">
           BUNDLING RECOMMENDATION
         </a>
       </div>

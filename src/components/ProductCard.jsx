@@ -8,7 +8,7 @@ import PaginationUser from "./PaginationUser";
 
 const SkeletonCard = () => (
   <div className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-lg animate-pulse">
-    <div className="h-40 sm:h-52 w-full bg-gray-300 px-3 sm:px-6 rounded-t-lg" />
+    <div className="h-[80px] sm:h-52 w-full bg-gray-300 px-3 sm:px-6 rounded-t-lg" />
     <hr className="border border-gray-200" />
     <div className="pt-3 sm:pt-6 w-full bg-white px-3 sm:px-6 pb-5 rounded-b-lg">
       <div className="h-6 bg-gray-300 rounded w-3/4 mb-2" />
@@ -77,17 +77,16 @@ const ProductCard = ({ visibleCount = 8 }) => {
             <div
               key={idx}
               onClick={() => handleOverview(product.id)}
-              className="rounded-lg border border-gray-200 bg-[#F0EEED] pt-4 shadow-md cursor-pointer"
+              className="rounded-lg border border-gray-200 bg-[#F0EEED] shadow-md cursor-pointer"
             >
-              <div className="h-40 sm:h-52 w-full px-3 sm:px-6">
-                {" "}
+              <div className="h-26 w-full px-4 md:h-52 py-2">
                 <Image
-                  className="mx-auto h-full object-contain"
-                  src={product.imageUrl}
-                  alt={product.name}
+                  className="mx-auto md:h-full h-[80px] object-contain"
+                  src={product.imageUrl || "/placeholder.png"}
+                  alt={product.name || "Product Image"}
                   priority={false}
-                  width={150}
-                  height={150}
+                  width={200}
+                  height={200}
                 />
               </div>
               <hr className="border border-gray-200" />

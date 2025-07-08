@@ -8,7 +8,7 @@ const UserLayout = ({ children }) => {
     <div className="flex flex-col min-h-screen antialiased bg-white">
       <Toaster position="top-right" />
       <NavbarMain />
-      <main className="flex-1 pt-20 pb-8">{children}</main>
+      <main className="flex-1 pt-16 pb-8">{children}</main>
       <Footer />
     </div>
   );

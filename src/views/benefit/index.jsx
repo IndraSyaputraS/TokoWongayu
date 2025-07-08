@@ -212,7 +212,7 @@ const Benefit = ({}) => {
         open={openModal}
         onClose={handleCloseModal}
         size="sm"
-        title="Create Benefit"
+        title={editMode ? "Edit Benefit" : "Add Benefit"}
       >
         <Modal.Body>
           <form
@@ -255,7 +255,7 @@ const Benefit = ({}) => {
             {editMode ? (
               <>
                 <PencilLine size={20} className="mr-2" />
-                Update Benefit
+                Edit Benefit
               </>
             ) : (
               <>

@@ -54,52 +54,60 @@ const ProductOverview = ({ productId }) => {
   return (
     <section className="py-4 md:py-8 bg-white antialiased max-w-screen-xl mx-auto">
       <div className="px-4 2xl:px-0">
-        <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center">
+        {/* GRID 2 KOLOM */}
+        <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 items-start">
           {/* Gambar Produk */}
-          <div className="shrink-0 max-w-xs md:max-w-md lg:max-w-lg mx-auto flex justify-center items-center">
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              priority={false}
-              width={150}
-              height={150}
-              className="object-contain"
-            />
+          <div className="h-full flex justify-center items-center">
+            <div className="max-w-xs md:max-w-md lg:max-w-lg">
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                width={130}
+                height={130}
+                className="object-contain"
+              />
+            </div>
           </div>
 
           {/* Detail Produk */}
-          <div className="mt-6 sm:mt-8 lg:mt-0">
-            <h1 className="text-lg md:text-xl font-semibold text-gray-900 sm:text-2xl">
+          <div className="mt-6 md:mt-8 lg:mt-0">
+            <h1 className="text-md md:text-xl font-semibold text-gray-900">
               {product.name}
             </h1>
 
-            {/* Brand, Category, Benefit */}
             <div className="mt-4 text-gray-700 grid grid-cols-2 gap-x-4 gap-y-2 max-w-xs">
-              <span className="font-semibold">Brand</span>
-              <span>{product.Brand?.name || "-"}</span>
+              <span className="font-semibold text-sm md:text-md">Brand</span>
+              <span className="text-sm md:text-md">
+                {product.Brand?.name || "-"}
+              </span>
 
-              <span className="font-semibold">Category</span>
-              <span>{product.Category?.name || "-"}</span>
+              <span className="font-semibold text-sm md:text-md">Category</span>
+              <span className="text-sm md:text-md">
+                {product.Category?.name || "-"}
+              </span>
 
-              <span className="font-semibold">Benefit</span>
-              <span>{product.Benefit?.name || "-"}</span>
+              <span className="font-semibold text-sm md:text-md">Benefit</span>
+              <span className="text-sm md:text-md">
+                {product.Benefit?.name || "-"}
+              </span>
             </div>
 
-            {/* Harga */}
             <div className="mt-6">
-              <p className="text-xl md:text-2xl font-extrabold text-gray-900 sm:text-3xl">
+              <p className="text-md md:text-2xl font-extrabold text-gray-900 sm:text-3xl">
                 {formatPrice(product.price)}
               </p>
             </div>
-
-            {/* Garis pemisah */}
-            <hr className="my-6 md:my-8 border-gray-200" />
-
-            {/* Deskripsi */}
-            <p className="mb-4 text-gray-500 text-justify">
-              {product.description}
-            </p>
           </div>
+        </div>
+
+        {/* GARIS PEMISAH */}
+        <hr className="my-6 md:my-8 border-gray-200" />
+
+        {/* DESKRIPSI DI BAWAH 2 KOLOM */}
+        <div className="mt-6">
+          <p className="text-gray-500 text-justify text-sm md:text-md">
+            {product.description}
+          </p>
         </div>
       </div>
     </section>

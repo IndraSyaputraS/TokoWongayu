@@ -35,12 +35,14 @@ const BundlingOverview = ({ bundlingId }) => {
         {isLoading ? (
           <div className="h-10 bg-gray-200 rounded w-2/3 animate-pulse"></div>
         ) : (
-          <p className="text-2xl lg:text-4xl text-gray-900 font-bold truncate">{data.name}</p>
+          <p className="text-2xl lg:text-4xl text-gray-900 font-bold truncate">
+            {data.name}
+          </p>
         )}
       </div>
 
       <section className="py-4 bg-white md:py-8 antialiased flex justify-center items-center">
-        <div className="w-full px-4 mx-4 sm:mx-10 2xl:px-0 grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="w-full px-4 mx-4 sm:mx-10 2xl:px-0 grid grid-cols-1 gap-4 md:gap-8 md:grid-cols-2">
           {isLoading
             ? Array(4)
                 .fill(0)
@@ -64,38 +66,40 @@ const BundlingOverview = ({ bundlingId }) => {
                   key={item.productId}
                   className="flex flex-col md:grid md:grid-cols-2 md:gap-6 items-center border border-gray-300 rounded p-4"
                 >
-                  <div className="w-[180px] h-[180px] md:w-[200px] md:h-[200px] rounded shadow overflow-hidden mx-auto">
-                    <Image
-                      src={item.imageUrl || "/images/noimage.png"}
-                      alt={item.name}
-                      priority={false}
-                      width={200}
-                      height={200}
-                      className="object-contain rounded"
-                    />
+                  <div className="h-full flex justify-center items-center">
+                    <div className="max-w-xs md:max-w-md lg:max-w-lg">
+                      <Image
+                        src={item.imageUrl || "/images/noimage.png"}
+                        alt={item.name}
+                        priority={false}
+                        width={130}
+                        height={130}
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
-                  <div className="mt-4 md:mt-0 md:pl-6 md:text-left w-full">
-                    <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
+                  <div className="md:pl-6 md:text-left w-full">
+                    <h1 className="text-md md:text-xl mb-2 mt-4 font-semibold text-gray-900">
                       {item.name}
                     </h1>
-                    <div className="mt-3 sm:items-center sm:gap-4 sm:flex justify-center md:justify-start">
-                      <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
-                        {formatPrice(item.price)}
-                      </p>
-                    </div>
-                    <hr className="my-6 md:my-8 border-gray-200" />
-                    <p className="mb-2 text-gray-500">
-                      <span className="font-medium text-gray-700">
+                    <p className="mb-2 text-gray-500 text-sm">
+                      <span className="font-medium text-sm md:text-md text-gray-700">
                         Benefit:
                       </span>{" "}
                       {item.benefit}
                     </p>
-                    <p className="mb-2 text-gray-500">
-                      <span className="font-medium text-gray-700">
+                    <p className="mb-2 text-gray-500 text-sm md:text-md">
+                      <span className="font-medium ext-sm md:text-md text-gray-700">
                         Category:
                       </span>{" "}
                       {item.category}
                     </p>
+                    <hr className="my-3 md:my-8 border-gray-200" />
+                    <div className="sm:items-center sm:gap-4 sm:flex justify-center md:justify-start">
+                      <p className="text-md md:text-2xl font-extrabold text-gray-900 sm:text-3xl">
+                        {formatPrice(item.price)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}

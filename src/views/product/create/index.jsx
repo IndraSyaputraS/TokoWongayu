@@ -426,7 +426,7 @@ const ProductCreate = ({ productId }) => {
               type="submit"
               className="px-5 py-2.5 text-sm font-medium text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900"
             >
-              {productId ? "Update Product" : "Add Product"}
+              {productId ? "Edit Product" : "Add Product"}
             </button>
           </div>
         </div>

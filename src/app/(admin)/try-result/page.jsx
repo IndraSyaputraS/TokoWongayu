@@ -6,12 +6,12 @@ const TryResultPage = async ({ searchParams }) => {
 
   return (
     <>
-      <Breadcrumb
+      {/* <Breadcrumb
         items={[
           { label: "Recomendation", href: "/recomendation" },
           { label: "Result", href: "/recomendation-result" },
         ]}
-      />
+      /> */}
 
       <TryResultClient productId={productId} />
     </>

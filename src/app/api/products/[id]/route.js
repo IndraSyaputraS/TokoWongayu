@@ -102,56 +102,6 @@ export async function PUT(request, { params }) {
   }
 }
 
-// export async function DELETE(request, { params }) {
-//   const { id } = await params;
-//   const IntId = parseInt(id);
-//   try {
-//     const product = await prisma.product.findUnique({
-//       where: { id: IntId },
-//     });
-
-//     if (!product) {
-//       return NextResponse.json(
-//         {
-//           success: false,
-//           message: "Product Not Found!",
-//           data: null,
-//         },
-//         { status: 404 }
-//       );
-//     }
-
-//     // Hapus gambar jika ada
-//     if (product.imageId) {
-//       await prisma.image.delete({
-//         where: { id: product.imageId },
-//       });
-//     }
-
-//     // Hapus produk
-//     await prisma.product.delete({
-//       where: { id: IntId },
-//     });
-
-//     return NextResponse.json(
-//       {
-//         success: true,
-//         message: "Product and Image Deleted!",
-//       },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     return NextResponse.json(
-//       {
-//         success: false,
-//         message: "Failed to delete product.",
-//         error: error,
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 export async function DELETE(request, { params }) {
   const { id } = await params;
   const IntId = parseInt(id, 10);

@@ -57,7 +57,6 @@ const RecomendationUser = () => {
         </div>
       </div>
 
-      {/* Product Card */}
       <div>
         <ProductCardRec data={results} onSelect={handleSelect} />
         <SpeedDial selectedProducts={selectedProducts} budget={budget} />

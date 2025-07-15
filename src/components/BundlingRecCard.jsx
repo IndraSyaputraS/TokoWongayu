@@ -114,9 +114,6 @@ const BundlingRecCard = () => {
               <h5 className="mb-1 text-lg md:text-xl font-bold tracking-tight text-gray-900">
                 Bundling {bundle.benefitName}
               </h5>
-              {/* <h5 className="mb-3 text-lg md:text-xl font-bold tracking-tight text-gray-900">
-                {bundle.benefitName}
-              </h5> */}
 
               <ul className="mb-4 space-y-1 text-gray-700 text-md max-h-40 overflow-auto">
                 {(bundle.items || []).map((product, idx) => (

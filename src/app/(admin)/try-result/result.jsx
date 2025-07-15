@@ -149,6 +149,7 @@
 // };
 
 // export default TryResultClient;
+
 "use client";
 import { TableSkeletonLoader } from "@/components";
 import { useEffect, useState } from "react";

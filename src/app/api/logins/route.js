@@ -3,7 +3,6 @@ import { hash, compare } from "bcryptjs";
 import { SignJWT } from "jose";
 import Joi from "joi";
 
-// Joi validation schema
 const schema = Joi.object({
   username: Joi.string().min(3).max(30).required().messages({
     "string.empty": "Username is required",
@@ -62,7 +61,6 @@ export async function POST(request) {
       );
     }
 
-    // Generate JWT
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const expiresIn = parseInt(process.env.JWT_EXPIRES_IN || "3600");
 
@@ -75,7 +73,6 @@ export async function POST(request) {
       .setExpirationTime(Math.floor(Date.now() / 1000) + expiresIn)
       .sign(secret);
 
-    // Set cookie
     const response = NextResponse.json({ message: "Login successful" });
     response.cookies.set("authToken", token, {
       httpOnly: true,

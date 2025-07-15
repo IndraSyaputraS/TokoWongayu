@@ -18,7 +18,7 @@ const SpeedDial = ({ selectedProducts = [], budget }) => {
     }
 
     setIsLoading(true);
-    setErrorMessage({}); // Reset error
+    setErrorMessage({});
 
     try {
       const res = await fetch("/api/recomendations/count", {

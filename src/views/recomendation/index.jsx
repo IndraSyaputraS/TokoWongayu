@@ -32,7 +32,7 @@ const Recomendation = () => {
   const [budget, setBudget] = useState("");
   const [products, setProducts] = useState([]);
   const [recomendations, setRecomendations] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Set default to true
+  const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
 

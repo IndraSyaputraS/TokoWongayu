@@ -15,7 +15,6 @@ const CalculationDataPage = async () => {
         History Transaction
       </h2>
       <CalculationData />
-      {/* <CalculationData data={calcs} products={products} getTransaction={getLast}/> */}
     </>
   );
 };

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 import Joi from "joi";
 
+//validasi
 const schema = Joi.object({
   productIds: Joi.array()
     .items(Joi.number().integer())
@@ -19,75 +20,21 @@ const schema = Joi.object({
   }),
 });
 
-// Fungsi untuk menghitung Cosine Similarity antar dua vektor
+//Perhitungan Cosine Similarity
 const cosineSimilarity = (vecA, vecB) => {
+  //Menghitung dot product
   const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
+  //Menghitung panjang vektor A dan B
   const magnitudeA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
   const magnitudeB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
+  //Mengecek kedua vektor dan hasil cosine similarity
   return magnitudeA && magnitudeB
     ? +(dotProduct / (magnitudeA * magnitudeB)).toFixed(3)
     : 0;
 };
 
-// function generateFlexibleBundles(
-//   candidatesByCategory,
-//   maxBudget,
-//   minAvgScore,
-//   benefitId
-// ) {
-//   const result = [];
-//   const usedProductIds = new Set();
-//   const maxBundles = 10;
-
-//   // Batasi kandidat tiap kategori produk berdasarkan score dan filter benefitId
-//   const trimmedCandidates = candidatesByCategory.map((categoryProducts) =>
-//     categoryProducts
-//       .filter(
-//         (product) =>
-//           product.score >= minAvgScore && product.benefitId === benefitId
-//       ) // filter benefitId juga
-//       .sort((a, b) => b.score - a.score)
-//   );
-
-//   function backtrack(index, currentBundle, totalPrice) {
-//     if (result.length >= maxBundles) return;
-//     if (totalPrice > maxBudget) return;
-
-//     if (index === trimmedCandidates.length) {
-//       if (currentBundle.length >= 3) {
-//         const avgScore =
-//           currentBundle.reduce((sum, p) => sum + p.score, 0) /
-//           currentBundle.length;
-
-//         const hasUsed = currentBundle.some((p) => usedProductIds.has(p.id));
-//         if (!hasUsed && avgScore >= minAvgScore) {
-//           result.push({ bundle: [...currentBundle], totalPrice, avgScore });
-//           currentBundle.forEach((p) => usedProductIds.add(p.id));
-//         }
-//       }
-//       return;
-//     }
-
-//     const categoryOptions = trimmedCandidates[index];
-//     for (const product of categoryOptions) {
-//       if (result.length >= maxBundles) return;
-//       if (usedProductIds.has(product.id)) continue;
-//       if (totalPrice + product.price > maxBudget) continue;
-
-//       currentBundle.push(product);
-//       backtrack(index + 1, currentBundle, totalPrice + product.price);
-//       currentBundle.pop();
-//     }
-
-//     // coba skip kategori ini
-//     backtrack(index + 1, currentBundle, totalPrice);
-//   }
-
-//   backtrack(0, [], 0);
-//   return result;
-// }
-
-function generateFlexibleBundles(
+//Membuat Bundling
+function generateBundles(
   candidatesByCategory,
   maxBudget,
   minAvgScore,
@@ -97,17 +44,16 @@ function generateFlexibleBundles(
   const usedProductIds = new Set();
   const maxBundles = 10;
 
-  // Sortir tiap kategori berdasar skor dan filter benefitId
-  const trimmedCandidates = candidatesByCategory.map(
-    (categoryProducts) =>
-      categoryProducts
-        .filter(
-          (product) =>
-            product.score >= 0.003 && product.benefitId === benefitId
-        )
-        .sort((a, b) => b.score - a.score) // skor tinggi dulu
+  //Filter dan urutkan produk per kategori
+  const trimmedCandidates = candidatesByCategory.map((categoryProducts) =>
+    categoryProducts
+      .filter(
+        (product) => product.score >= 0 && product.benefitId === benefitId
+      )
+      .sort((a, b) => b.score - a.score)
   );
 
+  //Fungsi pencarian dengan backtracking
   function backtrack(index, currentBundle, totalPrice) {
     if (result.length >= maxBundles) return;
     if (totalPrice > maxBudget) return;
@@ -119,7 +65,7 @@ function generateFlexibleBundles(
           currentBundle.length;
 
         const hasUsed = currentBundle.some((p) => usedProductIds.has(p.id));
-        if (!hasUsed && avgScore >= 0.003) {
+        if (!hasUsed && avgScore >= 0) {
           result.push({ bundle: [...currentBundle], totalPrice, avgScore });
           currentBundle.forEach((p) => usedProductIds.add(p.id));
         }
@@ -129,7 +75,6 @@ function generateFlexibleBundles(
 
     const categoryOptions = trimmedCandidates[index];
 
-    // Prioritaskan produk dengan skor tinggi
     for (const product of categoryOptions) {
       if (result.length >= maxBundles) return;
       if (usedProductIds.has(product.id)) continue;
@@ -140,22 +85,12 @@ function generateFlexibleBundles(
       currentBundle.pop();
     }
 
-    // coba skip kategori ini (tetap dibolehkan)
     backtrack(index + 1, currentBundle, totalPrice);
   }
 
   backtrack(0, [], 0);
 
-  // Urutkan hasil akhir berdasar skor rata-rata tertinggi
   return result.sort((a, b) => b.avgScore - a.avgScore);
-}
-
-function generateSignature(bundle, budget) {
-  const sortedProductIds = bundle.bundle
-    .map((item) => item.id) // gunakan 'id', bukan 'productId'
-    .sort((a, b) => a - b)
-    .join(""); // sambung tanpa separator
-  return `${sortedProductIds}${budget}`;
 }
 
 export async function GET(req) {
@@ -340,12 +275,12 @@ export async function GET(req) {
       averagedSimilarities.filter((item) => item.category === kategori)
     );
 
-    // const allBundles = generateFlexibleBundles(
+    // const allBundles = generateBundles(
     //   candidatesByCategory,
     //   maxBudget,
     //   avgAllScore
     // );
-    const allBundles = generateFlexibleBundles(
+    const allBundles = generateBundles(
       candidatesByCategory,
       maxBudget,
       avgAllScore,
@@ -387,9 +322,13 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
+    //Ambil dan parse body request
     const body = await req.json();
+
+    //Validasi input menggunakan schema
     const { error, value } = schema.validate(body, { abortEarly: false });
     if (error) {
+      //Format ulang error ke dalam objek yang lebih rapi
       const errorObject = {};
       error.details.forEach((detail) => {
         const field = detail.path[0];
@@ -399,7 +338,7 @@ export async function POST(req) {
           errorObject[field] = detail.message;
         }
       });
-
+      //Jika validasi gagal, kirim response 400
       return NextResponse.json(
         {
           success: false,
@@ -410,13 +349,16 @@ export async function POST(req) {
       );
     }
 
+    //Ambil nilai input valid
     const { productIds, budget } = value;
+
+    //Ambil produk yang dipilih dan relasi Benefit-nya
     const selectedProducts = await prisma.product.findMany({
       where: { id: { in: productIds } },
       include: { Benefit: true },
     });
 
-    // Hitung benefit dominant berdasarkan produk terpilih
+    //Hitung benefit dominan dari produk terpilih
     const benefitCount = {};
     for (const p of selectedProducts) {
       const benefitId = p.benefitId;
@@ -428,6 +370,7 @@ export async function POST(req) {
       (a, b) => b[1] - a[1]
     )[0]?.[0];
 
+    //Jika tidak ditemukan benefit dominan, kirim error
     if (!benefitDominantId) {
       return NextResponse.json(
         { error: "Benefit ID not found" },
@@ -435,15 +378,17 @@ export async function POST(req) {
       );
     }
 
-    // Ambil semua data transaksi dan produk untuk hitung matrix transaksi-produk
+    //Ambil data transaksi historis
     const calcs = await prisma.calculationData.findMany({
       select: { transaction: true, productId: true },
     });
 
+    //Ambil semua data produk dan kategorinya
     const products = await prisma.product.findMany({
       include: { Category: true },
     });
 
+    //Ambil kategori wajib dari bundleCategory berdasarkan benefit dominan
     const bundleCategory = await prisma.bundleCategory.findFirst({
       where: { benefitId: parseInt(benefitDominantId) },
       include: { categories: { include: { Category: true } } },
@@ -453,6 +398,7 @@ export async function POST(req) {
       ? bundleCategory.categories.map((pivot) => pivot.Category.name.trim())
       : [];
 
+    //Simulasikan transaksi user dengan kode palsu "SELECT"
     const fakeTransactionCode = "SELECT";
     const userSelectedTransaction = productIds.map((id) => ({
       transaction: fakeTransactionCode,
@@ -460,23 +406,24 @@ export async function POST(req) {
     }));
     const updatedCalcs = [...calcs, ...userSelectedTransaction];
 
+    //Buat mapping ID produk dan daftar kode transaksi unik
     const productIndexMap = products.map((p) => p.id);
     const transactions = [...new Set(calcs.map((c) => c.transaction))];
     const trxCodes = [...new Set(transactions)];
 
-    // Buat matrix transaksi x produk (1 jika produk dibeli dalam transaksi, 0 jika tidak)
+    //Buat matriks transaksi x produk berisi 0/1 (beli/tidak)
     const matrix = trxCodes.map((trxCode) => {
       const trxItems = updatedCalcs.filter((c) => c.transaction === trxCode);
       const boughtIds = trxItems.map((i) => i.productId);
       return productIndexMap.map((id) => (boughtIds.includes(id) ? 1 : 0));
     });
 
-    // Fungsi transpose matrix untuk dapatkan vektor produk (kolom)
+    //Transpose matrix → dapatkan vektor produk (kolom)
     const transpose = (matrix) =>
       matrix[0].map((_, i) => matrix.map((row) => row[i]));
-    const productVectors = transpose(matrix); // Array vektor produk
+    const productVectors = transpose(matrix);
 
-    // Indeks produk terpilih di productIndexMap
+    //Ambil indeks produk terpilih berdasarkan urutan ID
     const selectedIndexes = productIds
       .map((id) => productIndexMap.indexOf(id))
       .filter((i) => i !== -1);
@@ -488,6 +435,7 @@ export async function POST(req) {
       );
     }
 
+    //Hitung similarity antar produk terpilih dan seluruh produk
     const combinedSimilarities = [];
     for (let i of selectedIndexes) {
       for (let j = 0; j < productVectors.length; j++) {
@@ -503,6 +451,7 @@ export async function POST(req) {
         });
       }
     }
+    //Ambil skor tertinggi dari setiap produk
     const scoreMap = {};
     for (const item of combinedSimilarities) {
       if (!scoreMap[item.id]) {
@@ -518,7 +467,7 @@ export async function POST(req) {
       }
     }
 
-    // Cari produk terdekat berdasarkan similarity
+    //Buat daftar produk mirip dan tidak termasuk produk terpilih
     const averagedSimilarities = Object.values(scoreMap)
       .map(({ maxScore, data }) => {
         const productData = products.find((p) => p.id === data.id);
@@ -538,8 +487,10 @@ export async function POST(req) {
             products.findIndex((p) => p.id === item.id)
           ) && item.score > 0
       );
+    //Urutkan berdasarkan skor similarity tertinggi
     averagedSimilarities.sort((a, b) => b.score - a.score);
 
+    //Hitung rata-rata skor keseluruhan produk mirip
     const totalScore = averagedSimilarities.reduce(
       (sum, p) => sum + p.score,
       0
@@ -548,21 +499,25 @@ export async function POST(req) {
       ? totalScore / averagedSimilarities.length
       : 0;
 
+    //Ambil kategori wajib yang tersedia di hasil similarity
     const kategoriTersedia = kategoriWajib.filter((kategori) =>
       averagedSimilarities.some((item) => item.category === kategori)
     );
 
+    //Kelompokkan produk mirip berdasarkan kategori wajib
     const candidatesByCategory = kategoriTersedia.map((kategori) =>
       averagedSimilarities.filter((item) => item.category === kategori)
     );
 
-    const allBundles = generateFlexibleBundles(
+    //Bangun bundling berdasarkan data kandidat
+    const allBundles = generateBundles(
       candidatesByCategory,
       budget,
       avgAllScore,
       parseInt(benefitDominantId)
     );
 
+    //Hitung ulang total skor dan urutkan bundling berdasarkan skor rata-rata tertinggi
     const sortedBundles = allBundles
       .map((b) => ({
         bundle: b.bundle,
@@ -573,16 +528,16 @@ export async function POST(req) {
       }))
       .sort((a, b) => b.avgScore - a.avgScore);
 
-    // Fungsi generate signature untuk bundle (bisa disesuaikan)
+    //Fungsi bantu: buat kode unik isi bundle
     function generateSignature(bundle, budget) {
       const sortedProductIds = bundle.bundle
-        .map((item) => item.id) // gunakan ID dari produk
+        .map((item) => item.id)
         .sort((a, b) => a - b)
         .join("");
       return `${sortedProductIds}${budget}`;
     }
 
-    // Simpan bundle terbaik ke database jika belum ada
+    //Simpan hasil bundling jika belum pernah disimpan
     const savedBundles = await Promise.all(
       sortedBundles.map(async (bundle) => {
         const signature = generateSignature(bundle, budget);
@@ -603,10 +558,10 @@ export async function POST(req) {
             budget,
             totalScore: bundle.avgScore,
             signature,
-            totalPrice: bundle.totalPrice, // fix here
+            totalPrice: bundle.totalPrice,
             items: {
               create: bundle.bundle.map((item) => ({
-                productId: item.id, // fix here
+                productId: item.id,
                 price: item.price,
                 score: item.score,
               })),
@@ -618,6 +573,7 @@ export async function POST(req) {
       })
     );
 
+    //Format hasil akhir untuk dikirim ke frontend
     const response = sortedBundles.map((bundle, idx) => ({
       bundleId: savedBundles[idx].id,
       bundle: bundle.bundle.map((item) => ({
@@ -627,10 +583,10 @@ export async function POST(req) {
         price: item.price,
         score: item.score,
       })),
-      total: bundle.totalPrice, // fix here
+      total: bundle.totalPrice,
       avgScore: bundle.avgScore,
     }));
-
+    //Kirim hasil bundling ke klien
     return NextResponse.json({ savedBundles, bundles: response });
   } catch (error) {
     return NextResponse.json(

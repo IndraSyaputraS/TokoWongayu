@@ -8,7 +8,7 @@ import PaginationUser from "./PaginationUser";
 const ProductCardRec = ({ data, onSelect }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(data.length === 0); // loading true jika data kosong
+  const [isLoading, setIsLoading] = useState(data.length === 0);
 
   const productsPerPage = 15;
   const totalPages = Math.ceil(data.length / productsPerPage);

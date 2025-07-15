@@ -93,10 +93,6 @@ const Modal = ({
         aria-modal="true"
         role="dialog"
       >
-        {/* <div
-          className={`flex justify-center relative ${sizes[size]} w-auto h-full max-h-full pt-10 md:h-auto`}
-        >
-          <div className="relative bg-white rounded-lg shadow dark:bg-gray-800 w-full"> */}
         <div className={`flex relative ${sizes[size]} w-full`}>
           <div className={`${backgrounds[background]} rounded-lg shadow dark:bg-gray-800 w-full flex flex-col mx-auto h-auto max-h-max`}>
             {(header || title) && (
@@ -137,7 +133,6 @@ const Modal = ({
   );
 };
 
-// Komponen sub Modal
 Modal.Header = ({ children }) => children;
 Modal.Body = ({ children }) => children;
 Modal.Footer = ({ children }) => (

@@ -78,7 +78,6 @@ export async function POST(req) {
 
     // ========== UNTUK POST JSON MANUAL ==========
     if (contentType.includes("application/json")) {
-      // 2. Ambil body request
       const body = await req.json();
       const cleanBody = {
         ...body,
@@ -172,12 +171,10 @@ export async function POST(req) {
           where: { name: namaBrand },
         });
 
-        // Cari ID category berdasarkan nama
         const category = await prisma.category.findFirst({
           where: { name: namaCategory },
         });
 
-        // Cari ID benefit berdasarkan nama
         const benefit = await prisma.benefit.findFirst({
           where: { name: namaBenefit },
         });

@@ -119,7 +119,6 @@ export async function POST(req) {
       }
     }
 
-    // ========== FORMAT TIDAK DIDUKUNG ==========
     return NextResponse.json(
       { success: false, message: "Unsupported content type." },
       { status: 415 }

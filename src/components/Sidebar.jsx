@@ -78,7 +78,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  onClick={() => setSidebarOpen(false)} // close sidebar on mobile
+                  onClick={() => setSidebarOpen(false)}
                   className={`flex items-center p-2 text-base font-medium rounded-lg group transition-colors
           ${
             isActive

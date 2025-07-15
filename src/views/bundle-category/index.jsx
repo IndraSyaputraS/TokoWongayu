@@ -59,7 +59,6 @@ const BundleCategory = ({}) => {
       setBundleCategories(bunds);
     } catch (error) {
       console.error("Gagal memuat data:", error);
-      // setIsError(true);
     } finally {
       setLoading(false);
     }

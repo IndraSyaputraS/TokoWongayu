@@ -98,7 +98,7 @@ const Product = ({ data }) => {
       console.error("Upload error:", error);
       toast.error("Error importing file.");
     } finally {
-      setIsImporting(false); // stop loading
+      setIsImporting(false);
     }
   };
 

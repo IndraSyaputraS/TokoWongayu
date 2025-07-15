@@ -144,10 +144,7 @@ const ProductCreate = ({ productId }) => {
   };
 
   const handleDeleteImage = async () => {
-    // Cek jika tidak ada gambar yang di-upload (mungkin gambar default)
     if (!form.uploadedImageId && !form.uploadedImageUrl) return;
-
-    // Jika ada gambar yang sudah di-upload sebelumnya
     if (form.uploadedImageId) {
       const res = await fetch(`/api/upload-image/${form.uploadedImageId}`, {
         method: "DELETE",
@@ -162,7 +159,6 @@ const ProductCreate = ({ productId }) => {
         console.error("Failed to delete image");
       }
     } else {
-      // Jika gambar adalah gambar default (tanpa ID)
       updateForm("uploadedImageUrl", "");
       updateForm("image", null);
       updateForm("preview", null);
@@ -237,7 +233,6 @@ const ProductCreate = ({ productId }) => {
               ))
             ) : (
               <>
-                {/* Name */}
                 <div>
                   <label htmlFor="name" className="form-label">
                     Product Name
@@ -254,8 +249,6 @@ const ProductCreate = ({ productId }) => {
                   />
                   {errors.name && <HandleError error={errors.name} />}
                 </div>
-
-                {/* Item Code */}
                 <div>
                   <label htmlFor="itemCode" className="form-label">
                     Item Code
@@ -272,8 +265,6 @@ const ProductCreate = ({ productId }) => {
                   />
                   {errors.itemCode && <HandleError error={errors.itemCode} />}
                 </div>
-
-                {/* Brand */}
                 <div>
                   <label htmlFor="brand" className="form-label">
                     Brand
@@ -295,8 +286,6 @@ const ProductCreate = ({ productId }) => {
                   </select>
                   {errors.brandId && <HandleError error={errors.brandId} />}
                 </div>
-
-                {/* Category */}
                 <div>
                   <label htmlFor="category" className="form-label">
                     Category
@@ -320,8 +309,6 @@ const ProductCreate = ({ productId }) => {
                     <HandleError error={errors.categoryId} />
                   )}
                 </div>
-
-                {/* Benefit */}
                 <div>
                   <label htmlFor="benefit" className="form-label">
                     Benefit
@@ -343,8 +330,6 @@ const ProductCreate = ({ productId }) => {
                   </select>
                   {errors.benefitId && <HandleError error={errors.benefitId} />}
                 </div>
-
-                {/* Price */}
                 <div>
                   <label htmlFor="price" className="form-label">
                     Price
@@ -361,8 +346,6 @@ const ProductCreate = ({ productId }) => {
                   />
                   {errors.price && <HandleError error={errors.price} />}
                 </div>
-
-                {/* Description */}
                 <div className="sm:col-span-2">
                   <label htmlFor="description" className="form-label">
                     Description
@@ -380,7 +363,6 @@ const ProductCreate = ({ productId }) => {
             )}
           </div>
 
-          {/* Image Upload */}
           <div className="w-full lg:w-1/4 flex flex-col items-center lg:items-stretch mt-6 lg:mt-0 h-full">
             <label className="mb-2 text-sm font-medium text-center lg:text-left flex justify-center">
               Add Image
@@ -417,7 +399,6 @@ const ProductCreate = ({ productId }) => {
             )}
           </div>
         </div>
-        {/* Input Fields */}
 
         <div className="flex flex-col lg:flex-row items-start mt-4 gap-6">
           <div className="w-full lg:w-3/4"></div>

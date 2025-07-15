@@ -69,7 +69,6 @@ const ProductOverview = ({ productId }) => {
             </div>
           </div>
 
-          {/* Detail Produk */}
           <div className="mt-6 md:mt-8 lg:mt-0">
             <h1 className="text-md md:text-xl font-semibold text-gray-900">
               {product.name}
@@ -100,10 +99,8 @@ const ProductOverview = ({ productId }) => {
           </div>
         </div>
 
-        {/* GARIS PEMISAH */}
         <hr className="my-6 md:my-8 border-gray-200" />
 
-        {/* DESKRIPSI DI BAWAH 2 KOLOM */}
         <div className="mt-6">
           <p className="text-gray-500 text-justify text-sm md:text-md">
             {product.description}

@@ -29,12 +29,6 @@ const Brand = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedBrands = data.slice(startIndex, startIndex + itemsPerPage);
 
-  // useEffect(() => {
-  //   if (Array.isArray(data)) {
-  //     setIsLoading(false);
-  //   }
-  // }, [data]);
-
   const fetchBrands = async () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/brands`);

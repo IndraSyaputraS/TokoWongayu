@@ -9,7 +9,6 @@ export async function GET() {
     },
   });
 
-  // Jika tidak ada data, kembalikan array kosong atau null
   if (!calcs || !calcs.transaction) {
     return NextResponse.json(
       {

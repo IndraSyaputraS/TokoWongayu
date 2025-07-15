@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
-import sharp from "sharp"; // npm install sharp
+import sharp from "sharp";
 import cloudinary from "@/libs/cloudinary";
 
 export async function GET() {

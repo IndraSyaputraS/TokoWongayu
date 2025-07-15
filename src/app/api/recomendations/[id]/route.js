@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 
-// GET /api/saved-bundle/[id]
 export async function GET(request, { params }) {
   const { id } = await params;
   const bundleId = parseInt(id);

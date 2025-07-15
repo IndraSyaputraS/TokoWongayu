@@ -43,7 +43,7 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message: error.details[0].message, // kirim error pertama
+          message: error.details[0].message,
         },
         { status: 400 }
       );

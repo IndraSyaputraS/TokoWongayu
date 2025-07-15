@@ -48,7 +48,7 @@ function generateBundles(
   const trimmedCandidates = candidatesByCategory.map((categoryProducts) =>
     categoryProducts
       .filter(
-        (product) => product.score >= 0 && product.benefitId === benefitId
+        (product) => product.score >= 0.001 && product.benefitId === benefitId
       )
       .sort((a, b) => b.score - a.score)
   );
@@ -65,7 +65,7 @@ function generateBundles(
           currentBundle.length;
 
         const hasUsed = currentBundle.some((p) => usedProductIds.has(p.id));
-        if (!hasUsed && avgScore >= 0) {
+        if (!hasUsed && avgScore >= 0.001) {
           result.push({ bundle: [...currentBundle], totalPrice, avgScore });
           currentBundle.forEach((p) => usedProductIds.add(p.id));
         }

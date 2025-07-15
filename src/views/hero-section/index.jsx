@@ -29,7 +29,7 @@ const HeroSection = () => {
             <Image
               // className="w-[520px] h-[400px]"
               className="w-[260px] h-auto md:w-[520px]"
-              src="/assets/hero22.webp"
+              src="/assets/hero2.png"
               alt="shopping illustration"
               width={2000}
               height={2000}

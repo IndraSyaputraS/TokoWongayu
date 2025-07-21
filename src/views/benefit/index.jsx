@@ -78,7 +78,7 @@ const Benefit = ({}) => {
         setSelectedBenefit(null);
         fetchBenefits();
       } else {
-        console.error("Failed to save benefit:", await res.text());
+        setError(response.message || "Something went wrong");
       }
     } catch (err) {
       console.error("Error saving benefit:", err);

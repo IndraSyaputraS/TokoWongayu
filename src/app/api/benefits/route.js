@@ -30,8 +30,10 @@ export async function GET() {
 }
 
 const schema = Joi.object({
-  name: Joi.string().required().messages({
+  name: Joi.string().min(3).max(20).required().messages({
     "any.required": "Benefit name must be filled",
+    "string.min": "Benefit name must be at least 3 characters",
+    "string.max": "Benefit name must be less than or equal to 20 characters",
     "string.empty": "Benefit name must be filled",
   }),
 });

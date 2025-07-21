@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@libs/prismaClient";
 import { importExcel } from "@/libs/importExcel";
+import Joi from "joi";
 
 export async function GET() {
   try {
@@ -18,18 +19,29 @@ export async function GET() {
         message: "List Calculation Data",
         data: calcs,
       },
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (err) {
     return NextResponse.json({
-      sucess: false,
+      success: false,
       message: "Failed to fetch",
       error: err,
     });
   }
 }
+
+// Skema validasi Joi
+const schema = Joi.object({
+  transaction: Joi.string().min(2).required().messages({
+    "any.required": "Transaction must be filled",
+    "string.empty": "Transaction must be filled",
+    "string.min": "Transaction must be at least 2 characters",
+  }),
+  productId: Joi.number().required().messages({
+    "any.required": "Product must be selected",
+    "number.base": "Product must be selected",
+  }),
+});
 
 export async function POST(req) {
   try {
@@ -38,12 +50,33 @@ export async function POST(req) {
     // ========== UNTUK POST JSON MANUAL ==========
     if (contentType.includes("application/json")) {
       const body = await req.json();
-      const { transaction, productId } = body;
+
+      // Validasi dengan Joi
+      const { error, value } = schema.validate(body, { abortEarly: false });
+
+      if (error) {
+        const errors = {};
+        error.details.forEach((detail) => {
+          const field = detail.path[0];
+          errors[field] = detail.message;
+        });
+
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Validation failed",
+            errors,
+          },
+          { status: 400 }
+        );
+      }
+
+      const { transaction, productId } = value;
 
       const calcs = await prisma.calculationData.create({
         data: {
           transaction,
-          productId: parseInt(productId),
+          productId,
         },
       });
 
@@ -64,7 +97,7 @@ export async function POST(req) {
 
       if (!file) {
         return NextResponse.json(
-          { error: "No file uploaded." },
+          { success: false, message: "No file uploaded." },
           { status: 400 }
         );
       }
@@ -83,8 +116,8 @@ export async function POST(req) {
 
         if (products) {
           insertedData.push({
-            transaction: transaction,
-            productId: products?.id,
+            transaction,
+            productId: products.id,
           });
         }
       }
@@ -119,14 +152,15 @@ export async function POST(req) {
       }
     }
 
+    // ========== FORMAT TIDAK DIDUKUNG ==========
     return NextResponse.json(
       { success: false, message: "Unsupported content type." },
       { status: 415 }
     );
   } catch (err) {
     return NextResponse.json({
-      sucess: false,
-      message: "Failed to fetch",
+      success: false,
+      message: "Failed to process request.",
       error: err,
     });
   }

@@ -15,10 +15,10 @@ datasource db {
 
 model Product {
   id              Int               @id @default(autoincrement())
-  name            String
+  name            String 
   brandId         Int?              @map("brand_id")
   Brand           Brand?            @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  itemCode        String            @map("item_code")
+  itemCode        String            @unique @map("item_code")
   price           Float?
   categoryId      Int?              @map("category_id")
   Category        Category?         @relation(fields: [categoryId], references: [id], onDelete: Cascade)

@@ -31,8 +31,10 @@ export async function GET() {
 }
 
 const schema = Joi.object({
-  name: Joi.string().required().messages({
+  name: Joi.string().min(3).max(20).required().messages({
     "any.required": "Category name must be filled",
+    "string.min": "Category name must be at least 3 characters",
+    "string.max": "Category name must be less than or equal to 20 characters",
     "string.empty": "Category name must be filled",
   }),
 });

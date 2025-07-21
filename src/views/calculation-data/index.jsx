@@ -1,5 +1,10 @@
 "use client";
-import { Pagination, Modal, TableSkeletonLoader } from "@/components";
+import {
+  Pagination,
+  Modal,
+  TableSkeletonLoader,
+  HandleError,
+} from "@/components";
 import {
   CloudArrowUp,
   FileArrowDown,
@@ -45,6 +50,7 @@ const CalculationData = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [products, setProducts] = useState([]);
   const [calcs, setCalcs] = useState([]);
+  const [errors, setErrors] = useState("");
   const [getLast, setGetLast] = useState("");
   const itemsPerPage = 10;
   const totalPages = Math.ceil(calcs.length / itemsPerPage);
@@ -78,6 +84,12 @@ const CalculationData = () => {
   }
 
   function handleOpenCreateModal() {
+    setForm({
+      transaction: "",
+      productId: "",
+    });
+    setEditMode(false);
+    setSelectedCalc(null);
     setOpenCreateModal(true);
   }
   function handleCloseCreateModal() {
@@ -146,6 +158,8 @@ const CalculationData = () => {
         }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         const notif = editMode
           ? toast.success("Calculation Data Updated successfully.")
@@ -155,7 +169,11 @@ const CalculationData = () => {
         setSelectedCalc(null);
         loadData();
       } else {
-        console.error("Failed to save calculation data:", await res.text());
+        if (data.errors) {
+          setErrors(data.errors);
+        } else {
+          toast.error(data.message || "Something went wrong.");
+        }
       }
     } catch (err) {
       console.error("Error saving calculation data:", err);
@@ -301,7 +319,9 @@ const CalculationData = () => {
         open={openCreateModal}
         onClose={handleCloseCreateModal}
         size="sm"
-        title={editMode ? "Edit History Transaction" : "Add History Transaction"}
+        title={
+          editMode ? "Edit History Transaction" : "Add History Transaction"
+        }
       >
         <Modal.Body>
           <form
@@ -320,12 +340,18 @@ const CalculationData = () => {
                 <input
                   type="text"
                   id="transaction"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className={
+                    !errors
+                      ? "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-8 p-2 text-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      : "bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full h-8 p-2 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                  }
                   placeholder={getLast}
                   value={form.transaction}
                   onChange={(e) => updateForm("transaction", e.target.value)}
-                  required
                 />
+                {errors.transaction && (
+                  <HandleError error={errors.transaction} />
+                )}
               </div>
               <div>
                 <label
@@ -338,7 +364,9 @@ const CalculationData = () => {
                   id="product"
                   value={form.productId}
                   onChange={(e) => updateForm("productId", e.target.value)}
-                  className="input-field"
+                  className={
+                    !errors.productId ? "input-field" : "input-field-error"
+                  }
                 >
                   <option value="">Select Product</option>
                   {products.map((product) => (
@@ -347,6 +375,7 @@ const CalculationData = () => {
                     </option>
                   ))}
                 </select>
+                {errors.productId && <HandleError error={errors.productId} />}
               </div>
             </div>
           </form>
@@ -499,6 +528,19 @@ const CalculationData = () => {
           border-radius: 0.5rem;
           padding: 0.625rem;
           width: 100%;
+        }
+        .input-field-error {
+          background-color: #fef2f2;
+          border: 1px solid #f87171;
+          color: #111827;
+          font-size: 0.875rem;
+          border-radius: 0.5rem;
+          padding: 0.625rem;
+          width: 100%;
+        }
+
+        .input-field-error::placeholder {
+          color: #9b2c2c;
         }
       `}</style>
     </>

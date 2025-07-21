@@ -190,7 +190,6 @@ const ProductCreate = ({ productId }) => {
           description: form.description,
         }),
       });
-      console.log(res);
 
       let data = {};
       try {
@@ -207,7 +206,11 @@ const ProductCreate = ({ productId }) => {
         router.push("/product");
       } else {
         if (data.errors) {
+          // Validasi field seperti Joi/Zod
           setErrors(data.errors);
+        } else if (data.message) {
+          // Validasi umum seperti itemCode duplikat
+          setErrors({ itemCode: data.message });
         } else {
           console.error(
             "Failed to " + (productId ? "update" : "create") + " product"

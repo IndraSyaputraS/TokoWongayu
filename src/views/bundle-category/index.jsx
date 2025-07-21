@@ -1,5 +1,6 @@
 "use client";
 import {
+  HandleError,
   Modal,
   MultiSelect,
   Pagination,
@@ -36,9 +37,9 @@ const BundleCategory = ({}) => {
   const [categories, setCategories] = useState([]);
   const [bundleCategories, setBundleCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState("");
   const router = useRouter();
   const itemsPerPage = 10;
-
   const totalPages = Math.ceil(bundleCategories.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedBunCat = bundleCategories.slice(
@@ -71,10 +72,6 @@ const BundleCategory = ({}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!form.benefitId || selectedCategory.length === 0) {
-        toast.error("Please select both benefit and category.");
-        return;
-      }
       const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "";
       const url = editMode
         ? `${baseURL}/api/bundle-categories/${selectedBundCat.id}`
@@ -91,6 +88,8 @@ const BundleCategory = ({}) => {
         }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         const notif = editMode
           ? toast.success("Bundle Category Updated successfully.")
@@ -104,7 +103,11 @@ const BundleCategory = ({}) => {
         setSelectedCategory([]);
         loadData();
       } else {
-        console.error("Failed to save Bundle Category:", await res.text());
+        if (data.errors) {
+          setErrors(data.errors);
+        } else {
+          toast.error(data.message || "Something went wrong.");
+        }
       }
     } catch (err) {
       console.error("Error saving Bundle Category:", err);
@@ -167,6 +170,7 @@ const BundleCategory = ({}) => {
     setForm({
       benefitId: "",
     });
+    setErrors("");
     setSelectedBundCat(null);
     setSelectedCategory([]);
     setOpenModal(false);
@@ -294,7 +298,9 @@ const BundleCategory = ({}) => {
                   id="benefit"
                   value={form.benefitId}
                   onChange={(e) => updateForm("benefitId", e.target.value)}
-                  className="input-field"
+                  className={
+                    !errors.benefitId ? "input-field" : "input-field-error"
+                  }
                 >
                   <option value="">Select Benefit</option>
                   {benefits.map((benefit) => (
@@ -303,13 +309,18 @@ const BundleCategory = ({}) => {
                     </option>
                   ))}
                 </select>
+                {errors.benefitId && <HandleError error={errors.benefitId} />}
               </div>
               <div>
                 <MultiSelect
                   selectedCategory={selectedCategory}
                   setSelectedCategory={setSelectedCategory}
                   data={categories}
+                  error={errors.categoryIds} // Kirim error message
                 />
+                {errors.categoryIds && (
+                  <HandleError error={errors.categoryIds} />
+                )}
               </div>
             </div>
           </form>
@@ -377,6 +388,19 @@ const BundleCategory = ({}) => {
           border-radius: 0.5rem;
           padding: 0.625rem;
           width: 100%;
+        }
+        .input-field-error {
+          background-color: #fef2f2;
+          border: 1px solid #f87171;
+          color: #111827;
+          font-size: 0.875rem;
+          border-radius: 0.5rem;
+          padding: 0.625rem;
+          width: 100%;
+        }
+
+        .input-field-error::placeholder {
+          color: #9b2c2c;
         }
       `}</style>
     </>

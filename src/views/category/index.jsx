@@ -81,7 +81,8 @@ const Category = () => {
         setSelectedCategory(null);
         fetchCategories();
       } else {
-        console.error("Failed to save cateegory:", await res.text());
+        setError(response.message || "Something went wrong");
+        // console.error("Failed to save category:");
       }
     } catch (err) {
       console.error("Error saving category:", err);
